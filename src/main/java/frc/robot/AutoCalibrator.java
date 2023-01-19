@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoCalibrator extends AutoBaseClass {
 
-    private AutoAlign mAutoAlign = new AutoAlign();
-
     public void start(char robotPosition) {
         super.start(robotPosition);
     }

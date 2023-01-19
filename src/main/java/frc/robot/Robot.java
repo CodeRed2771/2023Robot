@@ -21,9 +21,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Climber.ClimberPosition;
-import frc.robot.Shooter.ManualShotPreset;
-import frc.robot.Shooter.ShooterPosition;
 import frc.robot.libs.HID.Gamepad;
 import pabeles.concurrency.IntOperatorTask.Max;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -48,15 +45,7 @@ public class Robot extends TimedRobot {
     final String autoCalibrator = "Auto Calibrator";
     final String autoWheelAlign = "Auto Wheel Align";
     final String autoAlign = "Auto Align";
-    final String ballPickUp = "Auto Ball Pick Up";
     final String AutoLeaveTarmac = "Auto Leave Tarmac";
-    final String AutoTarmacShoot1 = "Auto Tarmac Shoot 1";
-    final String AutoTarmacShoot2 = "Auto Tarmac Shoot 2";
-    final String AutoTarmacShoot2Vision = "Auto Tarmac Shoot 2 Vision";
-    final String AutoTarmacShoot3Vision = "Auto Tarmac Shoot 3 Vision";
-
-    private boolean isIntakeUpPosition = true;
-    private boolean intakeKeyAlreadyPressed = false;
 
     private double lastFWDvalue = 0; 
     private double lastSTRvalue = 0;
@@ -69,12 +58,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putString("Alliance Decided", DriverStation.getAlliance().toString());
         compressor.enableAnalog(100, 120);
 
-        Intake.init();
-        Shooter.init();
         RobotGyro.init();
-        Climber.init();
-
-        // swtest = new SwerveTurnTest();
 
         Calibration.loadSwerveCalibration();
         if (Calibration.isPracticeBot()) 
@@ -89,12 +73,9 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Show Encoders", true);
         SmartDashboard.putBoolean("Tune Drive-Turn PIDs", false);
 
-        VisionShooter.init(); // Limelight shooter vision tracking
         setupAutoChoices();
         mAutoProgram = new AutoDoNothing();
 
-        // VisionBall.init(); // Ball vision tracking setup
-        // VisionBall.start();
     }
 
     @Override
@@ -105,82 +86,13 @@ public class Robot extends TimedRobot {
         DriveTrain.allowTurnEncoderReset();
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
-        // VisionBall.start(); // (3/26/22 - this crashes the program when run a second time)
-        Shooter.StartShooter();
-        Shooter.setSpeed(6000);
-        Climber.reset();
+
     }
 
     @Override
     public void teleopPeriodic() {
 
-        // SmartDashboard.putNumber("Ball # Selected" , VisionBall.getClosestBallIndex());
-        // SmartDashboard.putNumber("Y Offset", VisionBall.getBallYOffset());
-        // SmartDashboard.putNumber("Number of Balls", VisionBall.getBallNumber());
-        // SmartDashboard.putNumber("Score", VisionBall.getBallScore());
-        // SmartDashboard.putNumber("Center X", VisionBall.centerX());
-        // SmartDashboard.putNumber("Center Y", VisionBall.centerY());
-        // SmartDashboard.putNumber("Distance to Ball", VisionBall.distanceToBall());
-
-        if (gamepad1.getRightTriggerAxis() > 0 || gamepad2.getRightTriggerAxis() > 0) {
-            Intake.startIntake();
-        } else {
-            Intake.stopIntake();
-        }
-        if (gamepad2.getLeftBumper()) {
-            Intake.reverseIntake();
-        }
-
-        if (gamepad2.getDPadUp() && !Intake.getIntakePosition()) {
-            Intake.deployIntake();
-         } else if (gamepad2.getDPadDown() && Intake.getIntakePosition()) {
-             Intake.retractIntake();
-         }
-        SmartDashboard.putNumber("D pad", gamepad1.getPOV(1));
-
-        if (gamepad1.getLeftBumper() && !mAutoProgram.isRunning() && !AutoAlign.getAllignment()) {
-            mAutoProgram = new AutoAlign();
-            mAutoProgram.start(true);
-        } else if (gamepad1.getLeftBumper() && AutoAlign.getAllignment()) {
-            Shooter.alignAndShoot(true);
-        }
-        
-         if (gamepad2.getAButton()) {
-             Shooter.setAutoDistancingMode();
-            // Shooter.setManualPresets(ManualShotPreset.LowGoal);
-        } else if (gamepad2.getBButton()) {
-            Shooter.setManualPresets(ManualShotPreset.TarmacLine);
-        } else if (gamepad2.getYButton()) {
-            //Shooter.setManualPresets(ManualShotPreset.Backwards);
-            Shooter.setManualPresets(ManualShotPreset.SafeZone);
-        } else if (gamepad2.getXButton()) {
-            Shooter.setManualPresets(ManualShotPreset.HumanPlayerStation);
-        }
-
-        if (gamepad2.getLeftTriggerAxis() > 0 ||gamepad1.getLeftTriggerAxis() > 0) {
-            Shooter.oneShotAuto();
-        }
-
-        if (gamepad2.getStartButton()) {
-            Shooter.reverseShooter();
-        } else {
-            Shooter.endReverseShooter();
-        }
-
-        if (gamepad2.getRightBumper() && gamepad2.getBackButton() && !mAutoProgram.isRunning() ) {
-            mAutoProgram = new AutoTraverse();
-            mAutoProgram.start();
-        }
-            
-
-        if (gamepad2.getRightBumper() || gamepad1.getRightBumper()) {
-            Shooter.StopShooter();
-        }
-
-        if (gamepad2.getLeftStickButtonPressed()) {
-            Shooter.setBallLiftDown();
-        }
-        
+      
         // --------------------------------------------------
         // RESET - allow manual reset of systems by pressing Start
         // --------------------------------------------------
@@ -197,38 +109,8 @@ public class Robot extends TimedRobot {
             mAutoProgram.tick();
         }
 
-        if (gamepad1.getXButton()) {
-            VisionShooter.setLED(true);
-        } else if (gamepad1.getYButton()) {
-            VisionShooter.setLED(false);
-        }
-
-        if (!mAutoProgram.isRunning()) {
-            if (gamepad2.getRightBumper()) {  // override mode
-                if (Math.abs(gamepad2.getRightY()) > 0.05) {
-                    Climber.move(gamepad2.getRightY());
-                } else
-                    Climber.move(0);
-            } else {
-                if (Math.abs(gamepad2.getRightY()) > 0.05) {
-                    Climber.moveV2(gamepad2.getRightY());
-                } else 
-                    Climber.moveV2(0);
-            }
-        }
         if (mAutoProgram.isRunning() && Math.abs(gamepad2.getRightY()) > 0.2) {
             mAutoProgram.stop();
-        }
-
-        if (gamepad2.getLeftY() > 0.5) {
-            Climber.climberPosition(ClimberPosition.Back);
-        } else if (gamepad2.getLeftY() < -0.5) {
-            Climber.climberPosition(ClimberPosition.Straight);
-        }
-
-        if (gamepad1.getRightBumper() && gamepad1.getYButton()) {
-            mAutoProgram = new AutoBallAlign();
-            mAutoProgram.start(true);
         }
 
         // DRIVER CONTROL MODE
@@ -237,23 +119,6 @@ public class Robot extends TimedRobot {
         double driveRotAmount = -gamepad1.getRightX();
         double driveFWDAmount = -gamepad1.getLeftY();
         double driveStrafeAmount = -gamepad1.getLeftX();
-
-       // double ballLaneAssist = VisionBall.getBallXOffset();
-
-        // if (Math.abs(driveRotAmount)>.1) {
-        //     swtest.move(driveRotAmount);
-        // }
-
-        // if (gamepad1.getAButton()) {
-        //     swtest.setPosA();
-        // }
-        // if (gamepad1.getBButton()) {
-        //     swtest.setPosB();
-        // }
-        // if (gamepad1.getXButton()) {
-        //     swtest.setPosOrig();
-        // }
-        // swtest.tick();
 
         // SmartDashboard.putNumber("SWERVE ROT AXIS", driveRotAmount);
         if (gamepad1.getAButton()) {
@@ -276,42 +141,6 @@ public class Robot extends TimedRobot {
         }
 
         SmartDashboard.putNumber("Best Position", TurnPosition.getBestPosition());
-
-        // if (ballTrackingTurnedOn && VisionBall.ballInView()) {
-            // if (Intake.isRunning()) {
-            //     if (ballLaneAssist > 0.05) 
-            //         driveStrafeAmount += .2;
-            //     else if (ballLaneAssist < -0.05) 
-            //         driveStrafeAmount -= .2;
-            // }
-
-
-        //     if (Intake.isRunning()) {
-        //         if (RobotGyro.getAngle() == 0 || RobotGyro.getAngle() == 180) {
-        //             if(ballLaneAssist > 0.05) {
-        //                 driveStrafeAmount += .2;
-        //             } else if (ballLaneAssist < -0.05) {
-        //                 driveStrafeAmount += -.2;
-        //             }
-        //         } else if (RobotGyro.getAngle() == 90 || RobotGyro.getAngle() == 270) {
-        //             if(ballLaneAssist > 0.05) {
-        //                 driveFWDAmount += .2;
-        //             } else if (ballLaneAssist < -0.05) {
-        //                 driveFWDAmount += -.2;
-        //             }
-        //         }
-        //         else {
-        //             if(ballLaneAssist > 0.05) {
-        //                 driveFWDAmount += Math.cos(VisionBall.degreesToBall()) * 0.2;
-        //                 driveStrafeAmount += Math.sin(VisionBall.degreesToBall()) * 0.2;
-        //             }else if (ballLaneAssist < -0.05) {
-        //                 driveFWDAmount += Math.cos(VisionBall.degreesToBall()) * -0.2;
-        //                 driveStrafeAmount += Math.sin(VisionBall.degreesToBall()) * -0.2;
-        //             }
-        //         }
-        //     }
-        // }
-
         SmartDashboard.putNumber("Outputs FWD", driveFWDAmount);
         SmartDashboard.putNumber("Outputs Strafe", driveStrafeAmount);
 
@@ -320,33 +149,15 @@ public class Robot extends TimedRobot {
                 mAutoProgram.stop();
         }
 
-        if (!mAutoProgram.isRunning()) {
-            if (gamepad1.getBackButton()) {
-                DriveTrain.humanDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
-                AutoAlign.setAllignment(false);
-            } else {
-                DriveTrain.fieldCentricDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
-                AutoAlign.setAllignment(false);
-            }
-        }
-
         showDashboardInfo();
     }
 
     @Override
     public void robotPeriodic() {
         SmartDashboard.updateValues();
-        // SmartDashboard.putNumber("Number of Balls", VisionBall.getBallNumber());
-        // SmartDashboard.putBoolean("Working", VisionBall.working());
-        Shooter.tick();
-        Intake.tick();
-        DriveAuto.tick();
-        Climber.tick();
 
-        // SmartDashboard.putNumber("Ball X Offset", VisionBall.getBallXOffset());
-        // SmartDashboard.putNumber("Ball Y Offset", VisionBall.getBallYOffset());
-        // SmartDashboard.putNumber("Degrees Output", VisionBall.degreesToBall());
-        // SmartDashboard.putNumber("Distance to Target", VisionShooter.getDistanceFromTarget());
+        DriveAuto.tick();
+
 
          // Sets the PID values based on input from the SmartDashboard
         // This is only needed during tuning
@@ -395,9 +206,6 @@ public class Robot extends TimedRobot {
         char robotPosition = selectedPos.toCharArray()[0];
         System.out.println("Robot position: " + robotPosition);
 
-        // Shooter.setShooterPosition(ShooterPosition.Medium); // releases the starting position block
-        Intake.startIntake(); // releases the intake strap
-
         autoSelected = (String) autoChooser.getSelected();
         SmartDashboard.putString("Auto Selected: ", autoSelected);
 
@@ -413,57 +221,12 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoWheelAlignment();
             mAutoProgram.start();
             break;
-        case autoAlign:
-            mAutoProgram = new AutoAlign();
-            mAutoProgram.start(robotPosition);
-            break;
-        case ballPickUp:
-            mAutoProgram = new AutoBallPickUp();
-            mAutoProgram.start();
-            break;
         case AutoLeaveTarmac:
             mAutoProgram = new AutoLeaveTarmack();
             mAutoProgram.start();
             break;
-        case AutoTarmacShoot1:
-            mAutoProgram = new AutoTarmacShoot1();
-            mAutoProgram.start();
-            break;
-        case AutoTarmacShoot2:
-            mAutoProgram = new AutoTarmacShoot2();
-            mAutoProgram.start();
-            break;
-        case AutoTarmacShoot2Vision:
-            mAutoProgram = new AutoTarmacShoot2Vision();
-            mAutoProgram.start();
-            break;
-        case AutoTarmacShoot3Vision:
-            mAutoProgram = new AutoTarmacShoot3Vision();
-            mAutoProgram.start(true);
-            break;
         }
-        // double degreesOffset;
-        // switch (postionAllianceSelected) {
-        //     case "Red 1":
-        //         degreesOffset = 15;
-        //         break;
-        //     case "Red 2":
-        //         degreesOffset = 0;
-        //         break;
-        //     case "Red 3":
-        //         degreesOffset = -15;
-        //         break;
-        //     case "Blue 1":
-        //         degreesOffset = 15;
-        //         break;
-        //     case "Blue 2":
-        //         degreesOffset = 0;
-        //         break;
-        //     case "Blue 3":
-        //         degreesOffset = -15; 
-        //         break;
-        // }
-
+      
     }
 
     private void setupAutoChoices() {
@@ -479,22 +242,10 @@ public class Robot extends TimedRobot {
         //autoChooser.addOption(autoWheelAlign, autoWheelAlign);
         autoChooser.addOption(autoAlign, autoAlign);
         //autoChooser.addOption(ballPickUp, ballPickUp);
-        autoChooser.addOption(AutoLeaveTarmac, AutoLeaveTarmac);
-        autoChooser.addOption(AutoTarmacShoot1, AutoTarmacShoot1);
-        autoChooser.addOption(AutoTarmacShoot2, AutoTarmacShoot2);
-        autoChooser.setDefaultOption(AutoTarmacShoot2Vision, AutoTarmacShoot2Vision);
-        autoChooser.addOption(AutoTarmacShoot3Vision, AutoTarmacShoot3Vision);
-
+        autoChooser.setDefaultOption(AutoLeaveTarmac, AutoLeaveTarmac);
+     
         SmartDashboard.putData("Auto Chose:", autoChooser);
 
-        // Position Chooser 2
-        // positionAllianceChooser = new SendableChooser<String>();
-        // positionAllianceChooser.addOption("Red 1", "Red 1");
-        // positionAllianceChooser.addOption("Red 2", "Red 2");
-        // positionAllianceChooser.addOption("Red 3", "Red 3");
-        // positionAllianceChooser.addOption("Blue 1", "Blue 1");
-        // positionAllianceChooser.addOption("Blue 2", "Blue 2");
-        // positionAllianceChooser.addOption("Blue 3", "Blue 3");
     }
 
     /**
@@ -513,12 +264,9 @@ public class Robot extends TimedRobot {
         // DriveTrain.allowTurnEncoderReset();
         // DriveTrain.resetDriveEncoders();
         // DriveTrain.resetTurnEncoders();
-
-        Shooter.StopShooter();
         
         Calibration.initializeSmartDashboard(); 
 
-        VisionShooter.setLED(false);
     }
 
     public void disabledPeriodic() {

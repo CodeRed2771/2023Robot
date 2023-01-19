@@ -9,8 +9,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Shooter.ManualShotPreset;
-import frc.robot.Shooter.ShooterPosition;
 
 public class AutoTarmacShoot1 extends AutoBaseClass {
     public void start() {
@@ -24,20 +22,20 @@ public class AutoTarmacShoot1 extends AutoBaseClass {
     @Override
     public void tick() {
         if (isRunning()) {
-            VisionShooter.setTargetForShooting();
+            // VisionShooter.setTargetForShooting();
             DriveAuto.tick();
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             
             switch (getCurrentStep()) {
                 case 0://segment 1 
                     driveInches(24, 0, 0.75);
-                    Shooter.setManualPresets(ManualShotPreset.BackOfTarmac);
+                    // Shooter.setManualPresets(ManualShotPreset.BackOfTarmac);
                     setTimerAndAdvanceStep(3000);
                     break;
                 case 1:
                     break;
                 case 2://segment 2
-                    Shooter.oneShotAuto();
+                    // Shooter.oneShotAuto();
                     setTimerAndAdvanceStep(1000);
                     break;
                 case 3:
