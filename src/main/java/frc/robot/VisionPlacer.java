@@ -95,4 +95,15 @@ public class VisionPlacer {
         return table.getEntry("camtran").getDouble(0);
     }
 
+    public static double botPose() {
+        return table.getEntry("botpose").getDouble(0);
+    }
+
+    public static double jsonDump() {
+        return table.getEntry("json").getDouble(0);
+    }
+
+    public static double getDepth() {
+        return 2;
+    }
 }
