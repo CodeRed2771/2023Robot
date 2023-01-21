@@ -12,11 +12,16 @@ public class VisionPlacer {
         Off,
         Blink
     }
+    public static enum Pipeline {
+        Retroreflective, 
+        AprilTag,
+    }
     
     public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         setRetroreflectivePipeline();
     }
+
     private static void setPipeline(int pipeline) {
 		NetworkTableEntry pipelineEntry = table.getEntry("pipeline");
     	pipelineEntry.setNumber(pipeline);
@@ -28,6 +33,15 @@ public class VisionPlacer {
 
     public static void setRetroreflectivePipeline() {
         setPipeline(1);
+    }
+
+    public static Pipeline getPipeline() {
+        double pipeline = table.getEntry("getpip").getDouble(0);
+        if (pipeline == 1) {
+            return Pipeline.Retroreflective;
+        } else {
+            return Pipeline.AprilTag;
+        }
     }
 
     public static double getXAngleOffset() {
@@ -58,6 +72,27 @@ public class VisionPlacer {
         } else {
             table.getEntry("ledMode").setNumber(3);
         }
+    }
+    
+    public static void switchLED() {
+        double onOff = table.getEntry("ledMode").getDouble(0); 
+        if (onOff == 3) {
+            setLED(LimelightOn.Off);
+        } else {
+            setLED(LimelightOn.On);
+        }
+    }
+
+    public static double imageRotation() {
+        return table.getEntry("ts").getDouble(0);
+    }
+
+    public static double aprilTagID() {
+        return table.getEntry("tid").getDouble(0);
+    }
+    
+    public static double cameraTran() {
+        return table.getEntry("camtran").getDouble(0);
     }
 
 }
