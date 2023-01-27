@@ -1,5 +1,7 @@
 package frc.robot; 
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance; 
@@ -90,13 +92,29 @@ public class VisionPlacer {
     public static double aprilTagID() {
         return table.getEntry("tid").getDouble(0);
     }
-    
-    public static double cameraTran() {
-        return table.getEntry("camtran").getDouble(0);
+
+    public static class Position {
+        Translation3d translation;
+        Rotation3d rotation;
+        public Position(Translation3d translation, Rotation3d rotation) {
+            this.translation = translation;
+            this.rotation = rotation;
+        }
     }
 
-    public static double botPose() {
-        return table.getEntry("botpose").getDouble(0);
+    public static Position botPose() {
+        //return table.getEntry("botpose").getNumberArray(0);
+        double[] test = table.getEntry("botpose").getDoubleArray(new double[]{});
+        Translation3d translation = new Translation3d(test[1], test[2], test[3]);
+        Rotation3d rotation = new Rotation3d(test[4], test[5], test[6]);
+        return new Position(translation, rotation);
+    }
+
+    public static Position camTran() {
+        double[] test = table.getEntry("camtran").getDoubleArray(new double[]{});
+        Translation3d translation = new Translation3d(test[1], test[2], test[3]);
+        Rotation3d rotation = new Rotation3d(test[4], test[5], test[6]);
+        return new Position(translation, rotation);
     }
 
     public static double jsonDump() {
