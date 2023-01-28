@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.AutoBaseClass.PlacePositions;
 import frc.robot.VisionPlacer.LimelightOn;
 import frc.robot.libs.HID.Gamepad;
 import pabeles.concurrency.IntOperatorTask.Max;
@@ -47,6 +48,7 @@ public class Robot extends TimedRobot {
     final String autoWheelAlign = "Auto Wheel Align";
     final String autoAlign = "Auto Align";
     final String AutoLeaveTarmac = "Auto Leave Tarmac";
+    
 
     private double lastFWDvalue = 0; 
     private double lastSTRvalue = 0;
@@ -94,12 +96,13 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
 
         if (gamepad1.getXButton()) {
-            VisionPlacer.setLED(LimelightOn.Off);
+            mAutoProgram = new AutoAprilTagAlign();
+            mAutoProgram.start(1, PlacePositions.LeftConeHigh);
         }
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.On);
         }
-        SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
+        SmartDashboard.putNumber("Data Test for Bot Positioning", VisionPlacer.botPose().translation.getX());
         // --------------------------------------------------
         // RESET - allow manual reset of systems by pressing Start
         // --------------------------------------------------

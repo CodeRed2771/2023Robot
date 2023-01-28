@@ -9,6 +9,18 @@ public abstract class AutoBaseClass {
     private Direction mDirection;
     private boolean mAutoShoot = false;
 
+    public static enum PlacePositions {
+        LeftConeHigh,
+        LeftConeLow,
+        LeftConeNuetral,
+        CubeHigh,
+        CubeLow,
+        CubeNuetral,
+        RightConeHigh,
+        RightConeLow,
+        RightConeNuetral,
+    }
+
     public static enum Direction {
         LEFT, RIGHT
     };
@@ -59,6 +71,10 @@ public abstract class AutoBaseClass {
        mAutoShoot = autoShoot;
        start(); 
     }
+
+    public void start(int IDSwitch, PlacePositions positions) {
+		start();
+	}
 
     public void stop() {
         mIsRunning = false;

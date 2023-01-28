@@ -21,7 +21,7 @@ public class VisionPlacer {
     
     public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
-        setRetroreflectivePipeline();
+        setAprilTagPipeline();
     }
 
     private static void setPipeline(int pipeline) {
@@ -105,20 +105,29 @@ public class VisionPlacer {
     public static Position botPose() {
         //return table.getEntry("botpose").getNumberArray(0);
         double[] test = table.getEntry("botpose").getDoubleArray(new double[]{});
-        Translation3d translation = new Translation3d(test[1], test[2], test[3]);
-        Rotation3d rotation = new Rotation3d(test[4], test[5], test[6]);
-        return new Position(translation, rotation);
+        if(test.length >0) {
+            Translation3d translation = new Translation3d(test[0], test[1], test[2]);
+            Rotation3d rotation = new Rotation3d(test[3], test[4], test[5]);
+            return new Position(translation, rotation);
+        } else {
+            Translation3d translation = new Translation3d(0, 0, 0);
+            Rotation3d rotation = new Rotation3d(0, 0, 0);
+            return new Position(translation, rotation);
+        }
+        
     }
 
     public static Position camTran() {
         double[] test = table.getEntry("camtran").getDoubleArray(new double[]{});
-        Translation3d translation = new Translation3d(test[1], test[2], test[3]);
-        Rotation3d rotation = new Rotation3d(test[4], test[5], test[6]);
-        return new Position(translation, rotation);
-    }
-
-    public static double jsonDump() {
-        return table.getEntry("json").getDouble(0);
+        if(test.length >0) {
+            Translation3d translation = new Translation3d(test[0], test[1], test[2]);
+            Rotation3d rotation = new Rotation3d(test[3], test[4], test[5]);
+            return new Position(translation, rotation);
+        } else {
+            Translation3d translation = new Translation3d(0, 0, 0);
+            Rotation3d rotation = new Rotation3d(0, 0, 0);
+            return new Position(translation, rotation);
+        }
     }
 
     public static double getDepth() {
