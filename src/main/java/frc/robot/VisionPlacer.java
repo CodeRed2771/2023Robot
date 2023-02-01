@@ -107,7 +107,7 @@ public class VisionPlacer {
         botPose = table.getEntry("botpose").getDoubleArray(new double[]{});
     }
 
-    public static double botPosePitch() {
+    public static double botPoseYaw() {
         botPose();
         if (botPose.length == 0) {
             return 0;
@@ -115,7 +115,47 @@ public class VisionPlacer {
             return botPose[5];
         }
     }
-
+    public static double botPosePitch() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[4];
+        }
+    }
+    public static double botPoseRoll() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[3];
+        }
+    }
+    public static double botPoseZ() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[3];
+        }
+    }
+    public static double botPoseY() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[2];
+        }
+    }
+    public static double botPoseX() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[1];
+        }
+    }
+    
     public static Position camTran() {
         double[] test = table.getEntry("camtran").getDoubleArray(new double[]{});
         if(test.length >0) {
