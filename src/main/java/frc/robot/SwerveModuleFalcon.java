@@ -552,6 +552,10 @@ public class SwerveModuleFalcon implements SwerveModule {
 		setTurnPower(0);
 	}
 
+	public void stopTurn() {
+		setTurnPower(0);
+	}
+
 	public void stopDrive() {
 		setDrivePower(0);
 	}

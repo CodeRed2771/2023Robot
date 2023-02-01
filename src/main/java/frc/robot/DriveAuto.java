@@ -179,7 +179,8 @@ public class DriveAuto {
         // rotDrivePID.setSetpoint(rotDrivePID.calculate(RobotGyro.getAngle())); //
         // changed 1/6/20
         // rotDrivePID.disable();
-        DriveTrain.stopDriveAndTurnMotors();
+        // DriveTrain.stopDriveAndTurnMotors();
+        DriveTrain.stopTurn();
     }
 
     public static void setTurnDegreesToCurrentAngle() {

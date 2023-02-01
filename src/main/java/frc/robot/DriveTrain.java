@@ -194,6 +194,13 @@ public class DriveTrain {
         moduleD.stopDrive();
     }
 
+    public static void stopTurn() {
+        moduleA.stopTurn();
+        moduleB.stopTurn();
+        moduleC.stopTurn();
+        moduleD.stopTurn();
+    }
+
     public static double angleToPosition(double angle) {
         if (angle < 0) {
             return .5d + ((180d - Math.abs(angle)) / 360d);
