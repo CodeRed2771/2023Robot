@@ -384,6 +384,10 @@ public class SwerveModuleNEO implements SwerveModule {
 		setDrivePower(0);
 	}
 
+	public void stopTurn() {
+		setTurnPower(0);
+	}
+
     public void setBrakeMode(final boolean b) {
         drive.setIdleMode(b ? IdleMode.kBrake : IdleMode.kCoast);
     }

@@ -5,9 +5,12 @@ import edu.wpi.first.wpilibj.SPI;
 
 public class RobotGyro {
     private static AHRS mGyro;
+    private static double pitchAdjust = 0;
 
     public static void init() {
         mGyro = new AHRS(SPI.Port.kMXP);
+        pitchAdjust = mGyro.getPitch(); // reads the pitch while at rest on flat surface
+                                        // will be used to offset values to return a relative pitch
     }
 
     public static AHRS getGyro() {
@@ -63,8 +66,12 @@ public class RobotGyro {
         return mGyro.getVelocityZ();
     }
 
-    public static double pitch() {
+    public static double pitch_raw() {
         return mGyro.getPitch();
+    }
+
+    public static double pitch() {
+        return mGyro.getPitch()-pitchAdjust;
     }
 
     public static double roll() {
@@ -98,6 +105,9 @@ public class RobotGyro {
 
     public static void reset() {
         mGyro.reset();
+        pitchAdjust = mGyro.getPitch(); // reads the pitch while at rest on flat surface
+        // will be used to offset values to return a relative pitch
+
     }
 
     public static double getGyroAngleInRad() {
@@ -108,10 +118,10 @@ public class RobotGyro {
         return adjustedAngle * (Math.PI / 180d);
     }
     
-
     public double pidGet() {
         return mGyro.getAngle();
     }
+    
     public static void position() {
         position.x += mGyro.getVelocityX() * CYCLE_TIME;
         position.y += mGyro.getVelocityY() * CYCLE_TIME;

@@ -1,5 +1,7 @@
 package frc.robot; 
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance; 
@@ -16,10 +18,11 @@ public class VisionPlacer {
         Retroreflective, 
         AprilTag,
     }
-    
+    static double[] botPose;
+
     public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
-        setRetroreflectivePipeline();
+        setAprilTagPipeline();
     }
 
     private static void setPipeline(int pipeline) {
@@ -90,17 +93,80 @@ public class VisionPlacer {
     public static double aprilTagID() {
         return table.getEntry("tid").getDouble(0);
     }
+
+    public static class Position {
+        Translation3d translation;
+        Rotation3d rotation;
+        public Position(Translation3d translation, Rotation3d rotation) {
+            this.translation = translation;
+            this.rotation = rotation;
+        }
+    }
+
+    public static void botPose() {
+        botPose = table.getEntry("botpose").getDoubleArray(new double[]{});
+    }
+
+    public static double botPoseYaw() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[5];
+        }
+    }
+    public static double botPosePitch() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[4];
+        }
+    }
+    public static double botPoseRoll() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[3];
+        }
+    }
+    public static double botPoseZ() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[3];
+        }
+    }
+    public static double botPoseY() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[2];
+        }
+    }
+    public static double botPoseX() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[1];
+        }
+    }
     
-    public static double cameraTran() {
-        return table.getEntry("camtran").getDouble(0);
-    }
-
-    public static double botPose() {
-        return table.getEntry("botpose").getDouble(0);
-    }
-
-    public static double jsonDump() {
-        return table.getEntry("json").getDouble(0);
+    public static Position camTran() {
+        double[] test = table.getEntry("camtran").getDoubleArray(new double[]{});
+        if(test.length >0) {
+            Translation3d translation = new Translation3d(test[0], test[1], test[2]);
+            Rotation3d rotation = new Rotation3d(test[3], test[4], test[5]);
+            return new Position(translation, rotation);
+        } else {
+            Translation3d translation = new Translation3d(0, 0, 0);
+            Rotation3d rotation = new Rotation3d(0, 0, 0);
+            return new Position(translation, rotation);
+        }
     }
 
     public static double getDepth() {
