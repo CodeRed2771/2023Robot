@@ -79,6 +79,7 @@ public class Robot extends TimedRobot {
         setupAutoChoices();
         mAutoProgram = new AutoDoNothing();
 
+        RobotGyro.reset();
     }
 
     @Override
@@ -103,6 +104,12 @@ public class Robot extends TimedRobot {
             VisionPlacer.setLED(LimelightOn.On);
         }
         SmartDashboard.putNumber("Data Test for Bot Positioning", VisionPlacer.botPose().translation.getX());
+        
+        //Test Balance 
+        if (gamepad1.getBButton()) {
+            mAutoProgram = new AutoClimbAndBalance();
+            mAutoProgram.start();
+        }
         // --------------------------------------------------
         // RESET - allow manual reset of systems by pressing Start
         // --------------------------------------------------
@@ -158,7 +165,15 @@ public class Robot extends TimedRobot {
             if (mAutoProgram.isRunning())
                 mAutoProgram.stop();
         }
-
+        if (!mAutoProgram.isRunning()) {
+            if (gamepad1.getBackButton()) {
+                DriveTrain.humanDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
+                // AutoAlign.setAllignment(false);
+            } else {
+                DriveTrain.fieldCentricDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
+                // AutoAlign.setAllignment(false);
+            }
+        }
         showDashboardInfo();
     }
 
