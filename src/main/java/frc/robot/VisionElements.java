@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.opencv.core.Scalar;
 import org.opencv.core.Point;
 
-public class VisionElements implements VisionRunner.Listener<CubePipeline>
+public class VisionElements implements VisionRunner.Listener<ElementPipeline>
 {
     // Varriables 
     private static UsbCamera  camera;
@@ -29,9 +29,12 @@ public class VisionElements implements VisionRunner.Listener<CubePipeline>
     private static double centerX = 0.0;
     private static AtomicBoolean running = new AtomicBoolean(false);
     private static double centerY = 0.0;
-    private static AtomicBoolean foundBall = new AtomicBoolean(false);
-    private static int closestBallIndex = -1;
-    private static int ballAmount = 0;
+    private static AtomicBoolean foundCone = new AtomicBoolean(false);
+    private static AtomicBoolean foundCube = new AtomicBoolean(false);
+    private static int closestConeIndex = -1;
+    private static int closestCubeIndex = -1;
+    private static int coneAmount = 0;
+    private static int cubeAmount = 0;
     private static double bestScore = 0;
     private static double currentScore = 0;
     private static AtomicBoolean working = new AtomicBoolean(false);
@@ -57,17 +60,17 @@ public class VisionElements implements VisionRunner.Listener<CubePipeline>
         return score;
     }
 
-    public static Mat findClosestBall(ArrayList<MatOfPoint> ballsFound) {
+    public static Mat findClosestCone(ArrayList<MatOfPoint> conesFound) {
         double topScore = 0;
         int closestIndex = 0;
 
-        if (ballsFound.size() <= 1) {
+        if (conesFound.size() <= 1) {
             closestIndex = 0;
-            currentScore = algorithim(Imgproc.boundingRect(ballsFound.get(0)));
+            currentScore = algorithim(Imgproc.boundingRect(conesFound.get(0)));
             topScore = currentScore;
         } else {
-            for (int i = 0; i < ballsFound.size(); i ++) {
-                currentScore = algorithim(Imgproc.boundingRect(ballsFound.get(i))); // Determining Closest Ball; Change as needed/
+            for (int i = 0; i < conesFound.size(); i ++) {
+                currentScore = algorithim(Imgproc.boundingRect(conesFound.get(i))); // Determining Closest Element; Change as needed/
                 SmartDashboard.putNumber("Current Score", currentScore);
                 if (topScore < currentScore) {
                     topScore = currentScore;
@@ -76,13 +79,40 @@ public class VisionElements implements VisionRunner.Listener<CubePipeline>
             }
         }
         synchronized (imgLock) {
-            closestBallIndex = closestIndex;
+            closestConeIndex = closestIndex;
             bestScore = topScore;
-            ballAmount = ballsFound.size();
+            coneAmount = conesFound.size();
         }
 
-        return ballsFound.get(closestBallIndex);
+        return conesFound.get(closestConeIndex);
     }
+    public static Mat findClosestCube(ArrayList<MatOfPoint> cubesFound) {
+        double topScore = 0;
+        int closestIndex = 0;
+
+        if (cubesFound.size() <= 1) {
+            closestIndex = 0;
+            currentScore = algorithim(Imgproc.boundingRect(cubesFound.get(0)));
+            topScore = currentScore;
+        } else {
+            for (int i = 0; i < cubesFound.size(); i ++) {
+                currentScore = algorithim(Imgproc.boundingRect(cubesFound.get(i))); // Determining Closest Element; Change as needed/
+                SmartDashboard.putNumber("Current Score", currentScore);
+                if (topScore < currentScore) {
+                    topScore = currentScore;
+                    closestIndex = i;
+                }
+            }
+        }
+        synchronized (imgLock) {
+            closestCubeIndex = closestIndex;
+            bestScore = topScore;
+            cubeAmount = cubesFound.size();
+        }
+
+        return cubesFound.get(closestCubeIndex);
+    }
+
 
     // Vision Set-Up and Run
     public static void init() {
@@ -91,57 +121,45 @@ public class VisionElements implements VisionRunner.Listener<CubePipeline>
         //mProcessedFrame = new Mat();
         //mProcessedStream.putFrame(mProcessedFrame);
         //mProcessedStream = CameraServer.putVideo("Processed Image", IMG_WIDTH, IMG_HEIGHT);
-        if (DriverStation.getAlliance() == Alliance.Red) {
-            visionThread = new VisionThread(camera, new VisionBallPipelineRed(), pipeline -> {
-                if (!pipeline.filterContoursOutput().isEmpty()) {
-
-                    Rect r = Imgproc.boundingRect(VisionBall.findClosestBall(pipeline.filterContoursOutput()));
-                    //Imgproc.rectangle(mProcessedFrame, new Point(r.x, r.y), 
-                    //new Point(r.x + r.width, r.y + r.height),
-                    //new Scalar(0,255,0), 10);
-                    //mProcessedStream.putFrame(mProcessedFrame);
-                    synchronized (imgLock) {
-                        centerX = r.x + (r.width / 2);
-                        centerY = r.y + (r.height/2);
-                        SmartDashboard.putString("Center X Components: X and Width", r.x + " " + r.width);
-                        foundBall.set(true);
-                        working.set(true);
-                    }
-                } else {
-                    synchronized (imgLock) {
-                        centerX = IMG_WIDTH / 2; // default to being centered
-                        centerY = IMG_HEIGHT / 2;
-                        ballAmount = 0;
-                        foundBall.set(false);
-                        bestScore = 0;
-                        working.set(true);                
-                    }
+        visionThread = new VisionThread(camera, new ElementPipeline(), pipeline -> {
+            if (pipeline.getElement() == ElementPipeline.Element.CONE) {
+                Rect r1 = Imgproc.boundingRect(VisionElements.findClosestCone(pipeline.coneFilterContoursOutput()));                    //Imgproc.rectangle(mProcessedFrame, new Point(r.x, r.y), 
+                //new Point(r.x + r.width, r.y + r.height),
+                //new Scalar(0,255,0), 10);
+                //mProcessedStream.putFrame(mProcessedFrame);
+                synchronized (imgLock) {
+                    centerX = r1.x + (r1.width / 2);
+                    centerY = r1.y + (r1.height/2);
+                    SmartDashboard.putString("Center X Components: X and Width (Cone)", r1.x + " " + r1.width);
+                    foundCone.set(true);
+                    working.set(true);
+                }
+            }
+            else if(pipeline.getElement() == ElementPipeline.Element.CUBE) {
+                Rect r2 = Imgproc.boundingRect(VisionElements.findClosestCube(pipeline.cubeFilterContoursOutput()));                    //Imgproc.rectangle(mProcessedFrame, new Point(r.x, r.y), 
+                synchronized (imgLock) {
+                    centerX = r2.x + (r2.width / 2);
+                    centerY = r2.y + (r2.height/2);
+                    SmartDashboard.putString("Center X Components: X and Width (Cube)", r2.x + " " + r2.width);
+                    foundCube.set(true);
+                    working.set(true);
+                }
+            }
+            else {//may need to not clear unless not seen for a second
+                synchronized (imgLock) {
+                    centerX = IMG_WIDTH / 2; // default to being centered
+                    centerY = IMG_HEIGHT / 2;
+                    coneAmount = 0;
+                    cubeAmount = 0;
+                    foundCube.set(false);
+                    foundCone.set(false);
+                    bestScore = 0;
+                    working.set(true);                
+                }
             }
         }
             );
-        } else {
-            visionThread = new VisionThread(camera, new VisionBallPipelineBlue(), pipeline -> {
-                if (!pipeline.filterContoursOutput().isEmpty()) {
-                    Rect r = Imgproc.boundingRect(VisionBall.findClosestBall(pipeline.filterContoursOutput()));
-                    synchronized (imgLock) {
-                        centerX = r.x + (r.width / 2);
-                        centerY = r.y + (r.height/2);
-                        working.set(true);
-                    }
-                    foundBall.set(true);
-                } else {
-                    synchronized (imgLock) {
-                        centerX = IMG_WIDTH / 2; // default to being centered
-                        centerY = IMG_HEIGHT / 2;
-                        ballAmount = 0;
-                        foundBall.set(false);
-                        bestScore = 0;    
-                        working.set(true);                
-                    }
-                }
-            });
         }
-    }
 
     public static void start() {
         visionThread.start();
@@ -151,54 +169,64 @@ public class VisionElements implements VisionRunner.Listener<CubePipeline>
         visionThread.interrupt();  // probably NOT the right call
     }
 
-    // Return Values for Finding Balls
-    public static double degreesToBall() {
+    // Return Values for Finding elements
+    public static double degreesToElement() {
         double degrees;
         double slope;
-        double distance =  distanceToBall();
-        slope = getBallYOffset()/getBallXOffset();
-        slope = getBallXOffset()/getBallYOffset();
-        slope = getBallXOffset()/distance;
+        double distance =  distanceToElement();
+        slope = getElementYOffset()/getElementXOffset();
+        slope = getElementXOffset()/getElementYOffset();
+        slope = getElementXOffset()/distance;
         //slope = centerX/centerY;
         //degrees = Math.toDegrees(Math.atan(slope));
         degrees = Math.toDegrees(Math.asin(slope));
         return degrees;
     }
 
-    public static double distanceToBall() {
+    public static double distanceToElement() {
         return distance(centerX, centerY);
     }
 
-    // Return Values for Finding Balls
-    public static int getBallNumber() {
-        return ballAmount;
+    // Return Values for Finding Elements
+    public static int getConeNumber() {
+        return coneAmount;
+    }
+    public static int getCubeNumber() {
+        return cubeAmount;
     }
 
-    public static double getBallXOffset() {
+    public static double getElementXOffset() {
         if (centerX == 0) {
             return 0;
         } else {
             return centerX - (IMG_WIDTH / 2);
         }
     }
-    public static double getBallYOffset() {
+    public static double getElementYOffset() {
         return centerY - (IMG_HEIGHT / 2);
     }
 
-    public static boolean ballInView() {
-        return foundBall.compareAndSet(true, true);
+    public static boolean coneInView() {
+        return foundCone.compareAndSet(true, true);
+    }
+    public static boolean cubeInView() {
+        return foundCube.compareAndSet(true, true);
     }
 
-    public static int getClosestBallIndex() {
-        return closestBallIndex;
+    public static int getClosestConeIndex() {
+        return closestConeIndex;
+
+    }
+    public static int getClosestCubeIndex() {
+        return closestCubeIndex;
     }
 
-    public static double getBallScore() {
+    public static double getElementScore() {
         return bestScore;
     }
 
     @Override
-    public void copyPipelineOutputs(VisionBallPipelineRed pipeline) {
+    public void copyPipelineOutputs(ElementPipeline pipeline) {
         // TODO Auto-generated method stub
         
     }

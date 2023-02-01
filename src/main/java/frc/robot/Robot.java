@@ -95,6 +95,8 @@ public class Robot extends TimedRobot {
 
         if (gamepad1.getXButton()) {
             VisionPlacer.setLED(LimelightOn.Off);
+            mAutoProgram = new AutoElementAlignment();
+            mAutoProgram.start();
         }
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.On);

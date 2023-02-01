@@ -16,6 +16,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.*;
 import org.opencv.objdetect.*;
 
+import edu.wpi.first.vision.VisionPipeline;
+
 /**
 * GRIPconePipeline class.
 *
@@ -23,7 +25,7 @@ import org.opencv.objdetect.*;
 *
 * @author GRIP
 */
-public class ElementPipeline {
+public class ElementPipeline implements VisionPipeline {
 
 	//Outputs
 	private Mat cubeHslThresholdOutput = new Mat();
@@ -39,17 +41,21 @@ public class ElementPipeline {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
 
+	public static enum Element {
+		CONE,CUBE,NONE
+	}
+	private Element elementSeen = Element.NONE;
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	public void process(Mat source0) {
+		
 		// Step HSL_Threshold0:
 		Mat hslThresholdInput = source0;
 		double[] cubeHslThresholdHue = {0.0, 47.91808873720136};
 		double[] coneHslThresholdHue = {38.84892086330935, 144.67576791808872};
 		double[] hslThresholdSaturation = {77.96762589928058, 157.0904436860068};
 		double[] hslThresholdLuminance = {41.276978417266186, 255.0};
-		hslThreshold(hslThresholdInput, cubeHslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, cubeHslThresholdOutput);
 		hslThreshold(hslThresholdInput, coneHslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, coneHslThresholdOutput);
 
 		// Step Blur0:
@@ -58,14 +64,12 @@ public class ElementPipeline {
 		BlurType blurType = BlurType.get("Box Blur");
 		double blurRadius = 8.108108108108109;
 		blur(coneBlurInput, blurType, blurRadius, coneBlurOutput);
-		blur(cubeBlurInput, blurType, blurRadius, cubeBlurOutput);
 
 		// Step Find_Contours0:
 		Mat coneFindContoursInput = coneBlurOutput;
 		Mat cubeFindContoursInput = cubeBlurOutput;
 		boolean findContoursExternalOnly = false;
 		findContours(coneFindContoursInput, findContoursExternalOnly, coneFindContoursOutput);
-		findContours(cubeFindContoursInput, findContoursExternalOnly, cubeFindContoursOutput);
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> cubeFilterContoursContours = cubeFindContoursOutput;
@@ -82,9 +86,24 @@ public class ElementPipeline {
 		double filterContoursMinVertices = 0.0;
 		double filterContoursMinRatio = 0.0;
 		double filterContoursMaxRatio = 1000.0;
-		filterContours(cubeFilterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, cubeFilterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, cubeFilterContoursOutput);
 		filterContours(coneFilterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, coneFilterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, coneFilterContoursOutput);
 
+		if(coneFilterContoursOutput.isEmpty()) {
+			hslThreshold(hslThresholdInput, cubeHslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, cubeHslThresholdOutput);
+			blur(cubeBlurInput, blurType, blurRadius, cubeBlurOutput);
+			findContours(cubeFindContoursInput, findContoursExternalOnly, cubeFindContoursOutput);
+			filterContours(cubeFilterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, cubeFilterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, cubeFilterContoursOutput);
+			if(!cubeFilterContoursOutput.isEmpty())
+				elementSeen = Element.CUBE;
+			else
+				elementSeen = Element.NONE;
+		}
+		else
+			elementSeen = Element.CONE;
+	}
+
+	public Element getElement() {
+		return elementSeen;
 	}
 
 	/**
