@@ -18,7 +18,8 @@ public class VisionPlacer {
         Retroreflective, 
         AprilTag,
     }
-    
+    static double[] botPose;
+
     public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         setAprilTagPipeline();
@@ -102,19 +103,17 @@ public class VisionPlacer {
         }
     }
 
-    public static Position botPose() {
-        //return table.getEntry("botpose").getNumberArray(0);
-        double[] test = table.getEntry("botpose").getDoubleArray(new double[]{});
-        if(test.length >0) {
-            Translation3d translation = new Translation3d(test[0], test[1], test[2]);
-            Rotation3d rotation = new Rotation3d(test[3], test[4], test[5]);
-            return new Position(translation, rotation);
+    public static void botPose() {
+        botPose = table.getEntry("botpose").getDoubleArray(new double[]{});
+    }
+
+    public static double botPosePitch() {
+        botPose();
+        if (botPose.length == 0) {
+            return 0;
         } else {
-            Translation3d translation = new Translation3d(0, 0, 0);
-            Rotation3d rotation = new Rotation3d(0, 0, 0);
-            return new Position(translation, rotation);
+            return botPose[5];
         }
-        
     }
 
     public static Position camTran() {

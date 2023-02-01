@@ -100,10 +100,7 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoAprilTagAlign();
             mAutoProgram.start(1, PlacePositions.LeftConeHigh);
         }
-        if (gamepad1.getYButton()) {
-            VisionPlacer.setLED(LimelightOn.On);
-        }
-        SmartDashboard.putNumber("Data Test for Bot Positioning", VisionPlacer.botPose().translation.getX());
+        // SmartDashboard.putNumber("Data Test for Bot Positioning", VisionPlacer.botPose().translation.getX());
         
         //Test Balance 
         if (gamepad1.getBButton()) {
