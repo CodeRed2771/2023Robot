@@ -50,7 +50,7 @@ public class AutoAprilTagAlign extends AutoBaseClass{
                     advanceStep();
                     break;
                 case 1:
-                    turnDegrees(VisionPlacer.botPosePitch(), .4);
+                    turnDegrees(VisionPlacer.botPoseYaw(), .4);
                     SmartDashboard.putNumber("Angle for April Tag", VisionPlacer.botPosePitch());
                     setTimerAndAdvanceStep(2000);
                     break;
@@ -60,12 +60,13 @@ public class AutoAprilTagAlign extends AutoBaseClass{
                         stop();
                     }
                     break;
-                // case 3:
-                //     if(VisionPlacer.botPose().translation.getY() > 0) {
-                //         depthOffset = VisionPlacer.botPose().translation.getY() - 2;
-                //     } else if (VisionPlacer.botPose().translation.getY() < 0) {
-                //         depthOffset = VisionPlacer.botPose().translation.getY() + 2;
-                //     }
+                case 3:
+                    
+                    if(VisionPlacer.botPoseY() > 0) {
+                        depthOffset = VisionPlacer.botPoseY() - 2;
+                    } else if (VisionPlacer.botPoseY() < 0) {
+                        depthOffset = VisionPlacer.botPoseY() + 2;
+                    }
                     
                 //     if (positions == PlacePositions.LeftConeHigh || positions == PlacePositions.LeftConeLow || positions == PlacePositions.LeftConeNuetral) {
                 //         if (VisionPlacer.camTran().translation.getX() > 0) {
@@ -91,7 +92,7 @@ public class AutoAprilTagAlign extends AutoBaseClass{
 
                 //     driveInches(adjustDistance, adjustAngle, .4);
                 //     setTimerAndAdvanceStep(1000);
-                //     break;
+                    break;
                 case 4:
                     if(driveCompleted()) {
                         advanceStep();
