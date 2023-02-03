@@ -23,6 +23,8 @@ public class Wiring {
 	public static final int BALLLIFT_FOWARD = 5;
 	public static final int CLIMBER_SOLENOID_FORWARD = 6 ;
 	public static final int CLIMBER_SOLENOID_REVERSE = 7;
+	public static final int CLAW_FORWARD = 2;
+	public static final int CLAW_REVERSE = 3;
 
 
 	/**

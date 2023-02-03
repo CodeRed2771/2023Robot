@@ -94,7 +94,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-
+        if (gamepad2.getAButton()){
+            Claw.openClaw();
+        }
+        if (gamepad2.getBButton()){
+            Claw.closeClaw();
+        }
         if (gamepad1.getXButton()) {
             // VisionPlacer.setLED(LimelightOn.Off);
             mAutoProgram = new AutoAprilTagAlign();
