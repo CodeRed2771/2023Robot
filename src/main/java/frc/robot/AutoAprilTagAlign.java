@@ -14,8 +14,11 @@ public class AutoAprilTagAlign extends AutoBaseClass{
     double adjustAngle;
     double adjustDistance;
     PlacePositions positions;
-    final double InchesToTheLeft = 10;
-    final double InchesToTheRight = -10;
+    final double PoleWidth = 29;
+    final double CubeWidth = 21.5;
+    final double HalfField = 30*12;
+    final double PlacingDepth =  54;
+    
 
     public void start(int IDSwitch, PlacePositions positions) {
 		super.start();
@@ -27,47 +30,39 @@ public class AutoAprilTagAlign extends AutoBaseClass{
         super.stop();
     }
 
-    private static double turnTo180(double angle) {
-        double adjustedAngle = 0;
-        if (angle > 45) {
-            adjustedAngle = angle - 45;
-        } else if (angle < 45) {
-            adjustedAngle = 45 - angle;
-        }
-        return adjustedAngle;
-    }
 
     @Override
     public void tick() {
         if (isRunning()) {
             SmartDashboard.putNumber("Auto April Tag Step", getCurrentStep());
-            // DriveAuto.tick();
             switch(getCurrentStep()) {
                 case 0:
                     VisionPlacer.setAprilTagPipeline();
                     VisionPlacer.setLED(LimelightOn.On);
-                    // angle = turnTo180(VisionPlacer.botPose().rotation.getZ());
                     advanceStep();
                     break;
                 case 1:
-                    turnDegrees(VisionPlacer.botPoseYaw(), .4);
-                    SmartDashboard.putNumber("Angle for April Tag", VisionPlacer.botPosePitch());
+                    turnDegrees(VisionPlacer.botPoseYaw(), .6);
+                    SmartDashboard.putNumber("Angle for April Tag", VisionPlacer.botPoseYaw());
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 2:
-                    if (driveCompleted()) {
-                        // advanceStep();
-                        stop();
+                    if (turnCompleted()) {
+                        advanceStep();
                     }
                     break;
                 case 3:
                     
                     if(VisionPlacer.botPoseY() > 0) {
-                        depthOffset = VisionPlacer.botPoseY() - 2;
+                        // depthOffset = VisionPlacer.botPoseY() - 10;
+                        depthOffset = HalfField - VisionPlacer.botPoseY() - PlacingDepth;
                     } else if (VisionPlacer.botPoseY() < 0) {
-                        depthOffset = VisionPlacer.botPoseY() + 2;
+                        depthOffset = HalfField + VisionPlacer.botPoseY() + PlacingDepth;
                     }
+                    // SmartDashboard.putNumber("Depth Offset Raw", VisionPlacer.botPoseY());
+                    SmartDashboard.putNumber("Depth Offset for the limelight", depthOffset);
                     
+
                 //     if (positions == PlacePositions.LeftConeHigh || positions == PlacePositions.LeftConeLow || positions == PlacePositions.LeftConeNuetral) {
                 //         if (VisionPlacer.camTran().translation.getX() > 0) {
                 //             xOffsest =  InchesToTheLeft - VisionPlacer.camTran().translation.getX();
@@ -90,7 +85,6 @@ public class AutoAprilTagAlign extends AutoBaseClass{
                 //     adjustDistance = Math.sqrt(Math.pow(xOffsest, 2) + Math.pow(depthOffset, 2));
                 //     adjustAngle = Math.atan(xOffsest/depthOffset);
 
-                //     driveInches(adjustDistance, adjustAngle, .4);
                 //     setTimerAndAdvanceStep(1000);
                     break;
                 case 4:

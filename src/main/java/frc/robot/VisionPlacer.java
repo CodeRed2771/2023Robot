@@ -103,12 +103,12 @@ public class VisionPlacer {
         }
     }
 
-    public static void botPose() {
+    public static void getBotPose() {
         botPose = table.getEntry("botpose").getDoubleArray(new double[]{});
     }
 
     public static double botPoseYaw() {
-        botPose();
+        getBotPose();
         if (botPose.length == 0) {
             return 0;
         } else {
@@ -116,7 +116,7 @@ public class VisionPlacer {
         }
     }
     public static double botPosePitch() {
-        botPose();
+        getBotPose();
         if (botPose.length == 0) {
             return 0;
         } else {
@@ -124,7 +124,7 @@ public class VisionPlacer {
         }
     }
     public static double botPoseRoll() {
-        botPose();
+        getBotPose();
         if (botPose.length == 0) {
             return 0;
         } else {
@@ -132,27 +132,27 @@ public class VisionPlacer {
         }
     }
     public static double botPoseZ() {
-        botPose();
+        getBotPose();
         if (botPose.length == 0) {
             return 0;
         } else {
-            return botPose[3];
+            return botPose[2] *39.3701;
         }
     }
     public static double botPoseY() {
-        botPose();
+        getBotPose();
         if (botPose.length == 0) {
             return 0;
         } else {
-            return botPose[2];
+            return botPose[1]  * 39.3701;
         }
     }
     public static double botPoseX() {
-        botPose();
+        getBotPose();
         if (botPose.length == 0) {
             return 0;
         } else {
-            return botPose[1];
+            return botPose[0] *39.3701;
         }
     }
     

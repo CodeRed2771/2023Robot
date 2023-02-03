@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.AutoBaseClass.PlacePositions;
 import frc.robot.VisionPlacer.LimelightOn;
 import frc.robot.libs.HID.Gamepad;
 import pabeles.concurrency.IntOperatorTask.Max;
@@ -88,15 +89,21 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
         VisionPlacer.init();
+        VisionElements.init();
     }
 
     @Override
     public void teleopPeriodic() {
-
+        if (gamepad2.getAButton()){
+            Claw.openClaw();
+        }
+        if (gamepad2.getBButton()){
+            Claw.closeClaw();
+        }
         if (gamepad1.getXButton()) {
-            VisionPlacer.setLED(LimelightOn.Off);
-            mAutoProgram = new AutoElementAlignment();
-            mAutoProgram.start();
+            // VisionPlacer.setLED(LimelightOn.Off);
+            mAutoProgram = new AutoAprilTagAlign();
+            mAutoProgram.start(1, PlacePositions.LeftConeHigh);
         }
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.On);
