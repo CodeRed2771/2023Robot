@@ -35,7 +35,6 @@ public class AutoAprilTagAlign extends AutoBaseClass{
     public void tick() {
         if (isRunning()) {
             SmartDashboard.putNumber("Auto April Tag Step", getCurrentStep());
-            // DriveAuto.tick();
             switch(getCurrentStep()) {
                 case 0:
                     VisionPlacer.setAprilTagPipeline();
@@ -48,20 +47,19 @@ public class AutoAprilTagAlign extends AutoBaseClass{
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 2:
-                    if (driveCompleted()) {
+                    if (turnCompleted()) {
                         advanceStep();
-                        // stop();
                     }
                     break;
                 case 3:
                     
                     if(VisionPlacer.botPoseY() > 0) {
                         // depthOffset = VisionPlacer.botPoseY() - 10;
-                        depthOffset = HalfField -VisionPlacer.botPoseY() - PlacingDepth;
+                        depthOffset = HalfField - VisionPlacer.botPoseY() - PlacingDepth;
                     } else if (VisionPlacer.botPoseY() < 0) {
                         depthOffset = HalfField + VisionPlacer.botPoseY() + PlacingDepth;
                     }
-                    SmartDashboard.putNumber("Depth Offset Raw", VisionPlacer.botPoseY());
+                    // SmartDashboard.putNumber("Depth Offset Raw", VisionPlacer.botPoseY());
                     SmartDashboard.putNumber("Depth Offset for the limelight", depthOffset);
                     
 
