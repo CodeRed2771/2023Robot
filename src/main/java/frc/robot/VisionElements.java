@@ -17,11 +17,17 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.opencv.core.Scalar;
 import org.opencv.core.Point;
+import edu.wpi.first.cscore.CvSink;
+
 
 public class VisionElements implements VisionRunner.Listener<ElementPipeline>
 {
     // Varriables 
     private static UsbCamera  camera;
+    private static CvSource mProcessedStream;
+    private static Mat mProcessedFrame;
+    private static CvSink mCameraFrameGrabber;
+    private static Mat mUnprocessedFrame;
     private static int IMG_WIDTH = 320;
     private static int IMG_HEIGHT = 240;
     private static VisionThread visionThread;
@@ -59,6 +65,19 @@ public class VisionElements implements VisionRunner.Listener<ElementPipeline>
         score = dis+ xOffset + yOffset + dis;
         return score;
     }
+
+    private static void GrabFrameFromServer()
+    {
+        // Grabs Frame From Camera
+        int attemptCount = 0;
+        while (mCameraFrameGrabber.grabFrame(mUnprocessedFrame) == 0 && attemptCount < 10)
+            attemptCount++;
+        //Display raw image
+        // mRawImageStream.putFrame(mUnprocessedFrame);
+        //Save copy of raw image so that we can bound balls on it later
+        Imgproc.cvtColor(mUnprocessedFrame, mProcessedFrame, Imgproc.COLOR_BGR2RGB);
+    }
+
 
     public static Mat findClosestCone(ArrayList<MatOfPoint> conesFound) {
         double topScore = 0;
@@ -118,9 +137,9 @@ public class VisionElements implements VisionRunner.Listener<ElementPipeline>
     public static void init() {
         camera = CameraServer.startAutomaticCapture();
         camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-        //mProcessedFrame = new Mat();
-        //mProcessedStream.putFrame(mProcessedFrame);
-        //mProcessedStream = CameraServer.putVideo("Processed Image", IMG_WIDTH, IMG_HEIGHT);
+        mProcessedFrame = new Mat();
+        mProcessedStream.putFrame(mProcessedFrame);
+        mProcessedStream = CameraServer.putVideo("Processed Image", IMG_WIDTH, IMG_HEIGHT);
         visionThread = new VisionThread(camera, new ElementPipeline(), pipeline -> {
             if (pipeline.getElement() == ElementPipeline.Element.CONE) {
                 Rect r1 = Imgproc.boundingRect(VisionElements.findClosestCone(pipeline.coneFilterContoursOutput()));                    //Imgproc.rectangle(mProcessedFrame, new Point(r.x, r.y), 
