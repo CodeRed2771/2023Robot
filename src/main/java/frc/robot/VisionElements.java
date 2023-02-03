@@ -139,6 +139,7 @@ public class VisionElements implements VisionRunner.Listener<ElementPipeline>
         camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
         mProcessedFrame = new Mat();
         mProcessedStream.putFrame(mProcessedFrame);
+        GrabFrameFromServer();
         mProcessedStream = CameraServer.putVideo("Processed Image", IMG_WIDTH, IMG_HEIGHT);
         visionThread = new VisionThread(camera, new ElementPipeline(), pipeline -> {
             if (pipeline.getElement() == ElementPipeline.Element.CONE) {
