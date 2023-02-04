@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
         VisionPlacer.init();
-        VisionElements.init();
+        // VisionElements.init();
     }
 
     @Override
@@ -164,7 +164,14 @@ public class Robot extends TimedRobot {
             if (mAutoProgram.isRunning())
                 mAutoProgram.stop();
         }
-
+        if (!mAutoProgram.isRunning()) {
+            if (gamepad1.getBackButton()) {
+                DriveTrain.humanDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
+            } else {
+                DriveTrain.fieldCentricDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
+            }
+        }
+        
         showDashboardInfo();
     }
 
