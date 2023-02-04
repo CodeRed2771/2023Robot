@@ -89,16 +89,19 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
         VisionPlacer.init();
-        VisionElements.init();
+        // VisionElements.init();
     }
 
     @Override
     public void teleopPeriodic() {
         if (gamepad2.getAButton()){
-            Claw.openClaw();
+            //Claw.openClaw();
         }
-        if (gamepad2.getBButton()){
-            Claw.closeClaw();
+        if (gamepad1.getBButton()){
+            //Claw.closeClaw();
+            mAutoProgram = new AutoClimbAndBalance(); 
+            mAutoProgram.start();
+
         }
         if (gamepad1.getXButton()) {
             // VisionPlacer.setLED(LimelightOn.Off);
@@ -108,6 +111,30 @@ public class Robot extends TimedRobot {
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.On);
         }
+        //up,right,down,left
+        if(gamepad2.getYButton()){
+            mAutoProgram = new DebugDrive(0);
+            mAutoProgram.start();
+        }
+        if(gamepad2.getBButton()){
+            mAutoProgram = new DebugDrive(1);
+            mAutoProgram.start();
+            
+        }
+        if(gamepad2.getAButton()){
+            mAutoProgram = new DebugDrive(2);
+            mAutoProgram.start();
+            
+        }
+        if(gamepad2.getXButton()){
+            mAutoProgram = new DebugDrive(3);
+            mAutoProgram.start();
+            
+        }
+
+
+
+
         SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
         // --------------------------------------------------
         // RESET - allow manual reset of systems by pressing Start
