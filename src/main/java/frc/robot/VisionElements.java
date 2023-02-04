@@ -1,3 +1,5 @@
+//Make sure that camera sees something (Problem is with not seeing a shape)
+
 package frc.robot;
 
 import java.util.ArrayList;
@@ -44,10 +46,81 @@ public class VisionElements implements VisionRunner.Listener<ElementPipeline>
     private static double bestScore = 0;
     private static double currentScore = 0;
     private static AtomicBoolean working = new AtomicBoolean(false);
+    private static CvSource mRawImageStream;
+    private static edu.wpi.first.cscore.UsbCamera mElementTrackingCamera;
+    private static final int CAMERA_HORIZONTAL_RESOLUTION = 640;
+    private static final int CAMERA_VERTICAL_RESOLUTION = 480;
     //private static CvSource mProcessedStream;
     //private static Mat mProcessedFrame;
 
+
+    // Vision Set-Up and Run
+    public static void init() {
+        camera = CameraServer.startAutomaticCapture();
+        camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+        mProcessedStream = CameraServer.putVideo("Processed Image (2023)", IMG_WIDTH, IMG_HEIGHT);
+        mProcessedFrame = new Mat();
+        mUnprocessedFrame = new Mat();
+        
+        mRawImageStream = CameraServer.putVideo("Raw Image", IMG_WIDTH, IMG_HEIGHT);
+        
+        mElementTrackingCamera = CameraServer.startAutomaticCapture();
+        mElementTrackingCamera.setResolution(CAMERA_HORIZONTAL_RESOLUTION,CAMERA_VERTICAL_RESOLUTION);
+        mElementTrackingCamera.setFPS(30);
+
+        mCameraFrameGrabber = CameraServer.getVideo();
+        mCameraFrameGrabber.setSource(mElementTrackingCamera);
+        
+      
+   
+        visionThread = new VisionThread(camera, new ElementPipeline(), pipeline -> {
+            if (pipeline.getElement() == ElementPipeline.Element.CONE) {
+                Rect r1 = Imgproc.boundingRect(VisionElements.findClosestCone(pipeline.coneFilterContoursOutput()));                    //Imgproc.rectangle(mProcessedFrame, new Point(r.x, r.y), 
+                //new Point(r.x + r.width, r.y + r.height),
+                //new Scalar(0,255,0), 10);
+                //mProcessedStream.putFrame(mProcessedFrame);
+                synchronized (imgLock) {
+                    centerX = r1.x + (r1.width / 2);
+                    centerY = r1.y + (r1.height/2);
+                    SmartDashboard.putString("Center X Components: X and Width (Cone)", r1.x + " " + r1.width);
+                    foundCone.set(true);
+                    working.set(true);
+                }
+            }
+            else if(pipeline.getElement() == ElementPipeline.Element.CUBE) {
+                Rect r2 = Imgproc.boundingRect(VisionElements.findClosestCube(pipeline.cubeFilterContoursOutput()));                    //Imgproc.rectangle(mProcessedFrame, new Point(r.x, r.y), 
+                synchronized (imgLock) {
+                    centerX = r2.x + (r2.width / 2);
+                    centerY = r2.y + (r2.height/2);
+                    SmartDashboard.putString("Center X Components: X and Width (Cube)", r2.x + " " + r2.width);
+                    foundCube.set(true);
+                    working.set(true);
+                }
+            }
+            else {//may need to not clear unless not seen for a second
+                synchronized (imgLock) {
+                    centerX = IMG_WIDTH / 2; // default to being centered
+                    centerY = IMG_HEIGHT / 2;
+                    coneAmount = 0;
+                    cubeAmount = 0;
+                    foundCube.set(false);
+                    foundCone.set(false);
+                    bestScore = 0;
+                    working.set(true);                
+                }
+            }
+        }
+            );
+    }
     
+    public static void start() {
+        visionThread.start();
+    }
+
+    public static void stop() {
+        visionThread.interrupt();  // probably NOT the right call
+    }
+
     // Distance Formula 
     public static double distance(double xPosition, double yPosition) {
         return Math.sqrt(Math.pow(xPosition, 2)+Math.pow(yPosition,2));
@@ -73,9 +146,11 @@ public class VisionElements implements VisionRunner.Listener<ElementPipeline>
         while (mCameraFrameGrabber.grabFrame(mUnprocessedFrame) == 0 && attemptCount < 10)
             attemptCount++;
         //Display raw image
-        // mRawImageStream.putFrame(mUnprocessedFrame);
+        if(attemptCount < 10) {
+        mRawImageStream.putFrame(mUnprocessedFrame);
         //Save copy of raw image so that we can bound balls on it later
         Imgproc.cvtColor(mUnprocessedFrame, mProcessedFrame, Imgproc.COLOR_BGR2RGB);
+        }
     }
 
 
@@ -130,63 +205,6 @@ public class VisionElements implements VisionRunner.Listener<ElementPipeline>
         }
 
         return cubesFound.get(closestCubeIndex);
-    }
-
-
-    // Vision Set-Up and Run
-    public static void init() {
-        camera = CameraServer.startAutomaticCapture();
-        camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-        mProcessedFrame = new Mat();
-        mProcessedStream.putFrame(mProcessedFrame);
-        GrabFrameFromServer();
-        mProcessedStream = CameraServer.putVideo("Processed Image", IMG_WIDTH, IMG_HEIGHT);
-        visionThread = new VisionThread(camera, new ElementPipeline(), pipeline -> {
-            if (pipeline.getElement() == ElementPipeline.Element.CONE) {
-                Rect r1 = Imgproc.boundingRect(VisionElements.findClosestCone(pipeline.coneFilterContoursOutput()));                    //Imgproc.rectangle(mProcessedFrame, new Point(r.x, r.y), 
-                //new Point(r.x + r.width, r.y + r.height),
-                //new Scalar(0,255,0), 10);
-                //mProcessedStream.putFrame(mProcessedFrame);
-                synchronized (imgLock) {
-                    centerX = r1.x + (r1.width / 2);
-                    centerY = r1.y + (r1.height/2);
-                    SmartDashboard.putString("Center X Components: X and Width (Cone)", r1.x + " " + r1.width);
-                    foundCone.set(true);
-                    working.set(true);
-                }
-            }
-            else if(pipeline.getElement() == ElementPipeline.Element.CUBE) {
-                Rect r2 = Imgproc.boundingRect(VisionElements.findClosestCube(pipeline.cubeFilterContoursOutput()));                    //Imgproc.rectangle(mProcessedFrame, new Point(r.x, r.y), 
-                synchronized (imgLock) {
-                    centerX = r2.x + (r2.width / 2);
-                    centerY = r2.y + (r2.height/2);
-                    SmartDashboard.putString("Center X Components: X and Width (Cube)", r2.x + " " + r2.width);
-                    foundCube.set(true);
-                    working.set(true);
-                }
-            }
-            else {//may need to not clear unless not seen for a second
-                synchronized (imgLock) {
-                    centerX = IMG_WIDTH / 2; // default to being centered
-                    centerY = IMG_HEIGHT / 2;
-                    coneAmount = 0;
-                    cubeAmount = 0;
-                    foundCube.set(false);
-                    foundCone.set(false);
-                    bestScore = 0;
-                    working.set(true);                
-                }
-            }
-        }
-            );
-        }
-
-    public static void start() {
-        visionThread.start();
-    }
-
-    public static void stop() {
-        visionThread.interrupt();  // probably NOT the right call
     }
 
     // Return Values for Finding elements

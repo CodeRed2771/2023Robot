@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
 
         setupAutoChoices();
         mAutoProgram = new AutoDoNothing();
+        VisionElements.init();
 
     }
 
@@ -89,7 +90,6 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
         VisionPlacer.init();
-        VisionElements.init();
     }
 
     @Override
