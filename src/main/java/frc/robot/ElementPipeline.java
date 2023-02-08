@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.HashMap;
+import edu.wpi.first.cscore.CvSource;
 
 import org.opencv.core.*;
 import org.opencv.core.Core.*;
@@ -15,6 +16,7 @@ import org.opencv.core.Core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.*;
 import org.opencv.objdetect.*;
+import edu.wpi.first.cameraserver.CameraServer;
 
 import edu.wpi.first.vision.VisionPipeline;
 
@@ -36,6 +38,7 @@ public class ElementPipeline implements VisionPipeline {
 	private ArrayList<MatOfPoint> cubeFilterContoursOutput = new ArrayList<MatOfPoint>();
 	private ArrayList<MatOfPoint> coneFindContoursOutput = new ArrayList<MatOfPoint>();
 	private ArrayList<MatOfPoint> coneFilterContoursOutput = new ArrayList<MatOfPoint>();
+	private static CvSource mProcessedStream;
 
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -50,6 +53,8 @@ public class ElementPipeline implements VisionPipeline {
 	 */
 	public void process(Mat source0) {
 		
+		mProcessedStream = CameraServer.putVideo("Processed Image 2023", 640, 480);
+
 		// Step HSL_Threshold0:
 		Mat hslThresholdInput = source0;
 		double[] cubeHslThresholdHue = {0.0, 47.91808873720136};
@@ -64,6 +69,10 @@ public class ElementPipeline implements VisionPipeline {
 		BlurType blurType = BlurType.get("Box Blur");
 		double blurRadius = 8.108108108108109;
 		blur(coneBlurInput, blurType, blurRadius, coneBlurOutput);
+
+		
+		mProcessedStream.putFrame(coneBlurOutput);
+
 
 		// Step Find_Contours0:
 		Mat coneFindContoursInput = coneBlurOutput;
