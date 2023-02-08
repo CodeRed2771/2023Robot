@@ -10,8 +10,8 @@ public class AutoAprilTagAlign extends AutoBaseClass{
     double angle;
     int IDSwitch; 
     double xOffsest;
-    double centerOffset;
-    double depthOffset;
+    static double centerOffset;
+    static double depthOffset;
     double adjustAngle;
     double adjustDistance;
     PlacePositions positions;
@@ -76,17 +76,18 @@ public class AutoAprilTagAlign extends AutoBaseClass{
                     }
                     break;
                 case 3:
-                    
-                    if(VisionPlacer.botPoseY() > 0) {
-                        depthOffset = HalfLengthField - VisionPlacer.botPoseY() - PlacingDepth;
-                    } else if (VisionPlacer.botPoseY() < 0) {
-                        depthOffset = HalfLengthField + VisionPlacer.botPoseY() - PlacingDepth;
-                    }
-                    centerOffset = 60 *Math.tan(VisionPlacer.getXAngleOffset()); 
-                    driveInches(centerOffset, 0, .5);
-                    setTimerAndAdvanceStep(2000);
-                    
 
+                    depthOffset = VisionPlacer.botPoseY() + PlacingDepth;
+                    centerOffset = depthOffset/Math.tan(VisionPlacer.getXAngleOffset());
+                    // driveInches(centerOffset, 90, .3);
+                    // setTimerAndAdvanceStep(2000);
+                    stop();
+                    
+                    // driveInches(depthOffset, 0, .3);
+                    // centerOffset = 60 *Math.tan(VisionPlacer.getXAngleOffset()); 
+                    // driveInches(10, 90, .5);
+                    // setTimerAndAdvanceStep(2000);
+                    
                 //     if (positions == PlacePositions.LeftConeHigh || positions == PlacePositions.LeftConeLow || positions == PlacePositions.LeftConeNuetral) {
                 //         if (VisionPlacer.camTran().translation.getX() > 0) {
                 //             xOffsest =  InchesToTheLeft - VisionPlacer.camTran().translation.getX();
@@ -119,7 +120,5 @@ public class AutoAprilTagAlign extends AutoBaseClass{
 
             }
         }    
-        
     }
-    
 }
