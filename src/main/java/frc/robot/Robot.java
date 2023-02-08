@@ -40,6 +40,7 @@ public class Robot extends TimedRobot {
     Compressor compressor = new Compressor(1, PneumaticsModuleType.REVPH);
     boolean reverseShooter = false;
     boolean ballTrackingTurnedOn = false;  
+    boolean clawFlippedPress = false;
     boolean rampCodeActive = true;
 
     AutoBaseClass mAutoProgram;
@@ -61,6 +62,7 @@ public class Robot extends TimedRobot {
         compressor.enableAnalog(100, 120);
 
         RobotGyro.init();
+        Claw.init();
 
         Calibration.loadSwerveCalibration();
         if (Calibration.isPracticeBot()) 
@@ -95,10 +97,10 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         if (gamepad2.getAButton()){
-            //Claw.openClaw();
+            Claw.openClaw();
         }
         if (gamepad1.getBButton()){
-            //Claw.closeClaw();
+            Claw.closeClaw();
             mAutoProgram = new AutoClimbAndBalance(); 
             mAutoProgram.start();
 
@@ -130,6 +132,14 @@ public class Robot extends TimedRobot {
             mAutoProgram = new DebugDrive(3);
             mAutoProgram.start();
             
+        }
+        if(gamepad2.getRightBumper()){
+            if (!clawFlippedPress){
+                Claw.flip();
+                clawFlippedPress = true;
+            } 
+        } else{
+            clawFlippedPress = false;
         }
 
 
