@@ -94,15 +94,6 @@ public class VisionPlacer {
         return table.getEntry("tid").getDouble(0);
     }
 
-    public static class Position {
-        Translation3d translation;
-        Rotation3d rotation;
-        public Position(Translation3d translation, Rotation3d rotation) {
-            this.translation = translation;
-            this.rotation = rotation;
-        }
-    }
-
     public static void getBotPose() {
         botPose = table.getEntry("botpose").getDoubleArray(new double[]{});
     }
@@ -156,20 +147,71 @@ public class VisionPlacer {
         }
     }
 
+    public static void getCamPose() {
+        botPose = table.getEntry("camtran").getDoubleArray(new double[]{});
+    }
 
-    
-    public static Position camTran() {
-        double[] test = table.getEntry("camtran").getDoubleArray(new double[]{});
-        if(test.length >0) {
-            Translation3d translation = new Translation3d(test[0], test[1], test[2]);
-            Rotation3d rotation = new Rotation3d(test[3], test[4], test[5]);
-            return new Position(translation, rotation);
+    public static double camPoseYaw() {
+        getCamPose();
+        if (botPose.length == 0) {
+            return 0;
         } else {
-            Translation3d translation = new Translation3d(0, 0, 0);
-            Rotation3d rotation = new Rotation3d(0, 0, 0);
-            return new Position(translation, rotation);
+            return botPose[5];
         }
     }
+    public static double camPosePitch() {
+        getCamPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[4];
+        }
+    }
+    public static double camPoseRoll() {
+        getCamPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[3];
+        }
+    }
+    public static double camPoseZ() {
+        getCamPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[2] *39.3701;
+        }
+    }
+    public static double camPoseY() {
+        getCamPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[1]  * 39.3701;
+        }
+    }
+    public static double camPoseX() {
+        getCamPose();
+        if (botPose.length == 0) {
+            return 0;
+        } else {
+            return botPose[0] *39.3701;
+        }
+    }
+    
+    // public static Position camTran() {
+    //     double[] test = table.getEntry("camtran").getDoubleArray(new double[]{});
+    //     if(test.length >0) {
+    //         Translation3d translation = new Translation3d(test[0], test[1], test[2]);
+    //         Rotation3d rotation = new Rotation3d(test[3], test[4], test[5]);
+    //         return new Position(translation, rotation);
+    //     } else {
+    //         Translation3d translation = new Translation3d(0, 0, 0);
+    //         Rotation3d rotation = new Rotation3d(0, 0, 0);
+    //         return new Position(translation, rotation);
+    //     }
+    // }
 
     public static double getDepth() {
         return 2;

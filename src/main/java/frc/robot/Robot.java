@@ -94,6 +94,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+
+        SmartDashboard.putNumber("Depth Offset Camera", VisionPlacer.camPoseY());
+        SmartDashboard.putNumber("Depth Offset Bot Pose", VisionPlacer.botPoseY());
+        SmartDashboard.putNumber("Depth Offset Calculated", AutoAprilTagAlign.depthOffset);
+        SmartDashboard.putNumber("Center Offset Based on angle", AutoAprilTagAlign.centerOffset);
+        SmartDashboard.putNumber("X Offset Camera", VisionPlacer.botPoseX());
+        SmartDashboard.putNumber("X Offset Bot", VisionPlacer.camPoseX());
+        SmartDashboard.putNumber("Angle for X", VisionPlacer.getXAngleOffset());
         if (gamepad2.getAButton()){
             //Claw.openClaw();
         }
