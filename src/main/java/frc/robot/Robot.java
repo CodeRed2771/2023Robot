@@ -191,7 +191,14 @@ public class Robot extends TimedRobot {
             if (mAutoProgram.isRunning())
                 mAutoProgram.stop();
         }
-
+        if (!mAutoProgram.isRunning()) {
+            if (gamepad1.getBackButton()) {
+                DriveTrain.humanDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
+            } else {
+                DriveTrain.fieldCentricDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
+            }
+        }
+        
         showDashboardInfo();
     }
 

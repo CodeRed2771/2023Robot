@@ -155,6 +155,8 @@ public class VisionPlacer {
             return botPose[0] *39.3701;
         }
     }
+
+
     
     public static Position camTran() {
         double[] test = table.getEntry("camtran").getDoubleArray(new double[]{});
