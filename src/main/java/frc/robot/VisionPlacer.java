@@ -130,7 +130,7 @@ public class VisionPlacer {
             return botPose[2] *39.3701;
         }
     }
-    public static double botPoseY() {
+    public static double botPoseWidth() {
         getBotPose();
         if (botPose.length == 0) {
             return 0;
@@ -138,7 +138,7 @@ public class VisionPlacer {
             return botPose[1]  * 39.3701;
         }
     }
-    public static double botPoseX() {
+    public static double botPoseLength() {
         getBotPose();
         if (botPose.length == 0) {
             return 0;
