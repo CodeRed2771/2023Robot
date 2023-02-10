@@ -12,6 +12,7 @@ public class AutoAprilTagAlign extends AutoBaseClass{
     double xOffsest;
     static double centerOffset;
     static double depthOffset;
+    static double positionOffsets;
     double adjustAngle;
     double adjustDistance;
     PlacePositions positions;
@@ -53,7 +54,7 @@ public class AutoAprilTagAlign extends AutoBaseClass{
         if (isRunning()) {
             SmartDashboard.putNumber("Auto April Tag Step", getCurrentStep());
             SmartDashboard.putNumber("Angle for April Tag", VisionPlacer.botPoseYaw());
-            SmartDashboard.putNumber("Depth Offset Raw", VisionPlacer.botPoseY());
+            SmartDashboard.putNumber("Depth Offset Raw", VisionPlacer.botPoseLength());
             SmartDashboard.putNumber("Depth Offset for the limelight", depthOffset);
             SmartDashboard.putNumber("Center Offset April Tag", centerOffset);
             switch(getCurrentStep()) {
@@ -76,41 +77,13 @@ public class AutoAprilTagAlign extends AutoBaseClass{
                     }
                     break;
                 case 3:
-
-                    depthOffset = VisionPlacer.botPoseY() + PlacingDepth;
+                    if (depthOffset > 0) {
+                        depthOffset = VisionPlacer.botPoseLength() - PlacingDepth;
+                    } else {
+                        depthOffset = VisionPlacer.botPoseLength() + PlacingDepth;
+                    }
                     centerOffset = depthOffset/Math.tan(VisionPlacer.getXAngleOffset());
-                    // driveInches(centerOffset, 90, .3);
-                    // setTimerAndAdvanceStep(2000);
                     stop();
-                    
-                    // driveInches(depthOffset, 0, .3);
-                    // centerOffset = 60 *Math.tan(VisionPlacer.getXAngleOffset()); 
-                    // driveInches(10, 90, .5);
-                    // setTimerAndAdvanceStep(2000);
-                    
-                //     if (positions == PlacePositions.LeftConeHigh || positions == PlacePositions.LeftConeLow || positions == PlacePositions.LeftConeNuetral) {
-                //         if (VisionPlacer.camTran().translation.getX() > 0) {
-                //             xOffsest =  InchesToTheLeft - VisionPlacer.camTran().translation.getX();
-                //         } else if (VisionPlacer.botPose().translation.getX() < 0) {
-                //             xOffsest = InchesToTheLeft + Math.abs(VisionPlacer.botPose().translation.getX());
-                //         }
-                //     } else if (positions == PlacePositions.RightConeHigh || positions == PlacePositions.RightConeLow || positions == PlacePositions.RightConeNuetral) {
-                //         if (VisionPlacer.camTran().translation.getX() > 0) {
-                //             xOffsest =  InchesToTheRight - VisionPlacer.camTran().translation.getX();
-                //         } else if (VisionPlacer.botPose().translation.getX() < 0) {
-                //             xOffsest = InchesToTheRight + VisionPlacer.botPose().translation.getX();
-                //         }
-                //     } else {
-                //         if (VisionPlacer.camTran().translation.getX() > 0) {
-                //             xOffsest =  -VisionPlacer.camTran().translation.getX();
-                //         } else if (VisionPlacer.botPose().translation.getX() < 0) {
-                //             xOffsest = Math.abs(VisionPlacer.botPose().translation.getX());
-                //         }
-                //     }
-                //     adjustDistance = Math.sqrt(Math.pow(xOffsest, 2) + Math.pow(depthOffset, 2));
-                //     adjustAngle = Math.atan(xOffsest/depthOffset);
-
-                //     setTimerAndAdvanceStep(1000);
                     break;
                 case 4:
                     if(driveCompleted()) {
