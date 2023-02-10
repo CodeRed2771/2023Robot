@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Arm.bistablePresets;
+import frc.robot.Arm.pancakePresets;
 import frc.robot.AutoBaseClass.PlacePositions;
 import frc.robot.VisionPlacer.LimelightOn;
 import frc.robot.libs.HID.Gamepad;
@@ -53,6 +55,7 @@ public class Robot extends TimedRobot {
     private double lastFWDvalue = 0; 
     private double lastSTRvalue = 0;
     private double lastROTvalue = 0;
+    private boolean stuffDelete = false;
 
     @Override
     public void robotInit() {
@@ -71,6 +74,7 @@ public class Robot extends TimedRobot {
             DriveTrain.init("FALCON");
         
         DriveAuto.init();
+        Arm.init();
 
         SmartDashboard.putNumber("Current Position", 0);
         SmartDashboard.putNumber("New Position", 0);
@@ -149,8 +153,19 @@ public class Robot extends TimedRobot {
         } else{
             clawFlippedPress = false;
         }
-
-
+        if(gamepad2.getDPadUp())
+            //Arm.presetExtend(bistablePresets.RETRACTED);
+        if(gamepad2.getDPadDown()) {
+            stuffDelete = true;
+        }
+        else {
+            stuffDelete = false;
+        }
+        if(gamepad2.getRightBumper())
+            Arm.presetLift(pancakePresets.PICKUP_CUBE);
+        if(gamepad2.getLeftTriggerAxis()>0.1)
+            Arm.lift(gamepad2.getRightX());
+        SmartDashboard.putBoolean("Can see stuff", stuffDelete);
 
 
         SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());

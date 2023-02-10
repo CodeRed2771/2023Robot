@@ -33,6 +33,10 @@ public class Arm {
         PICKUP_CUBE,
         PLACING
     }
+
+    public static double bistableRequestedPos = 0;
+    public static double pancakeRequestedPos = 0;
+
     public static void init() {
         
         //motor responsible of extension of bistable material
@@ -56,6 +60,74 @@ public class Arm {
         bistablePID = bistableMotor.getPIDController();
         pancakePID = pancakeMotor.getPIDController();
 
+        //Setting PID
         bistablePID.setP(Calibration.BISTABLE_MOTOR_P);
+        bistablePID.setI(Calibration.BISTABLE_MOTOR_I);
+        bistablePID.setD(Calibration.BISTABLE_MOTOR_D);
+        bistablePID.setIZone(Calibration.BISTABLE_MOTOR_IZONE);
+        pancakePID.setP(Calibration.PANCAKE_MOTOR_P);
+        pancakePID.setI(Calibration.PANCAKE_MOTOR_I);
+        pancakePID.setD(Calibration.PANCAKE_MOTOR_D);
+        pancakePID.setIZone(Calibration.PANCAKE_MOTOR_IZONE);
+
+        //Other Setup
+        bistablePID.setOutputRange(-1, 1);
+        pancakePID.setOutputRange(-1,1);
+
+        bistablePID.setSmartMotionMaxVelocity(25, 0);
+        pancakePID.setSmartMotionMaxVelocity(25, 0);
+
+        bistablePID.setSmartMotionMinOutputVelocity(0, 0);
+        pancakePID.setSmartMotionMinOutputVelocity(0, 0);
+
+        bistablePID.setSmartMotionMaxAccel(10, 0);
+        pancakePID.setSmartMotionMaxAccel(10,0);
+
+        bistablePID.setSmartMotionAllowedClosedLoopError(0.5,0);
+        pancakePID.setSmartMotionAllowedClosedLoopError(0.5,0);
+
+    }
+    public static void tick() {
+		SmartDashboard.putNumber("Climber1 Position Actual", bistableMotor.getEncoder().getPosition());
+		SmartDashboard.putNumber("Climber2 Position Actual", pancakeMotor.getEncoder().getPosition());
+    }
+
+    public static void presetExtend(bistablePresets position) {
+        switch(position) {
+            case RETRACTED:
+                bistableRequestedPos = 50;//??
+                break;
+            case GROUND:
+                bistableRequestedPos = 100;//??
+                break;
+            case LOW:
+                bistableRequestedPos = 150;//??
+            case HIGH:
+                bistableRequestedPos = 200;//??
+        }
+        bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);
+    }
+
+    public static void extend(double pwr) {
+        bistableRequestedPos = bistableRequestedPos + (2*pwr);
+        bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);
+    }
+
+    public static void presetLift(pancakePresets position) {
+        switch(position) {
+            case PICKUP_CONE:
+                pancakeRequestedPos = 50;//??
+                break;
+            case PICKUP_CUBE:
+                pancakeRequestedPos = 100;//??
+                break;
+            case PLACING:
+                pancakeRequestedPos = 150;//??
+        }
+    }
+
+    public static void lift(double pwr) {
+        pancakeRequestedPos = pancakeRequestedPos + (0.25*pwr);
+        pancakePID.setReference(pancakeRequestedPos, CANSparkMax.ControlType.kPosition);
     }
 }
