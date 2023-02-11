@@ -12,8 +12,8 @@ public class Wiring {
 	public static final int FEEDER_MOTOR_ID = 9;
 	public static final int INTAKE_MOTOR_ID = 11;
 	
-	public static final int BISTABLE_MOTOR = 12;
-	public static final int PANCAKE_MOTOR = 13;
+	public static final int BISTABLE_MOTOR = 13;
+	public static final int PANCAKE_MOTOR = 12;
 
 	//old climber code
 	// public static final int CLIMBER_MOTOR_1 = 12;

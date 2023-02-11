@@ -18,7 +18,8 @@ public class Arm {
     private static SparkMaxPIDController bistablePID;
     private static final int MAX_BISTABE_CURRENT = 50;
     private static final int MAX_PANCAKE_CURRENT = 50;
-    private final static double MAX_BISTABLE_EXTENSION = 50;//Unknown Values below as of 2-7
+    private static double MAX_BISTABLE_EXTENSION = 320;
+    private static double minExtension = 0;
     private final static double MAX_PANCAKE_EXTENSION = 80;
     private final static double MAX_BISTABE_RETRACTION = 0;
     private final static double MAX_PANKAKE_RETRACTION = 0;//Unknown Values end
@@ -34,7 +35,7 @@ public class Arm {
         PLACING
     }
 
-    public static double bistableRequestedPos = 0;
+    public static double bistableRequestedPos = minExtension;
     public static double pancakeRequestedPos = 0;
 
     public static void init() {
@@ -46,7 +47,7 @@ public class Arm {
 
         bistableMotor.setSmartCurrentLimit(MAX_BISTABE_CURRENT);
         bistableMotor.setIdleMode(IdleMode.kBrake);
-        bistableMotor.setInverted(false);//don't know what this is, if needed, and what it needs to be set to.
+        bistableMotor.setInverted(true);//don't know what this is, if needed, and what it needs to be set to.
 
         //motor responsible of lifting motor that claw+lift is connected to
         pancakeMotor = new CANSparkMax(Wiring.PANCAKE_MOTOR, MotorType.kBrushless);
@@ -59,6 +60,8 @@ public class Arm {
 
         bistablePID = bistableMotor.getPIDController();
         pancakePID = pancakeMotor.getPIDController();
+
+        bistableRequestedPos = minExtension;
 
         //Setting PID
         bistablePID.setP(Calibration.BISTABLE_MOTOR_P);
@@ -87,9 +90,17 @@ public class Arm {
         pancakePID.setSmartMotionAllowedClosedLoopError(0.5,0);
 
     }
+
+    public static void reset() {
+        bistableMotor.getEncoder().setPosition(0);
+        bistableRequestedPos = 0;
+        minExtension = 0;
+    }
+
     public static void tick() {
-		SmartDashboard.putNumber("Climber1 Position Actual", bistableMotor.getEncoder().getPosition());
-		SmartDashboard.putNumber("Climber2 Position Actual", pancakeMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Arm Extension Set Point", bistableRequestedPos);
+		SmartDashboard.putNumber("Arm Extension Actual", bistableMotor.getEncoder().getPosition());
+		SmartDashboard.putNumber("Pancake Position Actual", pancakeMotor.getEncoder().getPosition());
     }
 
     public static void presetExtend(bistablePresets position) {
@@ -109,8 +120,31 @@ public class Arm {
     }
 
     public static void extend(double pwr) {
-        bistableRequestedPos = bistableRequestedPos + (2*pwr);
+        bistableRequestedPos = bistableRequestedPos + (3 * pwr);
+        
+        if (bistableRequestedPos < minExtension) 
+            bistableRequestedPos = minExtension;
+        if (bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION))  
+            bistableRequestedPos = (minExtension + MAX_BISTABLE_EXTENSION);
+
         bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);
+        
+     }
+
+    public static void overrideExtend(double pwr) {
+        
+        bistableRequestedPos = bistableRequestedPos + (3 * pwr);
+
+        if (bistableRequestedPos < minExtension) {
+            minExtension = bistableRequestedPos;
+        }
+        // by pushing past the max extension, it actually adjusts the min position out.
+        if (bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION)) {
+            minExtension = minExtension + (bistableRequestedPos - (minExtension + MAX_BISTABLE_EXTENSION));
+        }
+
+        bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);
+
     }
 
     public static void presetLift(pancakePresets position) {
@@ -127,7 +161,8 @@ public class Arm {
     }
 
     public static void lift(double pwr) {
-        pancakeRequestedPos = pancakeRequestedPos + (0.25*pwr);
+        pancakeRequestedPos = pancakeRequestedPos + (0.25 * pwr);
         pancakePID.setReference(pancakeRequestedPos, CANSparkMax.ControlType.kPosition);
     }
+
 }
