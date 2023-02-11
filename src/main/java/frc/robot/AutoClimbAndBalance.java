@@ -29,47 +29,58 @@ public class AutoClimbAndBalance extends AutoBaseClass {
     @Override
     public void tick() {
         double currentPitch = RobotGyro.pitch();
-        SmartDashboard.putNumber("Owens Program", getCurrentStep());
+        SmartDashboard.putNumber("Climb Balance Step", getCurrentStep());
         if (isRunning()) {
             // if (counter == 0)
             //     DriveAuto.driveInches(6, 0, .5);
-            switch (getCurrentStep()) {
-                case 0 :
-                    DriveAuto.driveInches(90, 0, .5);
-                    break;
-                case 50 :  
-                    DriveAuto.driveInches(45, 0, .5);
-                    break; 
-                case 500 :  
-                    DriveAuto.driveInches(-90, 0, .5);
-                    break;   
-                case 1000 :  
-                    DriveAuto.driveInches(-30, 90, .5);
-                    break; 
-                case 1500 :  
-                    DriveAuto.driveInches(1 ,0, .5);
-                    break;
+            
+            counter++;
+
+            DriveAuto.tick();
+            SmartDashboard.putNumber("Auto Balance Counter", counter);
+            if(bob>0)
+                bob--;
+            if (Math.abs(currentPitch) < .5) {
+                SmartDashboard.putNumber("Stop Count", stopCount++);
+                // DriveTrain.stopDriveAndTurnMotors();
+            } else
+            {
+                // move relative to pitch angle   signum returns -1 or 1 based on sign of currentPitch
+                if (bob==0) {
+                    // DriveAuto.driveInches(6 * Math.signum((currentPitch)), 0, .3);                
+                    DriveAuto.driveInches(-6  * Math.signum((currentPitch)), 0, .5); 
+                    bob =20;               
+                    SmartDashboard.putNumber("Auto Drive Call", dacount++);
+               }
+
             }
-            advanceStep();
+            // switch (getCurrentStep()) {
+            //     case 0 :
+            //         DriveAuto.driveInches(16, 0, .5);
+            //         break;
+            //     case 20 :  
+            //         DriveAuto.driveInches(12, 0, .5);
+            //         break; 
+            //     case 40 :  
+            //         DriveAuto.driveInches(12, 0, .5);
+            //         break;   
+            //     case 60 :  
+            //         DriveAuto.driveInches(12, 0, .5);
+            //         break;   
+            //     case 80 :  
+            //         DriveAuto.driveInches(12, 0, .5);
+            //         break;   
+            //     case 90 :  
+            //         DriveAuto.driveInches(12, 0, .5);
+            //         break;   
+            //     case 140:  
+            //         DriveAuto.driveInches(-48, 0, .5);
+            //         break; 
+               
+            // }
+            // advanceStep();
 
-            // counter++;
-
-            // DriveAuto.tick();
-            // SmartDashboard.putNumber("Auto Balance Counter", counter);
-            // if(bob>0)
-            //     bob--;
-            // if (Math.abs(currentPitch) < .5) {
-            //     SmartDashboard.putNumber("Stop Count", stopCount++);
-            //     // DriveTrain.stopDriveAndTurnMotors();
-            // } else
-            // {
-            //     // move relative to pitch angle   signum returns -1 or 1 based on sign of currentPitch
-            //     if (bob==0) {
-            //         // DriveAuto.driveInches(6 * Math.signum((currentPitch)), 0, .3);                
-            //         DriveAuto.driveInches(-6  * Math.signum((currentPitch)), 0, .5); 
-            //         bob =20;               
-            //         SmartDashboard.putNumber("Auto Drive Call", dacount++);
-            //    }
+          
 
             // }
              

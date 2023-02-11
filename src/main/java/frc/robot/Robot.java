@@ -64,7 +64,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putString("Alliance Decided", DriverStation.getAlliance().toString());
         compressor.enableAnalog(100, 120);
 
-        RobotGyro.init();
         Claw.init();
 
         Calibration.loadSwerveCalibration();
@@ -84,17 +83,21 @@ public class Robot extends TimedRobot {
         setupAutoChoices();
         mAutoProgram = new AutoDoNothing();
 
+        RobotGyro.init();
+
     }
 
     @Override
     public void teleopInit() {
         mAutoProgram.stop();
-      
+        RobotGyro.reset();
+        
         DriveTrain.stopDriveAndTurnMotors();
         DriveTrain.allowTurnEncoderReset();
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
         VisionPlacer.init();
+        Arm.reset();
         // VisionElements.init();
     }
 
@@ -113,7 +116,7 @@ public class Robot extends TimedRobot {
             Claw.openClaw();
         }
         if (gamepad1.getBButton()){
-            Claw.closeClaw();
+           // Claw.closeClaw();
             mAutoProgram = new AutoClimbAndBalance(); 
             mAutoProgram.start();
 
@@ -164,8 +167,13 @@ public class Robot extends TimedRobot {
         }
         if(gamepad2.getRightBumper())
             Arm.presetLift(pancakePresets.PICKUP_CUBE);
-        if(gamepad2.getLeftTriggerAxis()>0.1)
-            Arm.lift(gamepad2.getRightX());
+        //if(gamepad2.getLeftTriggerAxis()>0.1)
+
+        if (gamepad2.getLeftBumper()) {
+            Arm.overrideExtend(gamepad2.getRightX());
+        } else
+            Arm.extend(gamepad2.getRightX());
+        
         SmartDashboard.putBoolean("Can see stuff", stuffDelete);
 
 
@@ -241,6 +249,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.updateValues();
 
         DriveAuto.tick();
+        Arm.tick();
 
 
          // Sets the PID values based on input from the SmartDashboard
@@ -270,6 +279,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
         SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
         SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
+        SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
         SmartDashboard.putNumber("Roll", RobotGyro.roll());
         SmartDashboard.putNumber("Yaw", RobotGyro.yaw());
     }
@@ -277,7 +287,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
 
-        // RobotGyro.reset();
+        RobotGyro.reset();
 
         DriveTrain.stopDriveAndTurnMotors();
         DriveTrain.allowTurnEncoderReset();
