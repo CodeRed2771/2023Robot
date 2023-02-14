@@ -170,9 +170,9 @@ public class Robot extends TimedRobot {
         //if(gamepad2.getLeftTriggerAxis()>0.1)
 
         if (gamepad2.getLeftBumper()) {
-            Arm.overrideExtend(gamepad2.getRightX());
+            Arm.overrideExtend(gamepad2.getRightY());
         } else
-            Arm.extend(gamepad2.getRightX());
+            Arm.extend(gamepad2.getRightY());
         
         SmartDashboard.putBoolean("Can see stuff", stuffDelete);
 
@@ -194,9 +194,9 @@ public class Robot extends TimedRobot {
             mAutoProgram.tick();
         }
 
-        if (mAutoProgram.isRunning() && Math.abs(gamepad2.getRightY()) > 0.2) {
-            mAutoProgram.stop();
-        }
+        //if (mAutoProgram.isRunning() && Math.abs(gamepad2.getRightY()) > 0.2) {
+        //    mAutoProgram.stop();
+        //}
 
         // DRIVER CONTROL MODE
         // Issue the drive command using the parameters from

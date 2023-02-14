@@ -120,7 +120,7 @@ public class Arm {
     }
 
     public static void extend(double pwr) {
-        bistableRequestedPos = bistableRequestedPos + (3 * pwr);
+        bistableRequestedPos = bistableRequestedPos + (4.5 * pwr);
         
         if (bistableRequestedPos < minExtension) 
             bistableRequestedPos = minExtension;
