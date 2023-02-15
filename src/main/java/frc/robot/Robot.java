@@ -104,14 +104,20 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        SmartDashboard.putNumber("Camera Tran Length", VisionPlacer.camPoseY());
-        SmartDashboard.putNumber("Bot Pose Lenght", VisionPlacer.botPoseLength());
-        SmartDashboard.putNumber("Test Z", VisionPlacer.botPoseZ());
-        SmartDashboard.putNumber("Depth Offset Calculated", AutoAprilTagAlign.depthOffset);
-        SmartDashboard.putNumber("Center Offset Based on angle", AutoAprilTagAlign.centerOffset);
-        SmartDashboard.putNumber("Bot Pose Width", VisionPlacer.botPoseWidth());
-        SmartDashboard.putNumber("Camera Tran Width", VisionPlacer.camPoseX());
-        SmartDashboard.putNumber("Angle for X", VisionPlacer.getXAngleOffset());
+        // SmartDashboard.putNumber("Camera Tran Length", VisionPlacer.camPoseY());
+        // SmartDashboard.putNumber("Bot Pose Lenght", VisionPlacer.botPoseLength());
+        // SmartDashboard.putNumber("Test Z", VisionPlacer.botPoseZ());
+        // SmartDashboard.putNumber("Depth Offset Calculated", AutoAprilTagAlign.depthOffset);
+        // SmartDashboard.putNumber("Center Offset Based on angle", AutoAprilTagAlign.centerOffset);
+        // SmartDashboard.putNumber("Bot Pose Width", VisionPlacer.botPoseWidth());
+        // SmartDashboard.putNumber("Camera Tran Width", VisionPlacer.camPoseX());
+        // SmartDashboard.putNumber("Angle for X", VisionPlacer.getXAngleOffset());
+        SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseWidth());
+        VisionPlacer.periodic();
+        SmartDashboard.putNumber("Target Space Stability Test Average", 
+            VisionPlacer.botpose_targetspace.averageData()[0]);
+                    SmartDashboard.putNumber("Target Space Stability Test Total", 
+            VisionPlacer.botpose_targetspace.dataTota()[0]);
         if (gamepad2.getAButton()){
             Claw.openClaw();
         }
