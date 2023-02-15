@@ -29,6 +29,38 @@ import frc.robot.libs.HID.Gamepad;
 import pabeles.concurrency.IntOperatorTask.Max;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
+/* Gamepad 1:
+ * Drive - right and left sticks
+ * Deploy Intake and Run Intake - press right trigger to deploy and hold right trigger to run intake
+ * Reverse Intake - hold left bumper and hold right trigger
+ * Retract Intake - press right bumper
+ * Auto Climb and Balance - press B button
+ * Auto Align With Pole- press A button
+ * 
+ * Gamepad2:
+ * Extend Arm - right stick held downwards
+ * Retract Arm - right stick held upwards
+ * Move Arm Upwards - left stick held up
+ * Move Arm Downwards -  left stick held down
+ * 
+ * Open Claw - press A button
+ * Close Claw - press B button
+ * Flip Claw - press Left Trigger
+ * 
+ * Deploy Intake and Run Intake - press right trigger to deploy and hold right trigger to run intake
+ * Reverse Intake - hold down left bumper and right trigger at the same time
+ * 
+ * Strafe Robot Right - left stick held to the right
+ * Strafe Robot Left - left stick held to the left
+ * 
+ * Presently Unused Presets - X and Y buttons
+ * Move Live Floor Forwards - Dpad up button held down
+ * Move Live Floor Backwards - Dpad down button held down
+ * 
+ */
+
+
+
 public class Robot extends TimedRobot { 
 
     SendableChooser<String> autoChooser;
@@ -149,7 +181,7 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
             
         }
-        if(gamepad2.getRightBumper()){
+        if(gamepad2.getLeftTrigger()){
             if (!clawFlippedPress){
                 Claw.flip();
                 clawFlippedPress = true;
@@ -173,7 +205,21 @@ public class Robot extends TimedRobot {
             Arm.overrideExtend(gamepad2.getRightY());
         } else
             Arm.extend(gamepad2.getRightY());
-        
+        if (gamepad2.getRightShoulder().getAsBoolean()){
+            if (gamepad2.getLeftBumper()){
+                Intake.deploy();
+                Intake.reverse();
+                
+            } 
+            else{
+                Intake.deploy();
+                Intake.run();
+            }
+        }
+        if (gamepad2.getRightBumper()){
+            Intake.retract();
+        }
+
         SmartDashboard.putBoolean("Can see stuff", stuffDelete);
 
 
