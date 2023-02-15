@@ -225,6 +225,15 @@ public class Robot extends TimedRobot {
             driveRotAmount = driveRotAmount * .3;
         }
 
+        SmartDashboard.putNumber("DPad1X", getRawAxis(AXIS_DPAD_X));
+        SmartDashboard.putBoolean("DPadUp", gamepad1.getDPadUp());
+        SmartDashboard.putBoolean("DPadLeft", gamepad1.getDPadLeft());
+        SmartDashboard.putBoolean("DPadRight", gamepad1.getDPadRight());
+        SmartDashboard.putBoolean("DPadDown2", gamepad2.getDPadDown());
+        SmartDashboard.putBoolean("DPadUp2", gamepad2.getDPadUp());
+        SmartDashboard.putBoolean("DPadLeft2", gamepad2.getDPadLeft());
+        SmartDashboard.putBoolean("DPadRight2", gamepad2.getDPadRight());
+
         SmartDashboard.putNumber("Best Position", TurnPosition.getBestPosition());
         SmartDashboard.putNumber("Outputs FWD", driveFWDAmount);
         SmartDashboard.putNumber("Outputs Strafe", driveStrafeAmount);
