@@ -1,5 +1,9 @@
 package frc.robot; 
 
+
+
+import java.util.Arrays;
+
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
@@ -18,11 +22,95 @@ public class VisionPlacer {
         Retroreflective, 
         AprilTag,
     }
+
+    // Find Mean
+    // Find MAD
+    // Elimate all MAD > ____
+    // Find New Mean
+    // Trash data for longer than 10 s without seeing target
+    
+    // Input Data to track by Stirng 
+    static class dataAveraging {
+        static String data;
+        static double[] instanceData;
+        static double[][] trackedData = new double[20][6];
+        static double[] dataTotal = new double[6];
+        static double[] averageData = new double[6];
+        static double[] nullArray = {0,0,0,0,0,0};
+        static double[][] MAD_Data = new double[20][6];
+        static double[] gatheredDataLenght = new double[6];
+        static int round;
+        // latency 
+        public dataAveraging(String data) {
+            this.data = data;
+            round = 0;
+        }
+        
+        public static void periodic() {
+            instanceData = table.getEntry(data).getDoubleArray(new double[]{});
+            if (instanceData.length != 0){
+                if (round < 20) {
+                    round = 0;
+                    for(int dataValue = 0; dataValue < 6; dataValue++) {
+                        trackedData[round][dataValue] = instanceData[dataValue];
+                    }
+                } else {
+                    for(int dataValue = 0; dataValue < 6; dataValue++) {
+                        trackedData[round][dataValue] = instanceData[dataValue];
+                    }
+                    round++;
+                }
+                Arrays.fill(dataTotal, 0);
+                Arrays.fill(gatheredDataLenght, 0);
+                for(int dataValue = 0; dataValue < 6; dataValue++) {
+                    for(int runThrough = 0; runThrough < trackedData.length; runThrough++) {
+                        if (trackedData[runThrough][dataValue] != 0) {
+                            dataTotal[dataValue] += trackedData[runThrough][dataValue];
+                            gatheredDataLenght[dataValue] ++;
+                        }
+                    }
+                }
+                for(int dataValue = 0; dataValue < 6; dataValue++) {
+                    averageData[dataValue] = dataTotal[dataValue]/gatheredDataLenght[dataValue];
+                }
+            }
+
+
+
+            
+        }
+
+        public static int roundsOfData() {
+            return trackedData.length;
+        }
+        
+        public static double[] averageData() {
+            if (averageData.length == 0) {
+                return nullArray;
+            } else {
+                return averageData;
+            }
+        }
+        public static double[] dataTota() {
+            if (dataTotal.length == 0) {
+                return nullArray;
+            } else {
+                return dataTotal;
+            }
+        }
+    }
+
+    
     static double[] botPose;
 
     public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         setAprilTagPipeline();
+    }
+    public static dataAveraging botpose_targetspace = new dataAveraging("botpose_targetspace");
+    
+    public static void periodic() {
+        dataAveraging.periodic();
     }
 
     private static void setPipeline(int pipeline) {
@@ -95,7 +183,7 @@ public class VisionPlacer {
     }
 
     public static void getBotPose() {
-        botPose = table.getEntry("botpose").getDoubleArray(new double[]{});
+        botPose = table.getEntry("botpose_targetspace").getDoubleArray(new double[]{});
     }
 
     public static double botPoseYaw() {
