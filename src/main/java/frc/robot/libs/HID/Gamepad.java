@@ -63,24 +63,41 @@ public class Gamepad extends XboxController {
      * Logitech Game Controller Dpad
      */
 
+    // public boolean getDPadLeft() {
+    //     double x = getDPadX();
+    //     return (x < -0.5);
+    // }
+
+    // public boolean getDPadRight() {
+    //     double x = getDPadX();
+    //     return (x > 0.5);
+    // }
+
+    // public boolean getDPadUp() {
+    //     double y = getDPadY();
+    //     return (y < -0.5);
+    // }
+
+    // public boolean getDPadDown() {
+    //     double y = getDPadY();
+    //     return (y > 0.5);
+    // }
+
     public boolean getDPadLeft() {
-        double x = getDPadX();
-        return (x < -0.5);
+        int dPadValue = getPOV();
+        return(dPadValue == 270) || (dPadValue == 315) || (dPadValue == 225);
     }
-
     public boolean getDPadRight() {
-        double x = getDPadX();
-        return (x > 0.5);
+        int dPadValue = getPOV();
+        return(dPadValue == 90) || (dPadValue == 135) || (dPadValue == 45);
     }
-
     public boolean getDPadUp() {
-        double y = getDPadY();
-        return (y < -0.5);
+        int dPadValue = getPOV();
+        return(dPadValue == 0) || (dPadValue == 45) || (dPadValue == 315);
     }
-
     public boolean getDPadDown() {
-        double y = getDPadY();
-        return (y > 0.5);
+        int dPadValue = getPOV();
+        return(dPadValue == 180) || (dPadValue == 225) || (dPadValue == 135);
     }
 
     /**

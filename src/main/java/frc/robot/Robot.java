@@ -230,7 +230,6 @@ public class Robot extends TimedRobot {
             Intake.retract();
         }
 
-        SmartDashboard.putBoolean("Can see stuff", stuffDelete);
 
 
         SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
@@ -280,6 +279,11 @@ public class Robot extends TimedRobot {
             driveStrafeAmount = driveStrafeAmount * .3;
             driveRotAmount = driveRotAmount * .3;
         }
+
+        SmartDashboard.putBoolean("DPadUp", gamepad1.getDPadUp());
+        SmartDashboard.putBoolean("DPadLeft", gamepad1.getDPadLeft());
+        SmartDashboard.putBoolean("DPadRight", gamepad1.getDPadRight());
+        SmartDashboard.putBoolean("DPadDown", gamepad1.getDPadDown());
 
         SmartDashboard.putNumber("Best Position", TurnPosition.getBestPosition());
         SmartDashboard.putNumber("Outputs FWD", driveFWDAmount);
