@@ -33,30 +33,45 @@ public class VisionPlacer {
     static class dataAveraging {
         static String data;
         static double[] instanceData;
-        static double[][] trackedData = new double[20][6];
+        static double[][] trackedData = new double[6][20];
         static double[] dataTotal = new double[6];
         static double[] averageData = new double[6];
         static double[] nullArray = {0,0,0,0,0,0};
-        static double[][] MAD_Data = new double[20][6];
+        static double[][] MAD_Data = new double[6][20];
         static double[] gatheredDataLenght = new double[6];
         static int round;
+        static boolean gettingSomewhere = false;
         // latency 
         public dataAveraging(String data) {
             this.data = data;
             round = 0;
         }
-        
+        public static void init() {
+            Arrays.fill(trackedData[0],0);
+            Arrays.fill(trackedData[1],0);
+            Arrays.fill(trackedData[2],0);
+            Arrays.fill(trackedData[3],0);
+            Arrays.fill(trackedData[4],0);
+            Arrays.fill(trackedData[5],0);
+            Arrays.fill(dataTotal,0);
+            Arrays.fill(averageData,0);
+            Arrays.fill(gatheredDataLenght,0);
+        }
         public static void periodic() {
             instanceData = table.getEntry(data).getDoubleArray(new double[]{});
             if (instanceData.length != 0){
-                if (round < 20) {
+                if (round >= 20) {
                     round = 0;
                     for(int dataValue = 0; dataValue < 6; dataValue++) {
-                        trackedData[round][dataValue] = instanceData[dataValue];
+                        if (dataValue > 3) {
+                              trackedData[dataValue][round] = instanceData[dataValue]* 39.3701;
+                        } else {
+                            trackedData[dataValue][round] = instanceData[dataValue]* 39.3701;
+                        }
                     }
                 } else {
                     for(int dataValue = 0; dataValue < 6; dataValue++) {
-                        trackedData[round][dataValue] = instanceData[dataValue];
+                        trackedData[dataValue][round] = instanceData[dataValue];
                     }
                     round++;
                 }
@@ -64,9 +79,12 @@ public class VisionPlacer {
                 Arrays.fill(gatheredDataLenght, 0);
                 for(int dataValue = 0; dataValue < 6; dataValue++) {
                     for(int runThrough = 0; runThrough < trackedData.length; runThrough++) {
-                        if (trackedData[runThrough][dataValue] != 0) {
-                            dataTotal[dataValue] += trackedData[runThrough][dataValue];
+                        if (trackedData[dataValue][runThrough] != 0) {
+                            dataTotal[dataValue] += Math.abs(trackedData[dataValue][runThrough]);
                             gatheredDataLenght[dataValue] ++;
+                            
+                        } else {
+                            gettingSomewhere = true;
                         }
                     }
                 }
@@ -75,13 +93,10 @@ public class VisionPlacer {
                 }
             }
 
-
-
-            
         }
 
-        public static int roundsOfData() {
-            return trackedData.length;
+        public double roundsOfData() {
+            return gatheredDataLenght[0];
         }
         
         public static double[] averageData() {
@@ -98,20 +113,29 @@ public class VisionPlacer {
                 return dataTotal;
             }
         }
+        public static boolean gotSomewhere() {
+            return gettingSomewhere;
+        }
     }
 
     
     static double[] botPose;
 
+    public static dataAveraging botpose_targetspace = new dataAveraging("botpose_targetspace");
     public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         setAprilTagPipeline();
+        botpose_targetspace.init();
     }
-    public static dataAveraging botpose_targetspace = new dataAveraging("botpose_targetspace");
     
     public static void periodic() {
         dataAveraging.periodic();
     }
+
+
+
+
+
 
     private static void setPipeline(int pipeline) {
 		NetworkTableEntry pipelineEntry = table.getEntry("pipeline");
@@ -304,4 +328,5 @@ public class VisionPlacer {
     public static double getDepth() {
         return 2;
     }
+
 }

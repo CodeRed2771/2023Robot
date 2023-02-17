@@ -144,12 +144,16 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putNumber("Bot Pose Width", VisionPlacer.botPoseWidth());
         // SmartDashboard.putNumber("Camera Tran Width", VisionPlacer.camPoseX());
         // SmartDashboard.putNumber("Angle for X", VisionPlacer.getXAngleOffset());
-        SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseWidth());
+        SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
         VisionPlacer.periodic();
         SmartDashboard.putNumber("Target Space Stability Test Average", 
             VisionPlacer.botpose_targetspace.averageData()[0]);
-                    SmartDashboard.putNumber("Target Space Stability Test Total", 
+        SmartDashboard.putNumber("Target Space Stability Test Total", 
             VisionPlacer.botpose_targetspace.dataTota()[0]);
+        SmartDashboard.putNumber("Target Space Stability Test Rounds", 
+            VisionPlacer.botpose_targetspace.roundsOfData());
+        SmartDashboard.putBoolean("Target Space Stability Test Getting Somewhere", 
+            VisionPlacer.botpose_targetspace.gotSomewhere());
         if (gamepad2.getAButton()){
             Claw.openClaw();
         }
@@ -187,7 +191,7 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
             
         }
-        if(gamepad2.getLeftTrigger()){
+        if(gamepad2.getLeftTriggerAxis() > .5){
             if (!clawFlippedPress){
                 Claw.flip();
                 clawFlippedPress = true;
