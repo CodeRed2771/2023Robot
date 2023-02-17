@@ -187,14 +187,14 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
             
         }
-        if(gamepad2.getLeftTrigger()){
-            if (!clawFlippedPress){
-                Claw.flip();
-                clawFlippedPress = true;
-            } 
-        } else{
-            clawFlippedPress = false;
-        }
+        // if(gamepad2.getLeftTrigger()){
+        //     if (!clawFlippedPress){
+        //         Claw.flip();
+        //         clawFlippedPress = true;
+        //     } 
+        // } else{
+        //     clawFlippedPress = false;
+        // }
         if(gamepad2.getDPadUp())
             //Arm.presetExtend(bistablePresets.RETRACTED);
         if(gamepad2.getDPadDown()) {
@@ -226,7 +226,6 @@ public class Robot extends TimedRobot {
             Intake.retract();
         }
 
-        SmartDashboard.putBoolean("Can see stuff", stuffDelete);
 
 
         SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
@@ -277,14 +276,10 @@ public class Robot extends TimedRobot {
             driveRotAmount = driveRotAmount * .3;
         }
 
-        SmartDashboard.putNumber("DPad1X", getRawAxis(AXIS_DPAD_X));
         SmartDashboard.putBoolean("DPadUp", gamepad1.getDPadUp());
         SmartDashboard.putBoolean("DPadLeft", gamepad1.getDPadLeft());
         SmartDashboard.putBoolean("DPadRight", gamepad1.getDPadRight());
-        SmartDashboard.putBoolean("DPadDown2", gamepad2.getDPadDown());
-        SmartDashboard.putBoolean("DPadUp2", gamepad2.getDPadUp());
-        SmartDashboard.putBoolean("DPadLeft2", gamepad2.getDPadLeft());
-        SmartDashboard.putBoolean("DPadRight2", gamepad2.getDPadRight());
+        SmartDashboard.putBoolean("DPadDown", gamepad1.getDPadDown());
 
         SmartDashboard.putNumber("Best Position", TurnPosition.getBestPosition());
         SmartDashboard.putNumber("Outputs FWD", driveFWDAmount);
