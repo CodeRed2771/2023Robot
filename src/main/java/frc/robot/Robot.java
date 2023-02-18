@@ -218,12 +218,12 @@ public class Robot extends TimedRobot {
         if (gamepad2.getRightShoulder().getAsBoolean()){
             if (gamepad2.getLeftBumper()){
                 Intake.deploy();
-                Intake.reverse(0.5);
+                Intake.reverse(0.75);
                 
             } 
             else{
                 Intake.deploy();
-                Intake.run(0.5);
+                Intake.run(0.75);
             }
         }
         if (gamepad2.getRightBumper()){
