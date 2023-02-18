@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.bistablePresets;
-import frc.robot.Arm.pancakePresets;
+import frc.robot.Arm.shoulderPresets;
 import frc.robot.AutoBaseClass.PlacePositions;
 import frc.robot.VisionPlacer.LimelightOn;
 import frc.robot.libs.HID.Gamepad;
@@ -208,7 +208,7 @@ public class Robot extends TimedRobot {
             stuffDelete = false;
         }
         if(gamepad2.getRightBumper())
-            Arm.presetLift(pancakePresets.PICKUP_CUBE);
+            Arm.presetLift(shoulderPresets.PICKUP_CUBE);
         //if(gamepad2.getLeftTriggerAxis()>0.1)
 
         if (gamepad2.getLeftBumper()) {
