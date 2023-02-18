@@ -4,8 +4,6 @@ package frc.robot;
 
 import java.util.Arrays;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance; 
@@ -23,101 +21,112 @@ public class VisionPlacer {
         AprilTag,
     }
 
-    // Find Mean
-    // Find MAD
-    // Elimate all MAD > ____
-    // Find New Mean
-    // Trash data for longer than 10 s without seeing target
-    
-    // Input Data to track by Stirng 
     static class dataAveraging {
         static String data;
-        static double[] instanceData;
-        static double[][] trackedData = new double[6][20];
-        static double[] dataTotal = new double[6];
-        static double[] averageData = new double[6];
-        static double[] nullArray = {0,0,0,0,0,0};
-        static double[][] MAD_Data = new double[6][20];
-        static double[] gatheredDataLenght = new double[6];
-        static int round;
-        static boolean gettingSomewhere = false;
-        // latency 
         public dataAveraging(String data) {
             this.data = data;
-            round = 0;
         }
+
+        // Data Instantiation 
+        // Arrays 
+         static double instanceData[] = new double[6];
+         static double gatheredData[][] = new double[6][50];
+         static double dataTotal[] = new double[6];
+         static double averagedData[] = new double[6];
+         static final double sanityCheckRange[] = {360, 180, 100, 120, 120, 180};
+         static final double adjustCheckRange[] = {10, 200, 200, 100, 100, 100};
+         static final double nullArray[] = {0, 0, 0, 0, 0,0};
+
+        // Signle Data
+         static int numberOfNonZeros = 0; 
+         static int cycle = 0;
+         static boolean wild = false;
+
+        // Init (Reset)
         public static void init() {
-            Arrays.fill(trackedData[0],0);
-            Arrays.fill(trackedData[1],0);
-            Arrays.fill(trackedData[2],0);
-            Arrays.fill(trackedData[3],0);
-            Arrays.fill(trackedData[4],0);
-            Arrays.fill(trackedData[5],0);
-            Arrays.fill(dataTotal,0);
-            Arrays.fill(averageData,0);
-            Arrays.fill(gatheredDataLenght,0);
+            numberOfNonZeros = 0;
+            wild = false;
+            Arrays.fill(gatheredData[0], 0);
+            Arrays.fill(gatheredData[5], 0);
+            Arrays.fill(gatheredData[1], 0);
+            Arrays.fill(gatheredData[2], 0);
+            Arrays.fill(gatheredData[3], 0);
+            Arrays.fill(gatheredData[4], 0);
         }
+        // Perodic
         public static void periodic() {
             instanceData = table.getEntry(data).getDoubleArray(new double[]{});
-            if (instanceData.length != 0){
-                if (round >= 20) {
-                    round = 0;
-                    for(int dataValue = 0; dataValue < 6; dataValue++) {
-                        if (dataValue > 3) {
-                              trackedData[dataValue][round] = instanceData[dataValue]* 39.3701;
-                        } else {
-                            trackedData[dataValue][round] = instanceData[dataValue]* 39.3701;
-                        }
-                    }
-                } else {
-                    for(int dataValue = 0; dataValue < 6; dataValue++) {
-                        trackedData[dataValue][round] = instanceData[dataValue];
-                    }
-                    round++;
-                }
-                Arrays.fill(dataTotal, 0);
-                Arrays.fill(gatheredDataLenght, 0);
+            if (instanceData.length != 0) { // !null
+                // Basic check
+                wild = false;
                 for(int dataValue = 0; dataValue < 6; dataValue++) {
-                    for(int runThrough = 0; runThrough < trackedData.length; runThrough++) {
-                        if (trackedData[dataValue][runThrough] != 0) {
-                            dataTotal[dataValue] += Math.abs(trackedData[dataValue][runThrough]);
-                            gatheredDataLenght[dataValue] ++;
-                            
-                        } else {
-                            gettingSomewhere = true;
+                    if(instanceData[dataValue] > sanityCheckRange[dataValue] 
+                        || instanceData[dataValue] < -sanityCheckRange[dataValue]){
+                            wild = true;
+                    } 
+                }
+                // Ajust check
+                if(cycle >= 2) {
+                    for(int dataValue = 0; dataValue < 6; dataValue++) {
+                        if(Math.abs(instanceData[dataValue]-averagedData[dataValue]) > adjustCheckRange[dataValue]) {
+                            instanceData[dataValue] = averagedData[dataValue] + Math.signum(instanceData[dataValue]-averagedData[dataValue])*adjustCheckRange[dataValue];
                         }
                     }
                 }
-                for(int dataValue = 0; dataValue < 6; dataValue++) {
-                    averageData[dataValue] = dataTotal[dataValue]/gatheredDataLenght[dataValue];
+                // Stash Data 
+                if (wild == false){
+                    if (cycle >= 50) {
+                        cycle = 0;
+                        for(int dataValue = 0; dataValue < 6; dataValue++) {
+                            gatheredData[dataValue][cycle] = instanceData[dataValue];
+                        }
+                    } else {
+                        for(int dataValue = 0; dataValue < 6; dataValue++) {
+                            gatheredData[dataValue][cycle] = instanceData[dataValue];
+                        }
+                        cycle++;
+                    }
+                    
+                    // Total number of NonZero Data
+                    numberOfNonZeros = 0;
+                    for(int i = 0; i < 50; i ++) {
+                        if (gatheredData[0][i] != 0) {
+                            numberOfNonZeros++;
+                        }
+                    }
+    
+                    // Total Data
+                    Arrays.fill(dataTotal, 0);
+                    for(int dataValue = 0; dataValue < 6; dataValue++) {
+                        for(int runThrough = 0; runThrough < 50; runThrough++) {
+                            dataTotal[dataValue] += gatheredData[dataValue][runThrough];
+                        }   
+                    }
+    
+                    // Find Average 
+                    for(int dataValue = 0; dataValue < 6; dataValue++) {
+                        averagedData[dataValue] = dataTotal[dataValue]/numberOfNonZeros;
+                    }
                 }
+
             }
-
         }
-
-        public double roundsOfData() {
-            return gatheredDataLenght[0];
-        }
-        
-        public static double[] averageData() {
-            if (averageData.length == 0) {
+        // Getters 
+        public static double[] averagedData() {
+            if (averagedData.length == 0) {
                 return nullArray;
             } else {
-                return averageData;
+                return averagedData;
             }
         }
-        public static double[] dataTota() {
-            if (dataTotal.length == 0) {
+        public static double[] dataTotal() {
+            if (averagedData.length == 0) {
                 return nullArray;
             } else {
                 return dataTotal;
             }
         }
-        public static boolean gotSomewhere() {
-            return gettingSomewhere;
-        }
     }
-
     
     static double[] botPose;
 
@@ -209,7 +218,6 @@ public class VisionPlacer {
     public static void getBotPose() {
         botPose = table.getEntry("botpose_targetspace").getDoubleArray(new double[]{});
     }
-
     public static double botPoseYaw() {
         getBotPose();
         if (botPose.length == 0) {
@@ -255,7 +263,7 @@ public class VisionPlacer {
         if (botPose.length == 0) {
             return 0;
         } else {
-            return botPose[0] *39.3701;
+            return botPose[0]*39.3701;
         }
     }
 

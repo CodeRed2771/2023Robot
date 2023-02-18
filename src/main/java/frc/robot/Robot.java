@@ -116,26 +116,30 @@ public class Robot extends TimedRobot {
         mAutoProgram = new AutoDoNothing();
 
         RobotGyro.init();
+        VisionPlacer.init();
 
     }
 
     @Override
     public void teleopInit() {
-        mAutoProgram.stop();
+        mAutoProgram.stop();        
         RobotGyro.reset();
         
         DriveTrain.stopDriveAndTurnMotors();
         DriveTrain.allowTurnEncoderReset();
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
-        VisionPlacer.init();
         Arm.reset();
         // VisionElements.init();
     }
 
     @Override
     public void teleopPeriodic() {
-
+        if(gamepad2.getXButton()) {
+            VisionPlacer.setAprilTagPipeline();
+        } else if (gamepad2.getYButton()) {
+            VisionPlacer.setRetroreflectivePipeline();
+        }
         // SmartDashboard.putNumber("Camera Tran Length", VisionPlacer.camPoseY());
         // SmartDashboard.putNumber("Bot Pose Lenght", VisionPlacer.botPoseLength());
         // SmartDashboard.putNumber("Test Z", VisionPlacer.botPoseZ());
@@ -145,15 +149,7 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putNumber("Camera Tran Width", VisionPlacer.camPoseX());
         // SmartDashboard.putNumber("Angle for X", VisionPlacer.getXAngleOffset());
         SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
-        VisionPlacer.periodic();
-        SmartDashboard.putNumber("Target Space Stability Test Average", 
-            VisionPlacer.botpose_targetspace.averageData()[0]);
-        SmartDashboard.putNumber("Target Space Stability Test Total", 
-            VisionPlacer.botpose_targetspace.dataTota()[0]);
-        SmartDashboard.putNumber("Target Space Stability Test Rounds", 
-            VisionPlacer.botpose_targetspace.roundsOfData());
-        SmartDashboard.putBoolean("Target Space Stability Test Getting Somewhere", 
-            VisionPlacer.botpose_targetspace.gotSomewhere());
+        
         if (gamepad2.getAButton()){
             Claw.openClaw();
         }
@@ -172,25 +168,25 @@ public class Robot extends TimedRobot {
             VisionPlacer.setLED(LimelightOn.On);
         }
         //up,right,down,left
-        if(gamepad2.getYButton()){
-            mAutoProgram = new DebugDrive(0);
-            mAutoProgram.start();
-        }
-        if(gamepad2.getBButton()){
-            mAutoProgram = new DebugDrive(1);
-            mAutoProgram.start();
+        // if(gamepad2.getYButton()){
+        //     mAutoProgram = new DebugDrive(0);
+        //     mAutoProgram.start();
+        // }
+        // if(gamepad2.getBButton()){
+        //     mAutoProgram = new DebugDrive(1);
+        //     mAutoProgram.start();
             
-        }
-        if(gamepad2.getAButton()){
-            mAutoProgram = new DebugDrive(2);
-            mAutoProgram.start();
+        // }
+        // if(gamepad2.getAButton()){
+        //     mAutoProgram = new DebugDrive(2);
+        //     mAutoProgram.start();
             
-        }
-        if(gamepad2.getXButton()){
-            mAutoProgram = new DebugDrive(3);
-            mAutoProgram.start();
+        // }
+        // if(gamepad2.getXButton()){
+        //     mAutoProgram = new DebugDrive(3);
+        //     mAutoProgram.start();
             
-        }
+        // }
         if(gamepad2.getLeftTriggerAxis() > .5){
             if (!clawFlippedPress){
                 Claw.flip();
@@ -307,6 +303,16 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         SmartDashboard.updateValues();
+        SmartDashboard.putNumber("Limelight Yaw", VisionPlacer.botPoseYaw());
+        SmartDashboard.putNumber("Limelight Roll", VisionPlacer.botPoseRoll());
+        SmartDashboard.putNumber("Limelight Pitch", VisionPlacer.botPosePitch());
+        SmartDashboard.putNumber("Limelight Width", VisionPlacer.botPoseWidth());
+        SmartDashboard.putNumber("Limelight Lenght", VisionPlacer.botPoseLength());
+        SmartDashboard.putNumber("Limelight Z", VisionPlacer.botPoseZ());
+        VisionPlacer.periodic();
+        SmartDashboard.putNumber("Limelight Average Testing Normal", VisionPlacer.botPoseLength());
+        SmartDashboard.putNumber("Limelight Average Testing", VisionPlacer.botpose_targetspace.averagedData()[0]*39.3701);
+        SmartDashboard.putNumber("Limelight Average Testing Total", VisionPlacer.botpose_targetspace.dataTotal()[0]*39.3701);
 
         DriveAuto.tick();
         Arm.tick();
