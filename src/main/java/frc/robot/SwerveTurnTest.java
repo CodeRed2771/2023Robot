@@ -68,7 +68,7 @@ public class SwerveTurnTest {
 
 	public void move(double amt) {
 		targetPos += (amt / 10);
-		turnPID.setReference(targetPos, ControlType.kPosition );
+		//2/18 commented out to remove errors   turnPID.setReference(targetPos, ControlType.kPosition );
 	}
 
 	public void setPosA() {
@@ -80,7 +80,7 @@ public class SwerveTurnTest {
 	}
 
 	public void setPosOrig() {
-		turnPID.setReference(turnZeroPos, ControlType.kPosition );
+		//2/18 commented out to remove errors   turnPID.setReference(turnZeroPos, ControlType.kPosition );
 	}
 
 	public double getTurnRelativePosition() {
@@ -220,7 +220,7 @@ public class SwerveTurnTest {
 		
 		}
 		SmartDashboard.putNumber("TURN CALL " + mModuleID, turnPos);
-		turnPID.setReference(turnPos, ControlType.kPosition );
+		//2/18 commented out to remove errors    turnPID.setReference(turnPos, ControlType.kPosition );
 		
 	}
 
