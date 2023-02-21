@@ -97,6 +97,7 @@ public class Robot extends TimedRobot {
         compressor.enableAnalog(100, 120);
 
         Claw.init();
+        LiveBottom.init();
 
         Calibration.loadSwerveCalibration();
         if (Calibration.isPracticeBot()) 
