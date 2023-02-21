@@ -4,9 +4,14 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Servo;
+
 public class LiveBottom {
     private static CANSparkMax LBmotor;
     private static final int MAX_LIVE_BOTTOM_CURRENT = 25;
+
+    private static Servo LBGate;
+
 
     private static int dir = 1;
 
@@ -31,6 +36,9 @@ public class LiveBottom {
 
         LBmotor.setSmartCurrentLimit(MAX_LIVE_BOTTOM_CURRENT);
         LBmotor.setIdleMode(IdleMode.kBrake);
+
+        LBGate = new Servo(Wiring.LIVE_BOTTOM_GATE_CHANNEL_ID);
+        LBGate.set(0);
 
     }
 
@@ -78,6 +86,19 @@ public class LiveBottom {
                 break;
         }
         
+    }
+
+
+    public static void openGate(){
+        LBGate.set(1);
+    }
+
+    public static void closeGate(){
+        LBGate.set(-1);
+    }
+
+    public static double getGatePos() {
+        return LBGate.get();
     }
 
 

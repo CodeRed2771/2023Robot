@@ -37,4 +37,9 @@ public class Wiring {
 	public static final int DRIVE_PDP_PORT = 1;
 
 
+	//PWM ports.
+    public static final int CLAW_CHANNEL_ID = 1;
+	public static final int LIVE_BOTTOM_GATE_CHANNEL_ID = 2;
+
+
 }
