@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Servo;
 
+
 public class Claw {
 
     private static DoubleSolenoid claw;
@@ -13,7 +14,7 @@ public class Claw {
     public static void init() {
        
         claw = new DoubleSolenoid(PneumaticsModuleType.REVPH, Wiring.CLAW_FORWARD, Wiring.CLAW_REVERSE);
-        wrist = new Servo(1);
+        wrist = new Servo(Wiring.CLAW_CHANNEL_ID);
         wrist.set(0);
         position = 0;
 
