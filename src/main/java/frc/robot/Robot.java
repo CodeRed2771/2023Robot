@@ -416,6 +416,8 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         if (mAutoProgram.isRunning()) {
             mAutoProgram.tick();
+            Arm.tick();
+            
         }
         showDashboardInfo();
     }
