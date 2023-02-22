@@ -312,7 +312,6 @@ public class Robot extends TimedRobot {
         VisionPlacer.periodic();
         SmartDashboard.putNumber("Limelight Average Testing Normal", VisionPlacer.botPoseLength());
         SmartDashboard.putNumber("Limelight Average Testing", VisionPlacer.botpose_targetspace.averagedData()[0]*39.3701);
-        SmartDashboard.putNumber("Limelight Average Testing Total", VisionPlacer.botpose_targetspace.dataTotal()[0]*39.3701);
 
         DriveAuto.tick();
         Arm.tick();
