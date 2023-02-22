@@ -21,7 +21,6 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
     public void start(boolean autoPlace){
         super.start(autoPlace);
         wasAligned = false;
-        angleOffset = 0;
     }
 
     public void stop() {
