@@ -20,7 +20,6 @@ public class Wiring {
 	public static final int INTAKE_SOLENOID_STOW = 6;
 	public static final int INTAKE_SOLENOID_EXTENDED = 7;
 
-
 	/**
 	 * DIO ID PORTS
 	 */

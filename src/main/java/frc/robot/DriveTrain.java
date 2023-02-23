@@ -11,10 +11,10 @@ public class DriveTrain {
     public static void init(String driveMotorType) {
         
         if (driveMotorType.equals("NEO")) {
-            moduleA = new SwerveModuleNEO(Calibration.DT_A_DRIVE_ID, Calibration.DT_A_TURN_ID, Calibration.getTurnZeroPos('A'), 'A'); // Front right
-            moduleB = new SwerveModuleNEO(Calibration.DT_B_DRIVE_ID, Calibration.DT_B_TURN_ID, Calibration.getTurnZeroPos('B'), 'B'); // Back left
-            moduleC = new SwerveModuleNEO(Calibration.DT_C_DRIVE_ID, Calibration.DT_C_TURN_ID, Calibration.getTurnZeroPos('C'), 'C'); // Back right
-            moduleD = new SwerveModuleNEO(Calibration.DT_D_DRIVE_ID, Calibration.DT_D_TURN_ID, Calibration.getTurnZeroPos('D'), 'D'); // Front left
+            moduleA = new SwerveModuleNEO(Calibration.DT_A_DRIVE_ID, Calibration.DT_A_TURN_ID, Wiring.TURN_ABS_ENC_A, Calibration.getTurnZeroPos('A'), 'A'); // Front right
+            moduleB = new SwerveModuleNEO(Calibration.DT_B_DRIVE_ID, Calibration.DT_B_TURN_ID, Wiring.TURN_ABS_ENC_B, Calibration.getTurnZeroPos('B'), 'B'); // Back left
+            moduleC = new SwerveModuleNEO(Calibration.DT_C_DRIVE_ID, Calibration.DT_C_TURN_ID, Wiring.TURN_ABS_ENC_C, Calibration.getTurnZeroPos('C'), 'C'); // Back right
+            moduleD = new SwerveModuleNEO(Calibration.DT_D_DRIVE_ID, Calibration.DT_D_TURN_ID, Wiring.TURN_ABS_ENC_D, Calibration.getTurnZeroPos('D'), 'D'); // Front left
         } else {
             moduleA = new SwerveModuleFalcon(Calibration.DT_A_DRIVE_ID, Calibration.DT_A_TURN_ID, Wiring.TURN_ABS_ENC_A, Calibration.getTurnZeroPos('A'), 'A'); // Front right
             moduleB = new SwerveModuleFalcon(Calibration.DT_B_DRIVE_ID, Calibration.DT_B_TURN_ID, Wiring.TURN_ABS_ENC_B, Calibration.getTurnZeroPos('B'), 'B'); // Back left
@@ -31,7 +31,7 @@ public class DriveTrain {
     }
 
     // define robot dimensions. L=wheel base W=track width
-    private static final double l = 29, w = 18, r = Math.sqrt((l * l) + (w * w));
+    private static final double l = 19, w = 19, r = Math.sqrt((l * l) + (w * w));
 
     public static void resetTurnZeroToCurrentPos() {
    		// sets the known "zero position" to be whatever we're at now.

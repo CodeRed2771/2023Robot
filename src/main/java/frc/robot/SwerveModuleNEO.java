@@ -1,5 +1,8 @@
 package frc.robot;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
@@ -10,13 +13,17 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveModuleNEO implements SwerveModule {
     public CANSparkMax drive;
-    public WPI_TalonSRX turn;
+    public CANSparkMax turn;
     private final SparkMaxPIDController drivePID;
+	private final SparkMaxPIDController turnPID;
     private final RelativeEncoder driveEncoder;
+	private final RelativeEncoder turnEncoder;
+	private final DutyCycleEncoder turnAbsEncoder;
 	private char mModuleID;
 	private final int FULL_ROTATION = 4096;
 	private double TURN_P, TURN_I, TURN_D, TURN_F, DRIVE_P, DRIVE_I, DRIVE_D;
@@ -31,7 +38,7 @@ public class SwerveModuleNEO implements SwerveModule {
 	 * @param driveTalonID First I gotta know what talon we are using for driving
 	 * @param turnTalonID  Next I gotta know what talon we are using to turn
 	 */
-	public SwerveModuleNEO(int driveMotorID, int turnTalonID, double tZeroPos, char moduleID) {
+	public SwerveModuleNEO(int driveMotorID, int turnMotorID,  int turnAbsEncID, double tZeroPos, char moduleID) {
 
         drive = new CANSparkMax(driveMotorID, MotorType.kBrushless);
         drive.restoreFactoryDefaults();
@@ -66,33 +73,36 @@ public class SwerveModuleNEO implements SwerveModule {
         drivePID.setSmartMotionMaxVelocity(Calibration.DT_MM_VELOCITY, 0);
         drivePID.setSmartMotionMaxAccel(Calibration.DT_MM_ACCEL, 0);
 
-        // TURN
+         // TURN
+		turnAbsEncoder = new DutyCycleEncoder(turnAbsEncID);
 
-		turn = new WPI_TalonSRX(turnTalonID);
-		turn.configFactoryDefault(10);
+		turn = new CANSparkMax(turnMotorID, MotorType.kBrushless);
+		turn.restoreFactoryDefaults();
+       // turn.setOpenLoopRampRate(.5);
+        turn.setSmartCurrentLimit(30);
 
-		turnZeroPos = tZeroPos;
+        turn.setIdleMode(IdleMode.kBrake);
+		turn.setInverted(true);
 
-		turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0); // ?? don't know if zeros are right
+		turnEncoder = turn.getAlternateEncoder(8192);
+		turnEncoder.setInverted(true);
+		turnPID = turn.getPIDController();
+		turnPID.setFeedbackDevice(turnEncoder);
+
 		TURN_P = Calibration.getTurnP();
 		TURN_I = Calibration.getTurnI();
 		TURN_D = Calibration.getTurnD();
-		TURN_F = Calibration.getTurnF();
 		TURN_IZONE = Calibration.getTurnIZone();
+		TURN_F = Calibration.getTurnF();
 
 		setTurnPIDValues(TURN_P, TURN_I, TURN_D, TURN_IZONE, TURN_F);
-
-		turn.selectProfileSlot(0, 0);
-		turn.configClosedloopRamp(.1, 0);
 		
-	}
+        turnPID.setOutputRange(-1, 1);
 
-	// public void setFollower(int talonToFollow) {
-	// 	if (talonToFollow != 0) {
-	// 		drive.set(ControlMode.Follower, talonToFollow);
-	// 	} else
-	// 		drive.set(ControlMode.Velocity, 0);
-	// }
+		turn.burnFlash(); // save settings for power off
+
+		turnZeroPos = tZeroPos;
+	}
 
     public void setDriveMMAccel(final int accel) {
         drivePID.setSmartMotionMaxAccel(accel, 0);
@@ -101,10 +111,6 @@ public class SwerveModuleNEO implements SwerveModule {
     public void setDriveMMVelocity(final int velocity) {
         drivePID.setSmartMotionMaxVelocity(velocity, 0);
     }
-
-	// public double getDriveVelocity() {
-	// 	return drive.getSelectedSensorVelocity(0);
-	// }
 
 	/**
 	 * getModuleLetters
@@ -120,7 +126,7 @@ public class SwerveModuleNEO implements SwerveModule {
 	 * @param p value from -1 to 1
 	 */
 	public void setTurnPower(double p) {
-		this.turn.set(ControlMode.PercentOutput, p);
+		this.turn.set(p);
 	}
 
 	/**
@@ -138,7 +144,7 @@ public class SwerveModuleNEO implements SwerveModule {
 	 * @return turn encoder position
 	 */
 	public double getTurnRelativePosition() {
-		return turn.getSelectedSensorPosition(0);
+		return turnEncoder.getPosition();
 	}
 
 	/**
@@ -148,20 +154,32 @@ public class SwerveModuleNEO implements SwerveModule {
 	 * @return turn encoder absolute position
 	 */
 	public double getTurnAbsolutePosition() {
-		return (turn.getSensorCollection().getPulseWidthPosition() & 0xFFF) / 4096d;
+		double encPos = 0;
+
+		if (turnAbsEncoder.get() >= 0)
+			encPos = (turnAbsEncoder.get() - (int) turnAbsEncoder.get()); // e.g. 3.2345 - 3.000 = .2345
+		else
+			encPos = ((int)Math.abs( turnAbsEncoder.get()) + 1 - Math.abs(turnAbsEncoder.get())); // e.g. -3.7655  = .2345
+		// now invert it because the turn motors are inverted
+		if (encPos <= .5) 
+			encPos = 1 - encPos; // e.g .2 becomes .8
+		else
+			encPos = .5 - (encPos - .5); // e.g. .5 - (.8 - .5) = .2
+		
+		return encPos;
 	}
 
 	public double getTurnPosition() {
 		// returns the 0 to 1 value of the turn position
 		// uses the calibration value and the actual position
 		// to determine the relative turn position
-
-		double currentPos = getTurnAbsolutePosition();
-		if (currentPos - turnZeroPos > 0) {
-			return currentPos - turnZeroPos;
-		} else {
-			return (1 - turnZeroPos) + currentPos;
-		}
+		return getTurnPositionWithInRotation();
+		// double currentPos = getTurnAbsolutePosition();
+		// if (currentPos - turnZeroPos > 0) {
+		// 	return currentPos - turnZeroPos;
+		// } else {
+		// 	return (1 - turnZeroPos) + currentPos;
+		// }
 	}
 
 	public double getTurnAngle() {
@@ -185,11 +203,15 @@ public class SwerveModuleNEO implements SwerveModule {
 		resets the Quad Encoder based on absolute encoder
 	*/
 	public void resetTurnEncoder() {
-		double modOffset = 0;
+		double currentPos = 0;
+		double positionToSet = 0;
 		setTurnPower(0);
 		Timer.delay(.1); // give module time to settle down
-		modOffset = getTurnAbsolutePosition();
-		setEncPos((int) (calculatePositionDifference(modOffset, turnZeroPos) * 4096d));
+		currentPos = getTurnAbsolutePosition();
+		
+		positionToSet = calculatePositionDifference(currentPos, turnZeroPos);
+		setEncPos(100 + positionToSet);
+		// setEncPos(0.95);
 	}
 
 	private static double calculatePositionDifference(double currentPosition, double calibrationZeroPosition) {
@@ -209,7 +231,7 @@ public class SwerveModuleNEO implements SwerveModule {
 	}
 
 	public void setEncPos(double d) {
-		turn.getSensorCollection().setQuadraturePosition((int) d, 10);
+		turnEncoder.setPosition(d);
 	}
 
 	/**
@@ -224,21 +246,27 @@ public class SwerveModuleNEO implements SwerveModule {
 	}
 
 	public int getTurnRotations() {
-		return (int) (turn.getSelectedSensorPosition(0) / FULL_ROTATION);
+		// i have verified that the (int) typecast 
+		// does properly truncate off the decimal portion
+		// without any rounding.
+		return (int) turnEncoder.getPosition();
 	}
 
 	public double getTurnOrientation() {
-		return (turn.getSelectedSensorPosition(0) % FULL_ROTATION) / FULL_ROTATION;
-
-		// SmartDashboard.putNumber("module-a-" + this.hashCode(),
-		// turn.getSelectedSensorPosition(0));
-		// SmartDashboard.putNumber("module-b-" + this.hashCode(),
-		// turn.getSelectedSensorPosition(0) % FULL_ROTATION);
-		// SmartDashboard.putNumber("module-c-" + this.hashCode(),
-		// (turn.getSelectedSensorPosition(0) % FULL_ROTATION) / FULL_ROTATION);
-
+		if (turnEncoder.getPosition() >= 0) {
+			return turnEncoder.getPosition() - (int) turnEncoder.getPosition();	
+		} else
+			return turnEncoder.getPosition() + (int) turnEncoder.getPosition();
 	}
-
+	
+	public double getTurnPositionWithInRotation() {
+		double rawPos = 0;
+		if (turnEncoder.getPosition() >= 0) {
+			return turnEncoder.getPosition() - (int) turnEncoder.getPosition();	
+		} else
+		rawPos =  turnEncoder.getPosition() + (int) turnEncoder.getPosition();
+		return round(rawPos, 3);
+	}
     public double getCurrentDriveSetpoint() {
         return currentDriveSetpoint;
     }
@@ -258,114 +286,145 @@ public class SwerveModuleNEO implements SwerveModule {
 	}
 
 	public void setTurnPIDToSetPoint(double setpoint) {
-		turn.set(ControlMode.Position, setpoint);
+		turn.set(setpoint);
 	}
 
 	public void resetTurnReversedFlag() {
 		isReversed = false;
 	}
 
-	/**
+		/**
 	 * Set turn to pos from 0 to 1 using PID
 	 * 
 	 * @param reqPosition orientation to set to
 	 */
 	public void setTurnOrientation(double reqPosition, boolean optimize) {
-		int base = getTurnRotations() * FULL_ROTATION;
-		double currentTurnPosition = getTurnPosition();
-		double reverseTurnPosition = (reqPosition + 0.5) % 1.0;
-		double distanceToNormalPosition;
-		double distanceToReversePosition;
-		double closestTurnPosition = 0; // closest to currentTurnPosition
-		double turnRelativePosition = getTurnRelativePosition();
-		// double distanceToNormalPosition = Math.abs(currentTurnPosition - position);
-		// double distanceToReversePosition = Math.abs(currentTurnPosition -
-		// reverseTurnPosition);
+		// reqPosition - a value between 0 and 1 that indicates the rotational position
+		//               that we want the module to be facing.
+		// Output
+		//      The result of this method is to instruct the turn motor to go to a
+		//      position that will equal the desired position.  But that position might
+		//      be the opposite side of the circle if we can get there quicker and
+		//      just invert the drive direction.
+		//      
+		// Note
+		//		Since "zero" on the modules doesn't equal zero as the requested position
+		//      we need to take into consideration the specific zero position of this 
+		//		module.  In other words, if the straight ahead "zero" position of this 
+		//		module is a reading of ".250" and our requested position is "0", then we
+		//		actually have to go to ".250" to satisfy the requested position.
+		// 		The encoders actual position will be a number like 5.2332 or -5.3842
+		//		indicating that it's 5 revolutions in plus a partial revolution.
+		//		so the final turn instruction needs to be relative to that original 
+		//      reading otherwise the module will have to unwind a bunch of revolutions.
 
-		if (currentTurnPosition - reqPosition >= 0)
-			if (currentTurnPosition - reqPosition > .5)
-				distanceToNormalPosition = (1 - currentTurnPosition) + reqPosition;
-			else
-				distanceToNormalPosition = currentTurnPosition - reqPosition;
-		else if (reqPosition - currentTurnPosition > .5)
-			distanceToNormalPosition = (1 - reqPosition) + currentTurnPosition;
-		else
-			distanceToNormalPosition = reqPosition - currentTurnPosition;
+        boolean invertDrive = false;
+        double nearestPosInRotation = 0;
+        double newTargetPosition = 0;
+		double currentPosition = turnEncoder.getPosition();
 
-		// note - this part could be eliminated because the distance to reverse
-		// is a simple calculation based on the distance of the normal way.
-		// I believe it would be just 1 - distance to Normal
-		// if normal is .7, reverse would be .3 (1 - .7)
-		// if normal is .3, reverse would be .7 (1 - .3)
-		// this next line didn't work for some reason....
-		// distanceToReversePosition = 1 - distanceToNormalPosition;
-		if (currentTurnPosition - reverseTurnPosition >= 0)
-			if (currentTurnPosition - reverseTurnPosition > .5)
-				distanceToReversePosition = (1 - currentTurnPosition) + reverseTurnPosition;
-			else
-				distanceToReversePosition = currentTurnPosition - reverseTurnPosition;
-		else if (reverseTurnPosition - currentTurnPosition > .5)
-			distanceToReversePosition = (1 - reverseTurnPosition) + currentTurnPosition;
-		else
-			distanceToReversePosition = reverseTurnPosition - currentTurnPosition;
+		// I think it would be best to adjust our requested position first so that it  
+		// is compatible with our modules zero offset.  Then all calculations after that
+		// will be in actual encoder positions.
+
+		// reqPosition = round(reqPosition,3); round was crashing occasionally
+
+		//reqPosition += turnZeroPos;  
+		if (reqPosition > 0.99999) // we went past the rotation point
+			reqPosition -= 1;  // remove the extra rotation. change 1.2344 to .2344
+        double reqPositionReverse = (reqPosition >= .5 ? reqPosition - .5 : reqPosition + .5) ; // e.g. .8 becomes .3
+
+		// now we can check where we currently are and figure out the optimal new position 
+		// based on which of the two potential positions is closest.
+		double currentPosInRotation = getTurnPositionWithInRotation();  // this is where it is .
+		int currentRevolutions = getTurnRotations();  // remember this for later
+
+        // e.g. curpos = .125;  req = .800  rot=15
 
 		if (optimize) {
-			closestTurnPosition = distanceToReversePosition < distanceToNormalPosition ? reverseTurnPosition
-					: reqPosition;
-		} else
-			closestTurnPosition = reqPosition;
-
-		isReversed = (closestTurnPosition != reqPosition);
-
-		if (turnRelativePosition >= 0) {
-			if ((base + (closestTurnPosition * FULL_ROTATION)) - turnRelativePosition < -FULL_ROTATION / 2) {
-				base += FULL_ROTATION;
-			} else if ((base + (closestTurnPosition * FULL_ROTATION)) - turnRelativePosition > FULL_ROTATION / 2) {
-				base -= FULL_ROTATION;
+			// if the difference between the current position and the requested position is less than 
+			// a half rotation, then use that position, otherwise use the reverse position
+			if (Math.abs(currentPosInRotation - reqPosition) <= .25 || Math.abs(currentPosInRotation - (1 + reqPosition)) <= .25|| Math.abs((currentPosInRotation+1)-reqPosition) <=0.25) {
+				nearestPosInRotation = reqPosition;
+				invertDrive = false;
+			} else {
+				nearestPosInRotation = reqPositionReverse;
+				invertDrive = true;
 			}
-			
-			turn.set(ControlMode.Position, (((closestTurnPosition * FULL_ROTATION) + (base))));
 		} else {
-			if ((base - ((1 - closestTurnPosition) * FULL_ROTATION)) - turnRelativePosition < -FULL_ROTATION / 2) {
-				base += FULL_ROTATION;
-			} else if ((base - ((1 - closestTurnPosition) * FULL_ROTATION)) - turnRelativePosition > FULL_ROTATION
-					/ 2) {
-				base -= FULL_ROTATION;
-			}
-			
-			turn.set(ControlMode.Position, (base - (((1 - closestTurnPosition) * FULL_ROTATION))));
+			nearestPosInRotation = reqPosition;
+			invertDrive = false;
 		}
+        
+        
+        // now we need to determine if we need to change our rotation counter to get to 
+        // this new position
+        // if we're at .9 and need to get to .1 for instance, then we need to increment 
+        // our rotation count or the module will unwind backwards a revolution.
+
+        // e.g. curpos = .125;  nearest = .300  rot=15
+        // have to handle cur = .125 nearest = .99  rot=15 
+        // and have to handle negative rotations
+        double newRevolutions = currentRevolutions;
+        if (nearestPosInRotation < currentPosInRotation)   {
+            // our nearest is a smaller number so we may need to change revolutions
+            // if the difference is larger than .5 then we are rotating across
+            // the zero position, so we need to adjust revolutions
+            if (Math.abs(currentPosInRotation - nearestPosInRotation) > .5) {
+                // e.g cur = .9  near = .1 rot = 15, then new = 16.1
+                // e.g cur = .9  near = .1 rot = -15, then new = -16.1
+                newRevolutions = (currentRevolutions >= 0 ? currentRevolutions + 1 : currentRevolutions - 1);
+            } 
+        } else { 
+            // see if we're backing up across the zero and then reduce the revs
+            if (Math.abs(currentPosInRotation - nearestPosInRotation) > .5) {
+                // e.g cur = .9  near = .1 rot = 15, then new = 16.1
+                // e.g cur = .9  near = .1 rot = -15, then new = -16.1
+                newRevolutions = (currentRevolutions >= 0 ? currentRevolutions - 1 : currentRevolutions + 1);
+            } 
+        }
+
+        newTargetPosition = (newRevolutions >= 0 ? newRevolutions + nearestPosInRotation : newRevolutions - nearestPosInRotation);
+        
+		// newTargetPosition = round(newTargetPosition,3);  round was crashing occasionally
+
+		// Set drive inversion if needed
+		isReversed = invertDrive; // invert
+
+        // TURN
+        turnPID.setReference(newTargetPosition, ControlType.kPosition );
+
+		// if (mModuleID=='C') {
+		// 	SmartDashboard.putString("MC Cur Pos", String.format("%.3f", turnEncoder.getPosition()));
+		// 	SmartDashboard.putString("MC Req Pos", String.format("%.3f", reqPosition));
+		// 	SmartDashboard.putString("MC Nearest", String.format("%.3f", nearestPosInRotation));
+		// 	SmartDashboard.putString("MC NewTarget", String.format("%.3f", newTargetPosition));
+		// 	SmartDashboard.putBoolean("MC Reversed", isReversed);
+		// }
+
+		// look for error
+		// if (Math.abs(currentPosition - newTargetPosition) > .250) {
+		// 	SmartDashboard.putString("MOD " + mModuleID + " CALC ERROR", "Cur: " + String.format("%.3f", currentPosition) + " New: " + String.format("%.3f", newTargetPosition) + "Called:  " + String.format("%.3f", reqPosition));
+		// }
+
+        // System.out.println("");
+        // System.out.println("Current Rotations:" + currentRevolutions);
+        // System.out.println("Current Position: " + currentPosInRotation);
+        // System.out.println("Requested Pos:    " + reqPosition);
+        // System.out.println("Requested Pos Rev:" + reqPositionReverse);
+        // System.out.println("Nearest Pos:      " + nearestPosInRotation);
+		// System.out.println("NEW TARGET POS:   " + newTargetPosition);
+        // System.out.println("INVERT DRIVE:     " + invertDrive);
 	}
 
-	// private void showDetailsOnDash(int base, int turnRelative, double
-	// currentTurnPosition, double requestedPosition,
-	// double reverseTurnPos, double distNormal, double distReverse, double
-	// closestTurn, boolean optimize,
-	// int newSetpoint) {
-	// if (mModuleID == 'B') {
-	// System.out.println("CurrentTurn: " + currentTurnPosition + " Req Pos: " +
-	// requestedPosition + " dist Norm: "
-	// + distNormal + " dist Rev: " + distReverse);
-	// SmartDashboard.putNumber("AAA Base", base);
-	// SmartDashboard.putNumber("AAA turnRel", turnRelative);
-	// SmartDashboard.putNumber("AAA req pos", requestedPosition);
-	// SmartDashboard.putNumber("AAA cur pos", currentTurnPosition);
-	// SmartDashboard.putNumber("AAA revPos", reverseTurnPos);
-	// SmartDashboard.putNumber("AAA distnorm", distNormal);
-	// SmartDashboard.putNumber("AAA distrev", distReverse);
-	// SmartDashboard.putBoolean("AAA reversed", isReversed);
-	// SmartDashboard.putNumber("AAA closest", closestTurn);
-	// SmartDashboard.putNumber("AAA new set", newSetpoint);
-	// SmartDashboard.putBoolean("AAA optimize", optimize);
-	// }
-	// }
+
 
 	public double getTurnError() {
-		return turn.getClosedLoopError(0);
+		return 9999; // fix later
 	}
 
 	public double getTurnSetpoint() {
-		return turn.getClosedLoopTarget(0);
+		return 9999; // fix later
 	}
 
 	// public double getDriveError() {
@@ -400,19 +459,27 @@ public class SwerveModuleNEO implements SwerveModule {
     }
 
 	public void setTurnPIDValues(double p, double i, double d, double izone, double f) {
-		turn.config_kP(0, p, 0);
-        turn.config_kI(0, i, 0);
-        turn.config_IntegralZone(0,  izone);
-        turn.config_kD(0, d, 0);
-        turn.config_kF(0, f, 0);
+		turnPID.setP(p);
+        turnPID.setI(i);
+        turnPID.setIZone(izone);
+        turnPID.setD(d);
+        turnPID.setFF(f);
 	}
 
 	public double getTurnZero() {
 		return turnZeroPos;
 	}
-
+	
 	public void resetZeroPosToCurrentPos() {
 		
 	}
 
+	public static Double round(Double val, int scale) {
+		try {
+			return new BigDecimal(val.toString()).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+		} catch (Exception ex) {
+			return val;
+		}
+
+    }
 }

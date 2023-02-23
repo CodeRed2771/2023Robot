@@ -590,6 +590,6 @@ public class SwerveModuleFalcon implements SwerveModule {
 			return val;
 		}
 
-       }
+    }
 
 }

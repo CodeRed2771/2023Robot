@@ -197,7 +197,7 @@ public class Calibration {
         if (isPracticeBot())
             return .00115;  // zuni
         else    
-            return .3;  // competition
+            return .00115;  // competition was .3
     }
     public static double getDriveI() { 
         if (isPracticeBot())
@@ -238,7 +238,7 @@ public class Calibration {
         if (isPracticeBot()) 
             return(.39);  
         else
-            return(1230);
+            return(.659); //was 1230
     }
 
     // Loads the calibration numbers from the stored file which overrides the programmed values

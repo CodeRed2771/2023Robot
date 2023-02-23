@@ -97,13 +97,13 @@ public class Robot extends TimedRobot {
         compressor.enableAnalog(100, 120);
 
         Claw.init();
-        LiveBottom.init();
+        // LiveBottom.init();
 
         Calibration.loadSwerveCalibration();
         if (Calibration.isPracticeBot()) 
-            DriveTrain.init("NEO");
-        else
             DriveTrain.init("FALCON");
+        else
+            DriveTrain.init("NEO");
         
         DriveAuto.init();
         Arm.init();
