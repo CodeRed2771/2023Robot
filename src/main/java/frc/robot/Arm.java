@@ -31,7 +31,9 @@ public class Arm {
     public static enum shoulderPresets {
         PICKUP_CONE,
         PICKUP_CUBE,
-        PLACING
+        PLACING_GROUND,
+        PLACING_LOW,
+        PLACING_HIGH
     }
 
     public static double bistableRequestedPos = minExtension;
@@ -155,7 +157,11 @@ public class Arm {
             case PICKUP_CUBE:
                 shoulderRequestedPos = 100;//??
                 break;
-            case PLACING:
+            case PLACING_GROUND:
+                shoulderRequestedPos = 150;//??
+            case PLACING_LOW:
+                shoulderRequestedPos = 150;//??
+            case PLACING_HIGH:
                 shoulderRequestedPos = 150;//??
         }
     }
