@@ -26,7 +26,9 @@ public class LiveBottom {
         EJECT,
         SHUFFLE
     }
-
+/**
+     * to be called once at the start to setup everything needed to make this work
+     */
     public static void init() {
 
 
@@ -41,7 +43,9 @@ public class LiveBottom {
         LBGate.set(0);
 
     }
-
+/**
+     * to be called every tick to make shuffle and eject methods work
+     */
     public static void tick(){
         long currentTimeMillis = System.currentTimeMillis();
         switch (mode) {
@@ -89,61 +93,112 @@ public class LiveBottom {
         
     }
 
-
+/**
+     * open the gate
+     */
     public static void openGate(){
         LBGate.set(1);
     }
 
+    /**
+     * close the gate
+     */
     public static void closeGate(){
         LBGate.set(-1);
     }
-
+    /**
+     * get the pos of the gate server
+     * 
+     */
     public static double getGatePos() {
         return LBGate.get();
     }
 
-
+    /**
+     * turns motor(s) on and makes them go forward
+     * forward is toward the front of the robot
+     */
     public static void forward() {
         LBmotor.set(1);
         dir = 1;
     }
 
+    /**
+     * turns motor(s) on and makes them go backward
+     * backwarad is toward the back of the robot
+     */
     public static void backward() {
         LBmotor.set(-1);
         dir = -1;
     }
 
+    /**
+     * turns motor(s) off
+     */
     public static void off() {
         LBmotor.set(0);
     }
 
+    /**
+     * turns motor(s) on
+     * motor(s) go the last direction they were going before they were off
+     * default is forward
+     */
     public static void on() {
         LBmotor.set(dir);
     }
 
+    /**
+     * turns motor(s) on and makes them go 
+     * the opposite of the direction they were going
+     */
     public static void reverse() {
         LBmotor.set(dir*-1);
         dir *= -1; 
     }
 
+    /**
+     * get the stored Direction for the motor
+     */
     public static int getDirection() {
         return dir;
     }
 
+    /**
+     * get the current motor speed<p>
+     * -1 is backward<p>
+     * 1 is forward<p>
+     * 0 = stopped<p>
+     * if you want to know the stored direction for when the motor will when turned on
+     * then use the getDirection() method
+     */
     public static int getSpeed() {
         return (int)LBmotor.get();
     }
 
+    /**
+     * returns the mod the motors are in<p>
+     * 
+     * NONE = normal setting, the motor isn't doing any preprogrammed stuff<p>
+     * EJECT = motor is doing the program for ejecting a game piece out of the robot<p>
+     * SHUFFLE = motor is doing the program to shuffle a game piece around inside the robot so the arm can pick it up
+     */
     public static LBMode getMode(){
         return mode;
     }
 
+    /**
+     * starts the eject program to eject a game piece from the robot
+     */
+    
     public static void eject() {
         backward();
         eject = System.currentTimeMillis() + 1000;
         mode = LBMode.EJECT;
     }
-
+    /**
+     * starts the shuffle program to shuffle a game piece in the robot
+     */
     public static void shuffle() {
         shuffle = System.currentTimeMillis();
         mode = LBMode.SHUFFLE;
