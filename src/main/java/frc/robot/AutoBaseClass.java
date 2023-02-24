@@ -8,6 +8,7 @@ public abstract class AutoBaseClass {
     private boolean mIsRunning = false;
     private Direction mDirection;
     private boolean mAutoPlace = false;
+    public int placeNumInAuto = 2;
 
     public static enum PlacePositions {
         LeftConeHigh,
