@@ -53,8 +53,7 @@ public class AutoWings extends AutoBaseClass{
                     break;
                 case 10:
                     Claw.closeClaw();
-                    if(elementsPlaced < 0)
-                        Intake.deploy();
+                    Intake.deploy();
                     Arm.presetExtend(bistablePresets.RETRACTED);
                     Arm.presetLift(shoulderPresets.PICKUP_CUBE);
                     setTimerAndAdvanceStep(2000);
@@ -79,9 +78,17 @@ public class AutoWings extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 16:
+                    driveInches(10, 0, 1);
+                    setTimerAndAdvanceStep(750);
+                    break;
+                case 17:
+                    if(driveCompleted())
+                        advanceStep();
+                break;
+                case 18:
                     elementsPlaced++;
                     if(placeNumInAuto >= elementsPlaced)
-                        setStep(80);
+                        setStep(25);
                     else {
                         LiveBottom.backward();
                         driveInches(-250, 0, 1);
@@ -89,22 +96,29 @@ public class AutoWings extends AutoBaseClass{
                         Claw.openClaw();
                     }
                     break;
-                case 17:
-                    if(driveCompleted())
-                        advanceStep();
-                    break;
-                case 18:
-                    driveInches(-48*(elementsPlaced-1)+39, 90, 1);//39 is probably wrong number
-                    setTimerAndAdvanceStep(elementsPlaced*750);
-                    break;
                 case 19:
                     if(driveCompleted())
                         advanceStep();
                     break;
                 case 20:
+                    driveInches(-48*(elementsPlaced-1)+39, 90, 1);//39 is probably wrong number
+                    setTimerAndAdvanceStep(elementsPlaced*750);
+                    break;
+                case 21:
+                    if(driveCompleted())
+                        advanceStep();
+                    break;
+                case 22:
+                    driveInches(-250, 0, 1);
+                    setTimerAndAdvanceStep(4000);
+                case 23:
+                    if(driveCompleted())
+                        advanceStep();
+                    break;
+                case 24:
                     setStep(4);
                     break;
-                case 99:
+                case 25:
                     stop();
                     break;
             }
