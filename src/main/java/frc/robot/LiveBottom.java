@@ -59,6 +59,7 @@ public class LiveBottom {
                             backward();
                             shuffle = System.currentTimeMillis() + 1000;
                             shuffleStep = 2;
+                            break;
                         case 2:
                             forward();
                             shuffle = System.currentTimeMillis()+1000;
@@ -146,5 +147,6 @@ public class LiveBottom {
     public static void shuffle() {
         shuffle = System.currentTimeMillis();
         mode = LBMode.SHUFFLE;
+        shuffleStep = 1;
     }
 }
