@@ -42,6 +42,8 @@ public class LiveBottom {
         LBGate = new Servo(Wiring.LIVE_BOTTOM_GATE_CHANNEL_ID);
         LBGate.set(0);
 
+        mode = LBMode.NONE;
+
     }
 /**
      * to be called every tick to make shuffle and eject methods work
@@ -61,17 +63,17 @@ public class LiveBottom {
                     switch (shuffleStep) {
                         case 1:
                             backward();
-                            shuffle = System.currentTimeMillis() + 1000;
+                            shuffle = System.currentTimeMillis() + 1500;
                             shuffleStep = 2;
                             break;
                         case 2:
                             forward();
-                            shuffle = System.currentTimeMillis()+1000;
+                            shuffle = System.currentTimeMillis()+1500;
                             shuffleStep++;
                             break;
                         case 3:
                             backward();
-                            shuffle = System.currentTimeMillis()+1000;
+                            shuffle = System.currentTimeMillis()+1500;
                             shuffleStep++;
                             break;
                         case 4:
@@ -119,7 +121,7 @@ public class LiveBottom {
      * forward is toward the front of the robot
      */
     public static void forward() {
-        LBmotor.set(1);
+        LBmotor.set(.5);
         dir = 1;
     }
 
@@ -128,7 +130,7 @@ public class LiveBottom {
      * backwarad is toward the back of the robot
      */
     public static void backward() {
-        LBmotor.set(-1);
+        LBmotor.set(-.5);
         dir = -1;
     }
 

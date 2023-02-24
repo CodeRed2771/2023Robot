@@ -70,8 +70,8 @@ public class SwerveModuleNEO implements SwerveModule {
         drivePID.setFF(0);
         drivePID.setOutputRange(-1, 1);
 
-        drivePID.setSmartMotionMaxVelocity(Calibration.DT_MM_VELOCITY, 0);
-        drivePID.setSmartMotionMaxAccel(Calibration.DT_MM_ACCEL, 0);
+        drivePID.setSmartMotionMaxVelocity(Calibration.getDT_MM_VELOCITY(), 0);
+        drivePID.setSmartMotionMaxAccel(Calibration.getDT_MM_ACCEL(), 0);
 
          // TURN
 		turnAbsEncoder = new DutyCycleEncoder(turnAbsEncID);
