@@ -55,7 +55,11 @@ public class AutoCPlace1 extends AutoBaseClass{
                     break;
                 case 12:
                     driveInches(250, 0, 0.8);
+                    setTimerAndAdvanceStep(6000);
                 case 13:
+                    if(driveCompleted())
+                        advanceStep();
+                case 14:
                     stop();
                     break;
             }
