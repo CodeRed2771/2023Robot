@@ -8,7 +8,7 @@ public class Wiring {
 	 */
 
 	public static final int LIVE_BOTTOM_MOTOR_ID = 9;
-	public static final int AVAILABLE_MOTOR_ID = 10;
+	public static final int CLAW_MOTOR_ID = 10;
 	public static final int INTAKE_MOTOR_ID = 11;
 	public static final int SHOULDER_MOTOR = 13;
 	public static final int BISTABLE_MOTOR = 12;
