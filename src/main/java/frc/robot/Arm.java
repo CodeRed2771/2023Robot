@@ -17,9 +17,10 @@ public class Arm {
     private static SparkMaxPIDController bistablePID;
     private static final int MAX_BISTABE_CURRENT = 50;
     private static final int MAX_SHOULDER_CURRENT = 50;
-    private static double MAX_BISTABLE_EXTENSION = 320;
+    private static final double MAX_BISTABLE_EXTENSION = 320;
+    private final static double MAX_SHOULDER_TRAVEL = 380;
     private static double minExtension = 0;
-    private final static double MAX_SHOULDER_EXTENSION = 80;
+    private static double minShoulderPosition = 0;
     private final static double MAX_BISTABE_RETRACTION = 0;
     private final static double MAX_SHOULDER_RETRACTION = 0;//Unknown Values end
     public static enum bistablePresets {
@@ -37,7 +38,7 @@ public class Arm {
     }
 
     public static double bistableRequestedPos = minExtension;
-    public static double shoulderRequestedPos = 0;
+    public static double shoulderRequestedPos = minShoulderPosition;
 
     public static void init() {
 
@@ -97,6 +98,7 @@ public class Arm {
         bistableMotor.getEncoder().setPosition(0);
         bistableRequestedPos = 0;
         minExtension = 0;
+        minShoulderPosition = 0;
     }
 
     public static void tick() {
@@ -122,30 +124,33 @@ public class Arm {
     }
 
     public static void extend(double pwr) {
-        bistableRequestedPos = bistableRequestedPos + (4.5 * pwr);
+        if (Math.abs(pwr)>.05) {
+            bistableRequestedPos = bistableRequestedPos + (4.5 * pwr);
         
-        if (bistableRequestedPos < minExtension) 
-            bistableRequestedPos = minExtension;
-        if (bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION))  
-            bistableRequestedPos = (minExtension + MAX_BISTABLE_EXTENSION);
-
-        bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);
-        
+            if (bistableRequestedPos < minExtension) 
+                bistableRequestedPos = minExtension;
+            if (bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION))  
+                bistableRequestedPos = (minExtension + MAX_BISTABLE_EXTENSION);
+    
+            bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);        
+        }        
      }
 
     public static void overrideExtend(double pwr) {
-        
-        bistableRequestedPos = bistableRequestedPos + (3 * pwr);
+        if (Math.abs(pwr)>.05) {
+            pwr = pwr * .25;
+            bistableRequestedPos = bistableRequestedPos + (3 * pwr);
 
-        if (bistableRequestedPos < minExtension) {
-            minExtension = bistableRequestedPos;
-        }
-        // by pushing past the max extension, it actually adjusts the min position out.
-        if (bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION)) {
-            minExtension = minExtension + (bistableRequestedPos - (minExtension + MAX_BISTABLE_EXTENSION));
-        }
+            if (bistableRequestedPos < minExtension) {
+                minExtension = bistableRequestedPos;
+            }
+            // by pushing past the max extension, it actually adjusts the min position out.
+            if (bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION)) {
+                minExtension = minExtension + (bistableRequestedPos - (minExtension + MAX_BISTABLE_EXTENSION));
+            }
 
-        bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);
+            bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);
+        }
 
     }
 
@@ -167,31 +172,34 @@ public class Arm {
     }
 
     public static void lift(double pwr) {
-        shoulderRequestedPos = shoulderRequestedPos + (4.5 * pwr);
+        if (Math.abs(pwr)>.05) {
         
-        if (shoulderRequestedPos < minExtension) 
-            shoulderRequestedPos = minExtension;
-        if (shoulderRequestedPos > (minExtension + MAX_SHOULDER_EXTENSION))  
-            shoulderRequestedPos = (minExtension + MAX_SHOULDER_EXTENSION);
+            shoulderRequestedPos = shoulderRequestedPos + (3.5 * -pwr);
+            
+            if (shoulderRequestedPos < minShoulderPosition) 
+                shoulderRequestedPos = minShoulderPosition;
+            if (shoulderRequestedPos > (minShoulderPosition + MAX_SHOULDER_TRAVEL))  
+                shoulderRequestedPos = (minShoulderPosition + MAX_SHOULDER_TRAVEL);
 
-        shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
-        
+            shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+        }
      }
 
     public static void overrideLift(double pwr) {
-        
-        shoulderRequestedPos = shoulderRequestedPos + (pwr);
+        if (Math.abs(pwr)>.05) {
+            pwr = pwr * .25;
+            shoulderRequestedPos = shoulderRequestedPos + (-pwr);
 
-        if (shoulderRequestedPos < minExtension) {
-            minExtension = shoulderRequestedPos;
+            if (shoulderRequestedPos < minShoulderPosition) {
+                minShoulderPosition = shoulderRequestedPos;
+            }
+            // by pushing past the max extension, it actually adjusts the min position out.
+            if (shoulderRequestedPos > (minShoulderPosition + MAX_SHOULDER_TRAVEL)) {
+                minShoulderPosition = minShoulderPosition + (shoulderRequestedPos - (minShoulderPosition + MAX_SHOULDER_TRAVEL));
+            }
+
+            shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
         }
-        // by pushing past the max extension, it actually adjusts the min position out.
-        if (shoulderRequestedPos > (minExtension + MAX_SHOULDER_EXTENSION)) {
-            minExtension = minExtension + (shoulderRequestedPos - (minExtension + MAX_SHOULDER_EXTENSION));
-        }
-
-        shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
-
     }
 
 }

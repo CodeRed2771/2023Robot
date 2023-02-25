@@ -26,17 +26,36 @@ public class AutoCalibrator extends AutoBaseClass {
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
             case 0:
-                turnDegrees(360, 1);
-                // driveInches(120, 0, 1);
+                // turnDegrees(360, 1);
+                driveInches(60, 0, 1);
                 setTimerAndAdvanceStep(6000);
                 break;
             case 1:
-                if (turnCompleted()) {
+                if (driveCompleted()) {
                     advanceStep();
                 }
                 break;
             case 2:
-                stop();
+                setTimerAndAdvanceStep(3000);
+                break;
+            case 3:
+                break;
+            case 4:
+                driveInches(-60, 0, 1);
+                setTimerAndAdvanceStep(6000);
+                break;
+            case 5:
+                if (driveCompleted()) {
+                    advanceStep();
+                }
+                break;
+            case 6:
+                setTimerAndAdvanceStep(3000);
+                break;
+            case 7:
+                break;
+            case 8:
+                setStep(0);
                 break;
             }
         }

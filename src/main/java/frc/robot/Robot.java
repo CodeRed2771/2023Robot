@@ -96,17 +96,18 @@ public class Robot extends TimedRobot {
         SmartDashboard.putString("Alliance Decided", DriverStation.getAlliance().toString());
         compressor.enableAnalog(100, 120);
 
-        Claw.init();
-        LiveBottom.init();
-
+  
         Calibration.loadSwerveCalibration();
         if (Calibration.isPracticeBot()) 
-            DriveTrain.init("NEO");
-        else
             DriveTrain.init("FALCON");
+        else
+            DriveTrain.init("NEO");
         
+        Claw.init();
+        LiveBottom.init();
         DriveAuto.init();
         Arm.init();
+        Intake.init();
 
         SmartDashboard.putNumber("Current Position", 0);
         SmartDashboard.putNumber("New Position", 0);
@@ -168,26 +169,7 @@ public class Robot extends TimedRobot {
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.On);
         }
-        //up,right,down,left
-        // if(gamepad2.getYButton()){
-        //     mAutoProgram = new DebugDrive(0);
-        //     mAutoProgram.start();
-        // }
-        // if(gamepad2.getBButton()){
-        //     mAutoProgram = new DebugDrive(1);
-        //     mAutoProgram.start();
-            
-        // }
-        // if(gamepad2.getAButton()){
-        //     mAutoProgram = new DebugDrive(2);
-        //     mAutoProgram.start();
-            
-        // }
-        // if(gamepad2.getXButton()){
-        //     mAutoProgram = new DebugDrive(3);
-        //     mAutoProgram.start();
-            
-        // }
+ 
         if(gamepad2.getLeftTriggerAxis() > .5){
             if (!clawFlippedPress){
                 Claw.flip();
@@ -196,8 +178,11 @@ public class Robot extends TimedRobot {
         } else{
             clawFlippedPress = false;
         }
-        if(gamepad2.getDPadUp())
+        if(gamepad2.getDPadUp()){
             //Arm.presetExtend(bistablePresets.RETRACTED);
+            LiveBottom.shuffle();
+        }
+            
         if(gamepad2.getDPadDown()) {
             stuffDelete = true;
         }
@@ -210,24 +195,28 @@ public class Robot extends TimedRobot {
 
         if (gamepad2.getLeftBumper()) {
             Arm.overrideExtend(gamepad2.getRightY());
-        } else
+            Arm.overrideLift(gamepad2.getLeftY());
+        } else {
             Arm.extend(gamepad2.getRightY());
-        if (gamepad2.getRightShoulder().getAsBoolean()){
+            Arm.lift(gamepad2.getLeftY());
+        }
+
+        if (gamepad2.getRightTriggerAxis()>.2){
             if (gamepad2.getLeftBumper()){
                 Intake.deploy();
-                Intake.reverse(0.75);
+                Intake.reverse(1);
                 
             } 
             else{
                 Intake.deploy();
-                Intake.run(0.75);
+                Intake.run(1);
             }
-        }
+        } else
+            Intake.stop();
+
         if (gamepad2.getRightBumper()){
             Intake.retract();
         }
-
-
 
         SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
         // --------------------------------------------------
@@ -274,7 +263,7 @@ public class Robot extends TimedRobot {
         if (gamepad1.getRightBumper()) {  // slow mode
             driveFWDAmount = driveFWDAmount * .3;
             driveStrafeAmount = driveStrafeAmount * .3;
-            driveRotAmount = driveRotAmount * .3;
+            driveRotAmount = driveRotAmount * .2;
         }
 
         SmartDashboard.putBoolean("DPadUp", gamepad1.getDPadUp());
@@ -317,6 +306,7 @@ public class Robot extends TimedRobot {
 
         DriveAuto.tick();
         Arm.tick();
+        LiveBottom.tick();
 
 
          // Sets the PID values based on input from the SmartDashboard
@@ -334,9 +324,9 @@ public class Robot extends TimedRobot {
                     SmartDashboard.getNumber("TURN I ZONE", Calibration.getTurnIZone()),
                     SmartDashboard.getNumber("TURN F", Calibration.getTurnF()));
 
-            DriveTrain.setDriveMMAccel((int) SmartDashboard.getNumber("DRIVE MM ACCEL", Calibration.DT_MM_ACCEL));
+            DriveTrain.setDriveMMAccel((int) SmartDashboard.getNumber("DRIVE MM ACCEL", Calibration.getDT_MM_ACCEL()));
             DriveTrain.setDriveMMVelocity(
-                    (int) SmartDashboard.getNumber("DRIVE MM VELOCITY", Calibration.DT_MM_VELOCITY));
+                    (int) SmartDashboard.getNumber("DRIVE MM VELOCITY", Calibration.getDT_MM_VELOCITY()));
         }
         RobotGyro.position();
         // SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
@@ -462,7 +452,7 @@ public class Robot extends TimedRobot {
         // more controlled movement
         double adjustedAmt = 0;
 
-        if (Math.abs(rotateAmt) < .05) {
+        if (Math.abs(rotateAmt) < .08) {
             adjustedAmt = 0;
         } else {
             if (Math.abs(rotateAmt) < .5) {
