@@ -2,7 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoCommunity extends AutoBaseClass{
+public class AutoCPlace1 extends AutoBaseClass{
 
 	public void start() {
 		super.start();
