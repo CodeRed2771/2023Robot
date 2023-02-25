@@ -260,7 +260,7 @@ public class Robot extends TimedRobot {
             driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, true);
         }
 
-        if (gamepad1.getRightBumper()) {  // slow mode
+        if (gamepad1.getRightBumper() || Arm.shoulderRequestedPos > 20) {  // slow mode unknown values for shoulderRequestedPos
             driveFWDAmount = driveFWDAmount * .3;
             driveStrafeAmount = driveStrafeAmount * .3;
             driveRotAmount = driveRotAmount * .2;

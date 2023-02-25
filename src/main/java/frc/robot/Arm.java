@@ -17,6 +17,8 @@ public class Arm {
     private static SparkMaxPIDController bistablePID;
     private static final int MAX_BISTABE_CURRENT = 50;
     private static final int MAX_SHOULDER_CURRENT = 50;
+    private static final double MAX_BISTABLE_ROBOT_EXTENSION = 100;
+    private static final double MAX_BISTABLE_GROUND_EXTENSION = 200;
     private static final double MAX_BISTABLE_EXTENSION = 320;
     private final static double MAX_SHOULDER_TRAVEL = 380;
     private static double minExtension = 0;
@@ -64,6 +66,7 @@ public class Arm {
         bistablePID = bistableMotor.getPIDController();
         shoulderPID = shoulderMotor.getPIDController();
 
+        minExtension = 0;
         bistableRequestedPos = minExtension;
 
         //Setting PID
@@ -91,6 +94,8 @@ public class Arm {
 
         bistablePID.setSmartMotionAllowedClosedLoopError(0.5,0);
         shoulderPID.setSmartMotionAllowedClosedLoopError(0.5,0);
+
+        bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);
 
     }
 
@@ -129,9 +134,12 @@ public class Arm {
         
             if (bistableRequestedPos < minExtension) 
                 bistableRequestedPos = minExtension;
-            if (bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION))  
+            if (shoulderRequestedPos < 20 && bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION))  
+                bistableRequestedPos = (minExtension + MAX_BISTABLE_ROBOT_EXTENSION);
+            else if (shoulderRequestedPos < 80 && bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION))  
+                bistableRequestedPos = (minExtension + MAX_BISTABLE_EXTENSION-15);
+            else if (bistableRequestedPos > (minExtension + MAX_BISTABLE_GROUND_EXTENSION))  
                 bistableRequestedPos = (minExtension + MAX_BISTABLE_EXTENSION);
-    
             bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);        
         }        
      }

@@ -18,7 +18,7 @@ public class AutoPark extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0: 
-                    turnDegrees(5, 0.1);
+                    turnDegrees(1, 0);
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 1:

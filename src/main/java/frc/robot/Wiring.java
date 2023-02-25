@@ -15,8 +15,6 @@ public class Wiring {
 
 
 	// PCM Ports
-	public static final int CLAW_FORWARD = 2;
-	public static final int CLAW_REVERSE = 3;
 	public static final int INTAKE_SOLENOID_STOW = 6;
 	public static final int INTAKE_SOLENOID_EXTENDED = 7;
 
