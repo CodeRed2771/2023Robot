@@ -54,6 +54,7 @@ public class LiveBottom {
             case EJECT:
                 if(currentTimeMillis > eject){
                     off();
+                    closeGate();
                     mode = LBMode.NONE;
                 }
                 break;
@@ -190,18 +191,22 @@ public class LiveBottom {
     }
 
     /**
-     * starts the eject program to eject a game piece from the robot
+     * starts the eject program to eject a game piece from the robot<p>
+     * moves the belt around a bit and will open and close the gate
      */
     
     public static void eject() {
         backward();
+        openGate();
         eject = System.currentTimeMillis() + 1000;
         mode = LBMode.EJECT;
     }
     /**
-     * starts the shuffle program to shuffle a game piece in the robot
+     * starts the shuffle program to shuffle a game piece in the robot<p>
+     * this moves the belt around a bit and closes the gate
      */
     public static void shuffle() {
+        closeGate();
         shuffle = System.currentTimeMillis();
         mode = LBMode.SHUFFLE;
         shuffleStep = 1;

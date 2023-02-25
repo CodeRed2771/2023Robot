@@ -29,7 +29,14 @@ import frc.robot.libs.HID.Gamepad;
 import pabeles.concurrency.IntOperatorTask.Max;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
-/* Gamepad 1:
+/* 
+Buttons - LB , RB , X , Y , B , A , DPadR - right , DPadU - up , DPadL - left , DPadD - down , back , start 
+Fluid controls - R Trigger , L Trigger , X and Y right stick , X and Y left stick
+DPad = directional pad 
+
+
+
+Gamepad 1:
  * Drive - right and left sticks
  * Deploy Intake and Run Intake - press right trigger to deploy and hold right trigger to run intake
  * Reverse Intake - hold left bumper and hold right trigger
