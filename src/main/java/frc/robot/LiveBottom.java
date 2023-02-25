@@ -170,7 +170,7 @@ public class LiveBottom {
      * get the current motor speed<p>
      * -1 is backward<p>
      * 1 is forward<p>
-     * 0 = stopped<p>
+     * 0 is stopped<p>
      * if you want to know the stored direction for when the motor will when turned on
      * then use the getDirection() method
      */
@@ -179,7 +179,7 @@ public class LiveBottom {
     }
 
     /**
-     * returns the mod the motors are in<p>
+     * returns the mode the motors are in, it's best to not do any manual controls/methods when the robot is doing a preprogrammed thingy<p>
      * 
      * NONE = normal setting, the motor isn't doing any preprogrammed stuff<p>
      * EJECT = motor is doing the program for ejecting a game piece out of the robot<p>
