@@ -169,26 +169,7 @@ public class Robot extends TimedRobot {
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.On);
         }
-        //up,right,down,left
-        // if(gamepad2.getYButton()){
-        //     mAutoProgram = new DebugDrive(0);
-        //     mAutoProgram.start();
-        // }
-        // if(gamepad2.getBButton()){
-        //     mAutoProgram = new DebugDrive(1);
-        //     mAutoProgram.start();
-            
-        // }
-        // if(gamepad2.getAButton()){
-        //     mAutoProgram = new DebugDrive(2);
-        //     mAutoProgram.start();
-            
-        // }
-        // if(gamepad2.getXButton()){
-        //     mAutoProgram = new DebugDrive(3);
-        //     mAutoProgram.start();
-            
-        // }
+ 
         if(gamepad2.getLeftTriggerAxis() > .5){
             if (!clawFlippedPress){
                 Claw.flip();
@@ -235,11 +216,7 @@ public class Robot extends TimedRobot {
 
         if (gamepad2.getRightBumper()){
             Intake.retract();
-
-            
         }
-
-
 
         SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
         // --------------------------------------------------
@@ -286,7 +263,7 @@ public class Robot extends TimedRobot {
         if (gamepad1.getRightBumper()) {  // slow mode
             driveFWDAmount = driveFWDAmount * .3;
             driveStrafeAmount = driveStrafeAmount * .3;
-            driveRotAmount = driveRotAmount * .3;
+            driveRotAmount = driveRotAmount * .2;
         }
 
         SmartDashboard.putBoolean("DPadUp", gamepad1.getDPadUp());
@@ -475,7 +452,7 @@ public class Robot extends TimedRobot {
         // more controlled movement
         double adjustedAmt = 0;
 
-        if (Math.abs(rotateAmt) < .05) {
+        if (Math.abs(rotateAmt) < .08) {
             adjustedAmt = 0;
         } else {
             if (Math.abs(rotateAmt) < .5) {
