@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.bistablePresets;
 import frc.robot.Arm.shoulderPresets;
-
+//probably just want to use Caleb's
 public class AutoWings extends AutoBaseClass{
     int elementsPlaced = 0;
 
@@ -21,7 +21,7 @@ public class AutoWings extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    Claw.closeClaw();
+                    Claw.closeClawA();
                     setTimerAndAdvanceStep(250);
                     break;
                 case 1:
@@ -33,7 +33,7 @@ public class AutoWings extends AutoBaseClass{
                 case 3:
                     break;
                 case 4:
-                    Claw.closeClaw();
+                    Claw.closeClawA();
                     Arm.presetLift(shoulderPresets.PLACING_HIGH);
                     setTimerAndAdvanceStep(750);
                     break;
@@ -46,13 +46,13 @@ public class AutoWings extends AutoBaseClass{
                 case 7:
                     break;
                 case 8:
-                    Claw.openClaw();
+                    Claw.closeClawA();
                     setTimerAndAdvanceStep(750);
                     break;
                 case 9:
                     break;
                 case 10:
-                    Claw.closeClaw();
+                    Claw.closeClawA();
                     Intake.deploy();
                     Arm.presetExtend(bistablePresets.RETRACTED);
                     Arm.presetLift(shoulderPresets.PICKUP_CUBE);
@@ -93,7 +93,7 @@ public class AutoWings extends AutoBaseClass{
                         LiveBottom.backward();
                         driveInches(-250, 0, 1);
                         setTimerAndAdvanceStep(4000);
-                        Claw.openClaw();
+                        Claw.closeClawA();
                     }
                     break;
                 case 19:
