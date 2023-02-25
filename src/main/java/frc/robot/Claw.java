@@ -39,12 +39,13 @@ public class Claw {
         position = 0;
 
     }
-    public static void openClaw() {
-        clawCurrentCall = clawCalls.POWERED_OPEN;
+    public static void openClawTO() {
+        clawMotor.set(0.7);
     }
-    public static void tick() {
-
-
+    public static void closeClawTO() {
+        clawMotor.set(-0.7);
+    }
+    public static void tickAuto() {
         if(clawRecordedTicks < 1000 && clawCurrentCall == clawCalls.POWERED_OPEN) {
             clawMotor.set(0.7);
             clawRecordedTicks++;
@@ -58,8 +59,11 @@ public class Claw {
         }
     }
     
-    public static void closeClaw() {
+    public static void closeClawA() {
         clawCurrentCall = clawCalls.POWERED_CLOSED;
+    }
+    public static void openClawA() {
+        clawCurrentCall = clawCalls.POWERED_OPEN;
     }
 
     public static void flip() {
@@ -70,8 +74,4 @@ public class Claw {
         }
         wrist.set(position);
     }
-
-
-
 }
-
