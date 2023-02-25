@@ -9,7 +9,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance; 
 
 public class VisionPlacer {
-    private static NetworkTable table;
+    public static NetworkTable table;
 
     public static enum LimelightOn {
         On,
@@ -21,130 +21,38 @@ public class VisionPlacer {
         AprilTag,
     }
 
-    static class dataAveraging {
-        static String data;
-        public dataAveraging(String data) {
-            this.data = data;
-        }
-
-        // Data Instantiation 
-        // Arrays 
-         static double instanceData[] = new double[6];
-         static double gatheredData[][] = new double[6][50];
-         static double dataTotal[] = new double[6];
-         static double averagedData[] = new double[6];
-         static final double sanityCheckRange[] = {360, 180, 100, 120, 120, 180};
-         static final double adjustCheckRange[] = {10, 200, 200, 100, 100, 100};
-         static final double nullArray[] = {0, 0, 0, 0, 0,0};
-
-        // Signle Data
-         static int numberOfNonZeros = 0; 
-         static int cycle = 0;
-         static boolean wild = false;
-
-        // Init (Reset)
-        public static void init() {
-            numberOfNonZeros = 0;
-            wild = false;
-            Arrays.fill(gatheredData[0], 0);
-            Arrays.fill(gatheredData[5], 0);
-            Arrays.fill(gatheredData[1], 0);
-            Arrays.fill(gatheredData[2], 0);
-            Arrays.fill(gatheredData[3], 0);
-            Arrays.fill(gatheredData[4], 0);
-        }
-        // Perodic
-        public static void periodic() {
-            instanceData = table.getEntry(data).getDoubleArray(new double[]{});
-            if (instanceData.length != 0) { // !null
-                // Basic check
-                wild = false;
-                for(int dataValue = 0; dataValue < 6; dataValue++) {
-                    if(instanceData[dataValue] > sanityCheckRange[dataValue] 
-                        || instanceData[dataValue] < -sanityCheckRange[dataValue]){
-                            wild = true;
-                    } 
-                }
-                // Ajust check
-                if(cycle >= 2) {
-                    for(int dataValue = 0; dataValue < 6; dataValue++) {
-                        if(Math.abs(instanceData[dataValue]-averagedData[dataValue]) > adjustCheckRange[dataValue]) {
-                            instanceData[dataValue] = averagedData[dataValue] + Math.signum(instanceData[dataValue]-averagedData[dataValue])*adjustCheckRange[dataValue];
-                        }
-                    }
-                }
-                // Stash Data 
-                if (wild == false){
-                    if (cycle >= 50) {
-                        cycle = 0;
-                        for(int dataValue = 0; dataValue < 6; dataValue++) {
-                            gatheredData[dataValue][cycle] = instanceData[dataValue];
-                        }
-                    } else {
-                        for(int dataValue = 0; dataValue < 6; dataValue++) {
-                            gatheredData[dataValue][cycle] = instanceData[dataValue];
-                        }
-                        cycle++;
-                    }
-                    
-                    // Total number of NonZero Data
-                    numberOfNonZeros = 0;
-                    for(int i = 0; i < 50; i ++) {
-                        if (gatheredData[0][i] != 0) {
-                            numberOfNonZeros++;
-                        }
-                    }
-    
-                    // Total Data
-                    Arrays.fill(dataTotal, 0);
-                    for(int dataValue = 0; dataValue < 6; dataValue++) {
-                        for(int runThrough = 0; runThrough < 50; runThrough++) {
-                            dataTotal[dataValue] += gatheredData[dataValue][runThrough];
-                        }   
-                    }
-    
-                    // Find Average 
-                    for(int dataValue = 0; dataValue < 6; dataValue++) {
-                        averagedData[dataValue] = dataTotal[dataValue]/numberOfNonZeros;
-                    }
-                }
-
-            }
-        }
-        // Getters 
-        public static double[] averagedData() {
-            if (averagedData.length == 0) {
-                return nullArray;
-            } else {
-                return averagedData;
-            }
-        }
-        public static double[] dataTotal() {
-            if (averagedData.length == 0) {
-                return nullArray;
-            } else {
-                return dataTotal;
-            }
-        }
-    }
-    
     static double[] botPose;
 
     public static dataAveraging botpose_targetspace = new dataAveraging("botpose_targetspace");
+    public static dataAveraging botpose_wpired = new dataAveraging("botpose_wpired");
+    public static dataAveraging botpose_wpiblue = new dataAveraging("botpose_wpiblue");
+    public static dataAveraging botpose = new dataAveraging("botpose");
+    public static dataAveraging camerapose_targetspace = new dataAveraging("camerapose_targetspace");
+    public static dataAveraging targetpose_cameraspace = new dataAveraging("targetpose_cameraspace");
+    public static dataAveraging targetpose_robotspace = new dataAveraging("targetpose_robotspace");
+
     public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         setAprilTagPipeline();
         botpose_targetspace.init();
+        botpose_wpired.init();
+        botpose_wpiblue.init();
+        botpose.init();
+        camerapose_targetspace.init();
+        targetpose_robotspace.init();
+        targetpose_robotspace.init();
+
     }
     
     public static void periodic() {
-        dataAveraging.periodic();
+        botpose_targetspace.periodic();
+        botpose_wpired.periodic();
+        botpose_wpiblue.periodic();
+        botpose.periodic();
+        camerapose_targetspace.periodic();
+        targetpose_robotspace.periodic();
+        targetpose_robotspace.periodic();
     }
-
-
-
-
-
 
     private static void setPipeline(int pipeline) {
 		NetworkTableEntry pipelineEntry = table.getEntry("pipeline");
