@@ -16,7 +16,6 @@ public class Wiring {
 	// PCM Ports
 	public static final int INTAKE_SOLENOID_STOW = 13;
 	public static final int INTAKE_SOLENOID_EXTENDED = 15;
->>>>>>> 7950618 (General work)
 
 	/**
 	 * DIO ID PORTS

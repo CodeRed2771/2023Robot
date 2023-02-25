@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.bistablePresets;
 import frc.robot.Arm.shoulderPresets;
 
-public class AutoCPlace1 extends AutoBaseClass{
+public class AutoPlace3VROOOM extends AutoBaseClass{
 
 	public void start() {
 		super.start();
