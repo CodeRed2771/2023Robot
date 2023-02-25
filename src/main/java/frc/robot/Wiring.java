@@ -13,15 +13,14 @@ public class Wiring {
 	public static final int SHOULDER_MOTOR = 13;
 	public static final int BISTABLE_MOTOR = 12;
 
-
 	// PCM Ports
-	public static final int INTAKE_SOLENOID_STOW = 6;
-	public static final int INTAKE_SOLENOID_EXTENDED = 7;
+	public static final int INTAKE_SOLENOID_STOW = 13;
+	public static final int INTAKE_SOLENOID_EXTENDED = 15;
+>>>>>>> 7950618 (General work)
 
 	/**
 	 * DIO ID PORTS
 	 */
-
 	public static final int TURN_ABS_ENC_A = 5;
 	public static final int TURN_ABS_ENC_B = 6;
 	public static final int TURN_ABS_ENC_C = 7;
@@ -34,9 +33,8 @@ public class Wiring {
 	public static final int DRIVE_PDP_PORT = 1;
 
 
-	//PWM ports.
-    public static final int CLAW_CHANNEL_ID = 1;
-	public static final int LIVE_BOTTOM_GATE_CHANNEL_ID = 2;
-
+	// PWM/SERVO ports.
+    public static final int CLAW_CHANNEL_ID = 0;
+	public static final int LIVE_BOTTOM_GATE_CHANNEL_ID = 1;
 
 }

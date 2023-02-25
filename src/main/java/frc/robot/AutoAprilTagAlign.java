@@ -34,10 +34,8 @@ public class AutoAprilTagAlign extends AutoBaseClass{
     
     
 
-    public void start(int IDSwitch, PlacePositions positions) {
+    public void start() {
 		super.start();
-        this.IDSwitch = IDSwitch;
-        this.positions = positions;
         angle = 0;
 	}
 
@@ -81,7 +79,7 @@ public class AutoAprilTagAlign extends AutoBaseClass{
                         }
                         
                         driveInches(lenghtDisplacement, 90, .3);
-                        setTimerAndAdvanceStep(6000);
+                        setTimerAndAdvanceStep(3000);
                     } else {
                         setStep(5);
                     }

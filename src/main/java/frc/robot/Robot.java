@@ -60,6 +60,9 @@ Gamepad 1:
  * Strafe Robot Right - left stick held to the right
  * Strafe Robot Left - left stick held to the left
  * 
+ * LiveBottom forwards - Dpad down
+ * LiveBottom backwards - Dpad down plus Left Bumper
+ * 
  * Presently Unused Presets - X and Y buttons
  * Move Live Floor Forwards - Dpad up button held down
  * Move Live Floor Backwards - Dpad down button held down
@@ -172,7 +175,7 @@ public class Robot extends TimedRobot {
         if (gamepad1.getXButton()) {
             // VisionPlacer.setLED(LimelightOn.Off);
             mAutoProgram = new AutoAprilTagAlign();
-            mAutoProgram.start(1, PlacePositions.LeftConeHigh);
+            mAutoProgram.start();
         }
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.On);
@@ -192,11 +195,15 @@ public class Robot extends TimedRobot {
         }
             
         if(gamepad2.getDPadDown()) {
-            stuffDelete = true;
+            if(gamepad2.getLeftBumper())
+                LiveBottom.backward();
+            else   
+                LiveBottom.forward();
         }
         else {
-            stuffDelete = false;
+            LiveBottom.off();
         }
+
         if(gamepad2.getRightBumper())
             Arm.presetLift(shoulderPresets.PICKUP_CUBE);
         //if(gamepad2.getLeftTriggerAxis()>0.1)

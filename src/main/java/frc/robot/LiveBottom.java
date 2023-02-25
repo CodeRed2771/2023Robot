@@ -78,9 +78,9 @@ public class LiveBottom {
                             shuffleStep++;
                             break;
                         case 4:
-                            off();
                             shuffleStep = 0;
                             mode = LBMode.NONE;
+                            off();
                             break;
                     }
                 }
@@ -139,7 +139,8 @@ public class LiveBottom {
      * turns motor(s) off
      */
     public static void off() {
-        LBmotor.set(0);
+        if (mode == LBMode.NONE) // only stop it if it's not running a routine
+            LBmotor.set(0);
     }
 
     /**
