@@ -17,14 +17,12 @@ public class Arm {
     private static SparkMaxPIDController bistablePID;
     private static final int MAX_BISTABE_CURRENT = 50;
     private static final int MAX_SHOULDER_CURRENT = 50;
-    private static final double MAX_BISTABLE_ROBOT_EXTENSION = 100;
-    private static final double MAX_BISTABLE_GROUND_EXTENSION = 200;
+    private static final double MAX_BISTABLE_ROBOT_EXTENSION = 60;
+    private static final double MAX_BISTABLE_GROUND_EXTENSION = 120;
     private static final double MAX_BISTABLE_EXTENSION = 320;
     private final static double MAX_SHOULDER_TRAVEL = 380;
     private static double minExtension = 0;
     private static double minShoulderPosition = 0;
-    private final static double MAX_BISTABE_RETRACTION = 0;
-    private final static double MAX_SHOULDER_RETRACTION = 0;//Unknown Values end
     public static enum bistablePresets {
         RETRACTED,
         GROUND,
@@ -134,11 +132,11 @@ public class Arm {
         
             if (bistableRequestedPos < minExtension) 
                 bistableRequestedPos = minExtension;
-            if (shoulderRequestedPos < 20 && bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION))  
+            if (shoulderRequestedPos < 133 && bistableRequestedPos > (minExtension + MAX_BISTABLE_ROBOT_EXTENSION))  
                 bistableRequestedPos = (minExtension + MAX_BISTABLE_ROBOT_EXTENSION);
-            else if (shoulderRequestedPos < 80 && bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION))  
+            else if (shoulderRequestedPos < 190 && bistableRequestedPos > (minExtension + MAX_BISTABLE_GROUND_EXTENSION))  
                 bistableRequestedPos = (minExtension + MAX_BISTABLE_EXTENSION-15);
-            else if (bistableRequestedPos > (minExtension + MAX_BISTABLE_GROUND_EXTENSION))  
+            else if (bistableRequestedPos > (minExtension + MAX_BISTABLE_EXTENSION))  
                 bistableRequestedPos = (minExtension + MAX_BISTABLE_EXTENSION);
             bistablePID.setReference(bistableRequestedPos, CANSparkMax.ControlType.kPosition);        
         }        

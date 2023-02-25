@@ -20,7 +20,7 @@ public class AutoCPlace1 extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    Claw.closeClaw();
+                    Claw.closeClawA();
                     setTimerAndAdvanceStep(250);
                     break;
                 case 1:
@@ -43,12 +43,12 @@ public class AutoCPlace1 extends AutoBaseClass{
                 case 7:
                     break;
                 case 8:
-                    Claw.openClaw();
+                    Claw.openClawA();
                     setTimerAndAdvanceStep(750);
                 case 9:
                     break;
                 case 10:
-                    Claw.closeClaw();
+                    Claw.closeClawA();
                     Arm.presetExtend(bistablePresets.RETRACTED);
                     setTimerAndAdvanceStep(2000);
                 case 11:

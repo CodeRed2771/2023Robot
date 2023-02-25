@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
         
         if (gamepad2.getAButton()){
-            Claw.openClaw();
+            Claw.openClawTO();
         }
         if (gamepad1.getBButton()){
            // Claw.closeClaw();
