@@ -15,8 +15,8 @@ public class Arm {
     private static CANSparkMax bistableMotor;
     private static SparkMaxPIDController shoulderPID;
     private static SparkMaxPIDController bistablePID;
-    private static final int MAX_BISTABE_CURRENT = 50;
-    private static final int MAX_SHOULDER_CURRENT = 50;
+    private static final int MAX_BISTABE_CURRENT = 20;
+    private static final int MAX_SHOULDER_CURRENT = 20;
     private static final double MAX_BISTABLE_ROBOT_EXTENSION = 60;
     private static final double MAX_BISTABLE_GROUND_EXTENSION = 120;
     private static final double MAX_BISTABLE_EXTENSION = 320;
