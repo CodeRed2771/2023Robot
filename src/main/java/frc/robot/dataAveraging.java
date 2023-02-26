@@ -94,7 +94,7 @@ public class dataAveraging {
             }
 
         } else {
-            System.out.println("No table found");
+            // System.out.println("No table found");
         }
     }
     // Getters 

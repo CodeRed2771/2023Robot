@@ -20,13 +20,13 @@ public class Intake {
         intakeMotor.restoreFactoryDefaults();
         intakeMotor.setSmartCurrentLimit(MAX_INTAKE_CURRENT);
         intakeMotor.setIdleMode(IdleMode.kBrake);
-        deploySolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, Wiring.INTAKE_SOLENOID_EXTENDED, Wiring.INTAKE_SOLENOID_STOW);
 
+        deploySolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, Wiring.INTAKE_SOLENOID_EXTENDED, Wiring.INTAKE_SOLENOID_STOW);
 
     }
 
     public static void deploy() {
-        deploySolenoid.set(DoubleSolenoid.Value.kForward);
+        deploySolenoid.set(DoubleSolenoid.Value.kReverse);
     }
     
     public static void retract() { 

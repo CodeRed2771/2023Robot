@@ -36,15 +36,15 @@ DPad = directional pad
 
 
 
-Gamepad 1:
+GAMEPAD 1:
  * Drive - right and left sticks
  * Deploy Intake and Run Intake - press right trigger to deploy and hold right trigger to run intake
  * Reverse Intake - hold left bumper and hold right trigger
  * Retract Intake - press right bumper
  * Auto Climb and Balance - press B button
  * Auto Align With Pole- press A button
- * 
- * Gamepad2:
+
+GAMEPAD 2:
  * Extend Arm - right stick held downwards
  * Retract Arm - right stick held upwards
  * Move Arm Upwards - left stick held up
@@ -68,8 +68,6 @@ Gamepad 1:
  * Move Live Floor Backwards - Dpad down button held down
  * 
  */
-
-
 
 public class Robot extends TimedRobot { 
 
@@ -105,7 +103,6 @@ public class Robot extends TimedRobot {
         gamepad2 = new Gamepad(1);
         SmartDashboard.putString("Alliance Decided", DriverStation.getAlliance().toString());
         compressor.enableAnalog(100, 120);
-
   
         Calibration.loadSwerveCalibration();
         if (Calibration.isPracticeBot()) 
@@ -165,7 +162,11 @@ public class Robot extends TimedRobot {
         
         if (gamepad2.getAButton()){
             Claw.openClawTO();
-        }
+        } else if (gamepad2.getBButton()) 
+            Claw.closeClawTO();
+        else
+            Claw.stopClawTO();
+
         if (gamepad1.getBButton()){
            // Claw.closeClaw();
             mAutoProgram = new AutoClimbAndBalance(); 
