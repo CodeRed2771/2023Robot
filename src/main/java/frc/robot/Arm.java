@@ -105,6 +105,7 @@ public class Arm {
 
     public static void reset() {
         extendMotor.getEncoder().setPosition(0);
+        shoulderMotor.getEncoder().setPosition(0);
         extendRequestedPos = 0;
         minExtension = 0;
         minShoulderPosition = 0;
