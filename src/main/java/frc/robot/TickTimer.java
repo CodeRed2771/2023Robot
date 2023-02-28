@@ -5,11 +5,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class TickTimer {
     
     
-    static long[] ticks = new long[100];
+    static long[] ticks;
     final static int length_avg_long_data = 4;
-    static double[] lastDelays = new double[length_avg_long_data];
-    static double[] lastTicksPerSecond = new double[length_avg_long_data];
-    static int delay = 0;
+    static double[] lastDelays;
+    static double[] lastTicksPerSecond;
+    static int longdelay = 0;
 
     //this is a debug class, it tests how many ticks per second the robot is doing and the ms between ticks
 
@@ -18,6 +18,9 @@ public class TickTimer {
 
 
     public static void init() {
+        ticks = new long[100];
+        lastDelays = new double[length_avg_long_data];
+        lastTicksPerSecond = new double[length_avg_long_data];
         for (int i = 0; i < ticks.length; i++) {
             ticks[i] = System.currentTimeMillis();
         }
@@ -25,11 +28,11 @@ public class TickTimer {
             lastDelays[i] = 0;
             lastTicksPerSecond[i] = 0;
         }
-        delay = 0;
+        longdelay = 0;
     }
 
     public static void tick(){
-        delay++;
+        longdelay++;
         long currenttime = System.currentTimeMillis();
         for (int i = 0; i < ticks.length-1; i++) {
             ticks[i] = ticks[i+1];
@@ -43,13 +46,14 @@ public class TickTimer {
         delay /= ticks.length-1;
         double avgTickPerSecond = (int) (ticks.length/(timediff)/1000.0);
         double avgMsBetweenTicks = delay;
-        if(delay>ticks.length){
+        if(longdelay>ticks.length){
             for (int i = 0; i < lastDelays.length-1; i++) {
                 lastDelays[i] = lastDelays[i+1];
                 lastTicksPerSecond[i] = lastTicksPerSecond[i+1];
             }
             lastDelays[lastDelays.length-1] = avgMsBetweenTicks;
             lastTicksPerSecond[lastTicksPerSecond.length-1] = avgTickPerSecond;
+            longdelay = 0;
         }
 
         for (int i = 0; i < lastDelays.length; i++) {
