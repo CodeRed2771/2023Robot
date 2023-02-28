@@ -33,9 +33,9 @@ public class Arm {
     private static SparkMaxPIDController extendPID;
 
     private static final int MAX_EXTEND_CURRENT = 30;
-    private static final int MAX_SHOULDER_CURRENT = 20;
+    private static final int MAX_SHOULDER_CURRENT = 30;
 
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 60;
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 65;
     private static final double MAX_GROUND_LEVEL_EXTENSION = 190;
     private static final double MAX_IN_AIR_EXTENSION = 500; //420
 
