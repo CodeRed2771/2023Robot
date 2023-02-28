@@ -6,9 +6,9 @@ import frc.robot.Arm.shoulderPresets;
 
 public class AutoPlace3VROOOM extends AutoBaseClass{
 
-    //TODO: TUNE, ADD MULTIPLIER FOR DIFFERENT POSITIONS
+    //TODO: TUNE, ADD MULTIPLIER FOR DIFFERENT POSITIONS, Add (If time > secs) then place on mid, and if time > otherSecs, place on high
 
-    int postionMultiplier = 0;
+    int positionMultiplier = 0;
 
 	public void start() {
 		super.start();
@@ -23,14 +23,14 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
         if (isRunning()) {
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
-                case 0://eject preload
+                case 0://eject preload and set position multiplier
                     LiveBottom.eject();
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 1:
                     break;
                 case 2://slide to pickup position
-                    driveInches(23.2*postionMultiplier, 90, 0.8);//needs to be tuned
+                    driveInches(23.2*positionMultiplier, 90, 0.8);//needs to be tuned
                     setTimerAndAdvanceStep(1000);
                     break;
                 case 3:
@@ -70,7 +70,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                     break;
                 case 12://turn live bottom off and align for placing
                     LiveBottom.off();
-                    driveInches(-5, 90, 0.8);//needs to be tuned
+                    driveInches(-5*positionMultiplier, 90, 0.8);//needs to be tuned
                     setTimerAndAdvanceStep(1000);
                     break;
                 case 13:
@@ -91,7 +91,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                 case 17:
                     break;
                 case 18://drive to 3rd elemnet
-                    driveInches(216, 90, 1);//might need slide before
+                    driveInches(216, 0, 1);//might need slide before
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 19:
@@ -100,7 +100,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                     break;
                 case 20://start intake and align to pick up element
                     Intake.run(1);
-                    driveInches(-20, 90, 1);//needs to be tuned
+                    driveInches(-20*positionMultiplier, 90, 1);//needs to be tuned
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 21:
@@ -118,7 +118,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                 case 24://stop intake, start live bottom, and drive to go back
                     Intake.stop();
                     LiveBottom.forward();
-                    driveInches(20, 90, 1);//needs to be tuned
+                    driveInches(20*positionMultiplier, 90, 1);//needs to be tuned
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 25:
@@ -135,7 +135,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                     break;
                 case 28://turn live bottom off, align horizontally
                     LiveBottom.off();
-                    driveInches(5, 90, 0.5);//needs to be tuned
+                    driveInches(5*positionMultiplier, 90, 0.5);//needs to be tuned
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 29:
