@@ -205,10 +205,6 @@ public class Robot extends TimedRobot {
             LiveBottom.off();
         }
 
-        if(gamepad2.getRightBumper())
-            Arm.presetLift(shoulderPresets.PICKUP_CUBE);
-        //if(gamepad2.getLeftTriggerAxis()>0.1)
-
         if (gamepad2.getLeftBumper()) {
             Arm.overrideExtend(gamepad2.getRightY());
             Arm.overrideLift(gamepad2.getLeftY());
@@ -221,7 +217,6 @@ public class Robot extends TimedRobot {
             if (gamepad2.getLeftBumper()){
                 Intake.deploy();
                 Intake.reverse(1);
-                
             } 
             else{
                 Intake.deploy();
@@ -263,12 +258,13 @@ public class Robot extends TimedRobot {
         double driveStrafeAmount = -gamepad1.getLeftX();
 
         // SmartDashboard.putNumber("SWERVE ROT AXIS", driveRotAmount);
-        if (gamepad1.getAButton()) {
-            // Shooter.StartShooter();
-            rampCodeActive = true;
-        } else if (gamepad1.getBButton()) {
-            rampCodeActive = false;
-        }
+        // if (gamepad1.getAButton()) {
+        //     // Shooter.StartShooter();
+        //     rampCodeActive = true;
+        // } else if (gamepad1.getBButton()) {
+        //     rampCodeActive = false;
+        // }
+        
         if (rampCodeActive) {
             driveRotAmount = rotationalAdjust(driveRotAmount);
             // SmartDashboard.putNumber("ADJUSTED SWERVE ROT AMOUNT", driveRotAmount);
