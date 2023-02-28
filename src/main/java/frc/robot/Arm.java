@@ -32,13 +32,14 @@ public class Arm {
     private static SparkMaxPIDController shoulderPID;
     private static SparkMaxPIDController extendPID;
 
-    private static final int MAX_EXTEND_CURRENT = 20;
+    private static final int MAX_EXTEND_CURRENT = 30;
     private static final int MAX_SHOULDER_CURRENT = 20;
 
     private static final double MAX_INSIDE_ROBOT_EXTENSION = 60;
-    private static final double MAX_GROUND_LEVEL_EXTENSION = 120;
-    private static final double MAX_IN_AIR_EXTENSION = 320;
-    private final static double MAX_SHOULDER_TRAVEL = 400;
+    private static final double MAX_GROUND_LEVEL_EXTENSION = 190;
+    private static final double MAX_IN_AIR_EXTENSION = 500; //420
+
+    private final static double MAX_SHOULDER_TRAVEL = 500;
 
     private static double minExtension = 0;
     private static double minShoulderPosition = 0;
@@ -98,6 +99,7 @@ public class Arm {
         shoulderPID.setSmartMotionAllowedClosedLoopError(0.5,0);
 
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
+        shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
 
     }
 
@@ -135,14 +137,14 @@ public class Arm {
 
     public static void extend(double pwr) {
         if (Math.abs(pwr)>.05) {
-            extendRequestedPos = extendRequestedPos + (4.5 * pwr);
+            extendRequestedPos = extendRequestedPos + (2.2 * pwr);
         
             if (extendRequestedPos < minExtension) 
                 extendRequestedPos = minExtension;
-            if (shoulderRequestedPos < 133 && extendRequestedPos > (minExtension + MAX_INSIDE_ROBOT_EXTENSION))  
+            if (shoulderRequestedPos > 290 && extendRequestedPos > (minExtension + MAX_INSIDE_ROBOT_EXTENSION))  
                 extendRequestedPos = (minExtension + MAX_INSIDE_ROBOT_EXTENSION);
-            else if (shoulderRequestedPos < 190 && extendRequestedPos > (minExtension + MAX_GROUND_LEVEL_EXTENSION))  
-                extendRequestedPos = (minExtension + MAX_IN_AIR_EXTENSION-15);
+            else if (shoulderRequestedPos > 162 && extendRequestedPos > (minExtension + MAX_GROUND_LEVEL_EXTENSION))  
+                extendRequestedPos = (minExtension + MAX_GROUND_LEVEL_EXTENSION);
             else if (extendRequestedPos > (minExtension + MAX_IN_AIR_EXTENSION))  
                 extendRequestedPos = (minExtension + MAX_IN_AIR_EXTENSION);
             extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);        
