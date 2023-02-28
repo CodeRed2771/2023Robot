@@ -5,10 +5,13 @@ import frc.robot.Arm.bistablePresets;
 import frc.robot.Arm.shoulderPresets;
 
 public class AutoPlace3VROOOM extends AutoBaseClass{
+<<<<<<< HEAD
 
     //TODO: TUNE, ADD MULTIPLIER FOR DIFFERENT POSITIONS, Add (If time > secs) then place on mid, and if time > otherSecs, place on high
 
     int positionMultiplier = 0;
+=======
+>>>>>>> origin/master
 
 	public void start() {
 		super.start();

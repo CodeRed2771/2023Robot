@@ -36,15 +36,15 @@ DPad = directional pad
 
 
 
-Gamepad 1:
+GAMEPAD 1:
  * Drive - right and left sticks
  * Deploy Intake and Run Intake - press right trigger to deploy and hold right trigger to run intake
  * Reverse Intake - hold left bumper and hold right trigger
  * Retract Intake - press right bumper
  * Auto Climb and Balance - press B button
  * Auto Align With Pole- press A button
- * 
- * Gamepad2:
+
+GAMEPAD 2:
  * Extend Arm - right stick held downwards
  * Retract Arm - right stick held upwards
  * Move Arm Upwards - left stick held up
@@ -60,13 +60,14 @@ Gamepad 1:
  * Strafe Robot Right - left stick held to the right
  * Strafe Robot Left - left stick held to the left
  * 
+ * LiveBottom forwards - Dpad down
+ * LiveBottom backwards - Dpad down plus Left Bumper
+ * 
  * Presently Unused Presets - X and Y buttons
  * Move Live Floor Forwards - Dpad up button held down
  * Move Live Floor Backwards - Dpad down button held down
  * 
  */
-
-
 
 public class Robot extends TimedRobot { 
 
@@ -102,7 +103,6 @@ public class Robot extends TimedRobot {
         gamepad2 = new Gamepad(1);
         SmartDashboard.putString("Alliance Decided", DriverStation.getAlliance().toString());
         compressor.enableAnalog(100, 120);
-
   
         Calibration.loadSwerveCalibration();
         if (Calibration.isPracticeBot()) 
@@ -162,7 +162,11 @@ public class Robot extends TimedRobot {
         
         if (gamepad2.getAButton()){
             Claw.openClawTO();
-        }
+        } else if (gamepad2.getBButton()) 
+            Claw.closeClawTO();
+        else
+            Claw.stopClawTO();
+
         if (gamepad1.getBButton()){
            // Claw.closeClaw();
             mAutoProgram = new AutoClimbAndBalance(); 
@@ -172,7 +176,7 @@ public class Robot extends TimedRobot {
         if (gamepad1.getXButton()) {
             // VisionPlacer.setLED(LimelightOn.Off);
             mAutoProgram = new AutoAprilTagAlign();
-            mAutoProgram.start(1, PlacePositions.LeftConeHigh);
+            mAutoProgram.start();
         }
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.On);
@@ -192,11 +196,15 @@ public class Robot extends TimedRobot {
         }
             
         if(gamepad2.getDPadDown()) {
-            stuffDelete = true;
+            if(gamepad2.getLeftBumper())
+                LiveBottom.backward();
+            else   
+                LiveBottom.forward();
         }
         else {
-            stuffDelete = false;
+            LiveBottom.off();
         }
+
         if(gamepad2.getRightBumper())
             Arm.presetLift(shoulderPresets.PICKUP_CUBE);
         //if(gamepad2.getLeftTriggerAxis()>0.1)
@@ -268,7 +276,7 @@ public class Robot extends TimedRobot {
             driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, true);
         }
 
-        if (gamepad1.getRightBumper() || Arm.shoulderRequestedPos > 20) {  // slow mode unknown values for shoulderRequestedPos
+        if (gamepad1.getRightBumper() || Arm.getIsExtenderExtended()) {  // slow mode if arm is extended
             driveFWDAmount = driveFWDAmount * .3;
             driveStrafeAmount = driveStrafeAmount * .3;
             driveRotAmount = driveRotAmount * .2;
