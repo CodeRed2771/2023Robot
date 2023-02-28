@@ -1,4 +1,6 @@
 package frc.robot;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 //robot is 31 in wide and each side is 15.5 (With Bumpers)
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.bistablePresets;
@@ -8,6 +10,10 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
     //TODO: TUNE, ADD MULTIPLIER FOR DIFFERENT POSITIONS, Add If time > secs then place on mid, and if time > otherSecs, place on high
 
     int positionMultiplier = 0;
+    int posRLOffset = 0;
+    int posRROffset = 0;
+    int posBLOffset = 0;
+    int posBROffset = 0;
 
 	public void start() {
 		super.start();
@@ -23,6 +29,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0://eject preload and set position multiplier
+                    if(DriverStation.getAlliance() == Alliance.Blue && robotPosition() == Position.LEFT)
                     LiveBottom.eject();
                     setTimerAndAdvanceStep(1250);
                     break;

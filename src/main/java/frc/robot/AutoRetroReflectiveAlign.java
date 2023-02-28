@@ -10,6 +10,7 @@ import frc.robot.VisionPlacer.LimelightOn;
 public class AutoRetroReflectiveAlign extends AutoBaseClass {
 
     private double strafeDistance = 0;
+    private double distFromTarget = 41.75;
 
     public void start() {
         super.start();
@@ -35,12 +36,11 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
                 SmartDashboard.putNumber("Adj Angle Offset", strafeDistance);
                 SmartDashboard.putNumber("Angle Offset", VisionPlacer.getXAngleOffset());
                 SmartDashboard.putBoolean("Sees Target", VisionPlacer.seesTarget());
-                strafeDistance = Math.tan(Math.toRadians(VisionPlacer.getXAngleOffset()))*32;
+                strafeDistance = distFromTarget*(Math.toDegrees(Math.tan(Math.toRadians(VisionPlacer.getXAngleOffset()))));
                 advanceStep();
                 break;
             case 2:
                 if (Math.abs(strafeDistance) > 1){
-                    driveInches(strafeDistance, 90, 1);
                     driveInches(strafeDistance, 90,0.4);
                     setTimerAndAdvanceStep(2000);
                 } else {
