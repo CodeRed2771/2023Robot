@@ -116,6 +116,7 @@ public class Robot extends TimedRobot {
         Arm.init();
         Intake.init();
         VisionPlacer.init();
+        TickTimer.init();
 
         SmartDashboard.putNumber("Current Position", 0);
         SmartDashboard.putNumber("New Position", 0);
@@ -327,6 +328,7 @@ public class Robot extends TimedRobot {
         DriveAuto.tick();
         Arm.tick();
         LiveBottom.tick();
+        TickTimer.tick();
 
 
          // Sets the PID values based on input from the SmartDashboard
