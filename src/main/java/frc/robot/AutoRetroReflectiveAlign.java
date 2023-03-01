@@ -4,6 +4,7 @@ import javax.lang.model.util.ElementScanner6;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.VisionPlacer.LimelightOn;
+import frc.robot.VisionPlacer.Pole;
 
 //The purpose of this class is to turn the robot until we are on target.
 
@@ -11,6 +12,7 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
 
     private double strafeDistance = 0;
     private double distFromTarget = 41.75;
+    private double angle;
 
     public void start() {
         super.start();
@@ -33,13 +35,28 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
                 advanceStep();
                 break;
             case 1:
+                angle = RobotGyro.getClosestTurn(0);
+                if (angle > 1 || angle < 1) {
+                    turnDegrees(angle, .3);
+                    setTimerAndAdvanceStep(2000);
+                } else {
+                    setStep(3);
+                }
+                break;
+            case 2:
                 SmartDashboard.putNumber("Adj Angle Offset", strafeDistance);
                 SmartDashboard.putNumber("Angle Offset", VisionPlacer.getXAngleOffset());
                 SmartDashboard.putBoolean("Sees Target", VisionPlacer.seesTarget());
-                strafeDistance = distFromTarget*(Math.toDegrees(Math.tan(Math.toRadians(VisionPlacer.getXAngleOffset()))));
+                if(VisionPlacer.getPole() == Pole.HighPole) {
+                    distFromTarget = 41.75;
+                } else if (VisionPlacer.getPole() == Pole.LowPole) {
+                    distFromTarget = 32;
+                }
+                strafeDistance = distFromTarget*(Math.tan(Math.toRadians(VisionPlacer.getXAngleOffset())));
+                VisionPlacer.setLED(LimelightOn.Off);
                 advanceStep();
                 break;
-            case 2:
+            case 3:
                 if (Math.abs(strafeDistance) > 1){
                     driveInches(strafeDistance, 90,0.4);
                     setTimerAndAdvanceStep(2000);
@@ -47,12 +64,12 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
                     setStep(5);
                 }
                 break;
-            case 3:
+            case 4:
                 if (driveCompleted()) {
                     advanceStep();
                 }
                 break;
-            case 4:
+            case 5:
                 stop();
                 break;
             }

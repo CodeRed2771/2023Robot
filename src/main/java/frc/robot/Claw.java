@@ -3,6 +3,8 @@ package frc.robot;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Servo;
@@ -13,6 +15,8 @@ public class Claw {
 
     private static CANSparkMax clawMotor;
     private static Servo wrist;
+    // private static AnalogPotentiometer potentiometer;
+    // private static AnalogInput analogInput;
     private static double position;
     private static int clawRecordedTicks = 0;
     private static CurrentBreaker clawCurrentBreaker;
@@ -26,7 +30,9 @@ public class Claw {
 
 
     public static void init() {
-       
+    //     analogInput = new AnalogInput(0);
+    //     analogInput.setAverageBits(2);
+    //    potentiometer = new AnalogPotentiometer(analogInput, 0, 180);
         clawMotor = new CANSparkMax(Wiring.CLAW_MOTOR_ID, MotorType.kBrushed);
 
         wrist = new Servo(Wiring.CLAW_CHANNEL_ID);
@@ -35,6 +41,12 @@ public class Claw {
 
     }
 
+    // public static double getPotentionmeterDegree() {
+    //     return potentiometer.get();
+    // }
+    public static void openClaw() {
+        
+    }
     
     public static void openClawTOPos() {
         clawMotor.set(.75);
