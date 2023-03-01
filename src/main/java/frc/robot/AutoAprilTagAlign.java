@@ -56,11 +56,11 @@ public class AutoAprilTagAlign extends AutoBaseClass{
                     break;
                 case 1:
                     angle = RobotGyro.getClosestTurn(0);
-                    if (angle > 1 || angle < 1) {
-                        turnDegrees(-angle, .3);
-                        setTimerAndAdvanceStep(2000);
+                    if (angle > 1 || angle < -1) {
+                        turnDegrees(angle, .3);
+                        setTimerAndAdvanceStep(4000);
                     } else {
-                        setStep(3);
+                       setStep(3);
                     }
                     break;
                 case 2:
@@ -90,6 +90,7 @@ public class AutoAprilTagAlign extends AutoBaseClass{
                     }
                     break;
                 case 5:
+                    VisionPlacer.setLED(LimelightOn.Off);
                     stop();
                     break;
             }

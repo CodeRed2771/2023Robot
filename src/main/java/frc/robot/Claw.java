@@ -49,11 +49,11 @@ public class Claw {
     }
     
     public static void openClawTOPos() {
-        clawMotor.set(.75);
+        clawMotor.set(1);
     }
     
     public static void closeClawTONeg() {
-        clawMotor.set(-.75);
+        clawMotor.set(-1);
     }
 
     public static void stopClawTO() {

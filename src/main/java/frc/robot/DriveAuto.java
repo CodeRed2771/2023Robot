@@ -190,7 +190,7 @@ public class DriveAuto {
     }
 
     public static double degreesToInches(double degrees) {
-        double inches = degrees / 3.115;
+        double inches = degrees / 4.42; //3.115;
         return inches;
     }
 
