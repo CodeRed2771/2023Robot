@@ -2,6 +2,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 //robot is 31 in wide and each side is 15.5 (With Bumpers)
+//bars are 3 in wide
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.bistablePresets;
 import frc.robot.Arm.shoulderPresets;
@@ -42,7 +43,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                 case 1:
                     break;
                 case 2://slide to pickup position
-                    driveInches(23.2*positionMultiplier, 90, 0.8);//TUNE LINE
+                    driveInches(43.75*positionMultiplier, 90, 0.8);//TUNE LINE??
                     setTimerAndAdvanceStep(1000);
                     break;
                 case 3:
@@ -82,7 +83,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                     break;
                 case 12://turn live bottom off and align for placing
                     LiveBottom.off();
-                    driveInches(-5*positionMultiplier, 90, 0.8);//TUNE LINE
+                    driveInches(-8*positionMultiplier, 90, 0.8);//TUNE LINE
                     setTimerAndAdvanceStep(1000);
                     break;
                 case 13:
@@ -102,73 +103,81 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                     break;
                 case 17:
                     break;
-                case 18://drive to 3rd elemnet
-                    driveInches(216, 0, 1);//MIGHT NEED SLIDE BEFORE
-                    setTimerAndAdvanceStep(1500);
+                case 18:
+                    driveInches(8*positionMultiplier, 90, 0.8);//TUNE LINE
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 19:
                     if(driveCompleted())
                         advanceStep();
                     break;
-                case 20://start intake and align to pick up element
-                    Intake.run(1);
-                    driveInches(-20*positionMultiplier, 90, 1);//TUNE LINE
+                case 20://drive to 3rd elemnet
+                    driveInches(216, 0, 1);
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 21:
                     if(driveCompleted())
                         advanceStep();
                     break;
-                case 22://pick up element
-                    driveInches(12, 0, 0.2);
+                case 22://start intake and align to pick up element
+                    Intake.run(1);
+                    driveInches(-48*positionMultiplier, 90, 1);//TUNE LINE??
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 23:
                     if(driveCompleted())
                         advanceStep();
                     break;
-                case 24://stop intake, start live bottom, and drive to go back
-                    Intake.stop();
-                    LiveBottom.forward();
-                    driveInches(20*positionMultiplier, 90, 1);//TUNE LINE
+                case 24://pick up element
+                    driveInches(12, 0, 0.2);
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 25:
                     if(driveCompleted())
                         advanceStep();
                     break;
-                case 26://drive back
-                    driveInches(-224, 0, 1);
-                    setTimerAndAdvanceStep(2000);
+                case 26://stop intake, start live bottom, and drive to go back
+                    Intake.stop();
+                    LiveBottom.forward();
+                    driveInches(48*positionMultiplier, 90, 1);//TUNE LINE
+                    setTimerAndAdvanceStep(1500);
                     break;
                 case 27:
                     if(driveCompleted())
                         advanceStep();
                     break;
-                case 28://turn live bottom off, align horizontally
-                    LiveBottom.off();
-                    driveInches(5*positionMultiplier, 90, 0.5);//TUNE LINE
-                    setTimerAndAdvanceStep(1250);
+                case 28://drive back
+                    driveInches(-224, 0, 1);
+                    setTimerAndAdvanceStep(2000);
                     break;
                 case 29:
                     if(driveCompleted())
                         advanceStep();
                     break;
-                case 30://drive back a lill' more
-                    driveInches(-4, 0, 0.5);//TUNE LINE
+                case 30://turn live bottom off, align horizontally
+                    LiveBottom.off();
+                    driveInches(25.5*positionMultiplier, 90, 0.5);//TUNE LINE
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 31:
                     if(driveCompleted())
                         advanceStep();
                     break;
-                case 32://eject elemnt
+                case 32://drive back a lill' more
+                    driveInches(-4, 0, 0.5);//TUNE LINE
+                    setTimerAndAdvanceStep(1250);
+                    break;
+                case 33:
+                    if(driveCompleted())
+                        advanceStep();
+                    break;
+                case 34://eject elemnt
                     LiveBottom.eject();
                     setTimerAndAdvanceStep(1500);
                     break;
-                case 33:
+                case 35:
                     break;
-                case 34:
+                case 36:
                     stop();
                     break;
             }

@@ -35,10 +35,11 @@ public class Arm {
     private static final int MAX_EXTEND_CURRENT = 30;
     private static final int MAX_SHOULDER_CURRENT = 30;
 
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 65;
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 75;//65 was too low
     private static final double MAX_GROUND_LEVEL_EXTENSION = 190;
     private static final double MAX_IN_AIR_EXTENSION = 500; //420
 
+    private static double MAX_SHOULDER_SPEED = 0;
     private final static double MAX_SHOULDER_TRAVEL = 500;
 
     private static double minExtension = 0;
@@ -100,6 +101,8 @@ public class Arm {
 
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
         shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+
+        MAX_SHOULDER_SPEED = 0;
 
     }
 
@@ -180,23 +183,31 @@ public class Arm {
     public static void presetLift(shoulderPresets position) {
         switch(position) {
             case PICKUP_CONE:
+                MAX_SHOULDER_SPEED=1;
                 shoulderRequestedPos = 50;//??
                 break;
             case PICKUP_CUBE:
                 shoulderRequestedPos = 100;//??
+                MAX_SHOULDER_SPEED = 1;
                 break;
             case PLACING_GROUND:
                 shoulderRequestedPos = 150;//??
+                MAX_SHOULDER_SPEED=0.7;
             case PLACING_LOW:
                 shoulderRequestedPos = 150;//??
+                MAX_SHOULDER_SPEED=0.55;
             case PLACING_HIGH:
                 shoulderRequestedPos = 150;//??
+                MAX_SHOULDER_SPEED = 0.4;
         }
     }
 
     public static void lift(double pwr) {
         if (Math.abs(pwr)>.05) {
-        
+            if(extendRequestedPos > 100) {
+                if(pwr > (1/1500)*extendRequestedPos+0.75)
+                    pwr = (1/1500)*extendRequestedPos+0.75;
+            }
             shoulderRequestedPos = shoulderRequestedPos + (3.5 * -pwr);
             
             if (shoulderRequestedPos < minShoulderPosition) 

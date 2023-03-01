@@ -5,6 +5,9 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+//THE ROBOT IS NAMED BETELGEUSE
+
+
 package frc.robot;
 
 import java.math.BigDecimal;
@@ -162,9 +165,9 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
         
         if (gamepad2.getAButton()){
-            Claw.openClawTO();
+            Claw.openClawTOPos();
         } else if (gamepad2.getBButton()) 
-            Claw.closeClawTO();
+            Claw.closeClawTONeg();
         else
             Claw.stopClawTO();
 

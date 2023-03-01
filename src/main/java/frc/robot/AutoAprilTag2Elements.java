@@ -30,13 +30,13 @@ public class AutoAprilTag2Elements extends AutoBaseClass {
                 case 4:
                     break;
                 case 5:
-                    Claw.openClaw();
+                    Claw.openClawA();
                     setTimerAndAdvanceStep(1000);
                     break;
                 case 6: 
                     break;
                 case 7: 
-                    Claw.closeClaw();
+                    Claw.closeClawA();
                     Intake.deploy();
                     Arm.presetExtend(bistablePresets.RETRACTED);
                     setTimerAndAdvanceStep(2000);
