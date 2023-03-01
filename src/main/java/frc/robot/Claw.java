@@ -28,11 +28,11 @@ public class Claw {
     }
     
     public static void openClawTO() {
-        clawMotor.set(.5);
+        clawMotor.set(.75);
     }
     
     public static void closeClawTO() {
-        clawMotor.set(-.5);
+        clawMotor.set(-.75);
     }
 
     public static void stopClawTO() {
