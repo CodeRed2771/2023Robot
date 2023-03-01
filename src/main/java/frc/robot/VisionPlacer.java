@@ -228,21 +228,17 @@ public class VisionPlacer {
         }
     }
     
-    // public static Position camTran() {
-    //     double[] test = table.getEntry("camtran").getDoubleArray(new double[]{});
-    //     if(test.length >0) {
-    //         Translation3d translation = new Translation3d(test[0], test[1], test[2]);
-    //         Rotation3d rotation = new Rotation3d(test[3], test[4], test[5]);
-    //         return new Position(translation, rotation);
-    //     } else {
-    //         Translation3d translation = new Translation3d(0, 0, 0);
-    //         Rotation3d rotation = new Rotation3d(0, 0, 0);
-    //         return new Position(translation, rotation);
-    //     }
-    // }
+    public static enum Pole {
+        HighPole,
+        LowPole,
+    }
 
-    public static double getDepth() {
-        return 2;
+    public static Pole getPole() {
+        if(VisionPlacer.getYAngleOffset() < 0) {
+            return Pole.LowPole;
+        } else {
+            return Pole.HighPole;
+        }
     }
 
 }
