@@ -145,17 +145,13 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
         Arm.reset();
-        // VisionElements.init();
+
+        VisionPlacer.setLED(LimelightOn.Off);
     }
 
     @Override
     public void teleopPeriodic() {
-        if(gamepad2.getXButton()) {
-            VisionPlacer.setAprilTagPipeline();
-        } else if (gamepad2.getYButton()) {
-            VisionPlacer.setRetroreflectivePipeline();
-        }
-        
+           
         SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
         
         if (gamepad2.getAButton()){
@@ -165,29 +161,7 @@ public class Robot extends TimedRobot {
         else
             Claw.stopClawTO();
 
-        if (gamepad1.getBButton()){
-           // Claw.closeClaw();
-            mAutoProgram.stop();
-            mAutoProgram = new AutoClimbAndBalance(); 
-            mAutoProgram.start();
-
-        }
-        if(gamepad1.getAButton()) {
-            mAutoProgram.stop();
-            mAutoProgram = new AutoRetroReflectiveAlign();
-            mAutoProgram.start();
-        }
-        if (gamepad1.getXButton()) {
-            // VisionPlacer.setLED(LimelightOn.Off);
-            mAutoProgram.stop();
-            mAutoProgram = new AutoAprilTagAlign();
-            mAutoProgram.start();
-        }
-        if (gamepad1.getYButton()) {
-            VisionPlacer.setLED(LimelightOn.On);
-        }
- 
-        if(gamepad2.getLeftTriggerAxis() > .5){
+            if(gamepad2.getLeftTriggerAxis() > .5){
             if (!clawFlippedPress){
                 Claw.flip();
                 clawFlippedPress = true;
@@ -195,16 +169,41 @@ public class Robot extends TimedRobot {
         } else{
             clawFlippedPress = false;
         }
+
+        if (gamepad1.getBButton()){
+            mAutoProgram.stop();
+            mAutoProgram = new AutoClimbAndBalance(); 
+            mAutoProgram.start();
+        }
+
+        if(gamepad1.getAButton()) {
+            VisionPlacer.setRetroreflectivePipeline();
+            mAutoProgram.stop();
+            mAutoProgram = new AutoRetroReflectiveAlign();
+            mAutoProgram.start();
+        }
+           
+        if (gamepad1.getXButton()) {
+            VisionPlacer.setAprilTagPipeline();
+            mAutoProgram.stop();
+            mAutoProgram = new AutoAprilTagAlign();
+            mAutoProgram.start();
+        }
+
+        if (gamepad1.getYButton()) {
+            VisionPlacer.setLED(LimelightOn.Off);
+        }
+ 
         if(gamepad2.getDPadUp()){
             //Arm.presetExtend(bistablePresets.RETRACTED);
-            LiveBottom.shuffle();
+            // LiveBottom.shuffle();
         }
             
-        if(gamepad2.getDPadDown()) {
-            if(gamepad2.getLeftBumper())
-                LiveBottom.backward();
-            else   
+        if(gamepad2.getDPadDown() || gamepad1.getDPadDown()) {
+            if(gamepad2.getLeftBumper() || gamepad1.getDPadUp())
                 LiveBottom.forward();
+            else   
+                LiveBottom.backward();
         }
         else {
             LiveBottom.off();
@@ -246,14 +245,6 @@ public class Robot extends TimedRobot {
 
             DriveTrain.setAllTurnOrientation(0, false);
         }
-        // DRIVE
-        if (mAutoProgram.isRunning()) {
-            mAutoProgram.tick();
-        }
-
-        //if (mAutoProgram.isRunning() && Math.abs(gamepad2.getRightY()) > 0.2) {
-        //    mAutoProgram.stop();
-        //}
 
         // DRIVER CONTROL MODE
         // Issue the drive command using the parameters from
@@ -263,9 +254,6 @@ public class Robot extends TimedRobot {
         double driveStrafeAmount = -gamepad1.getLeftX();
 
         if (gamepad1.getRightBumper() || Arm.getIsExtenderExtended()) {  // slow mode if arm is extended
-            // driveFWDAmount = driveFWDAmount * .3;
-            // driveStrafeAmount = driveStrafeAmount * .4;
-            // driveRotAmount = driveRotAmount * .3;
             driveRotAmount = rotationalAdjust(driveRotAmount, false);
             driveFWDAmount = forwardAdjustV2(driveFWDAmount, false);
             driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, false);   
@@ -276,19 +264,11 @@ public class Robot extends TimedRobot {
             driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, true);    
         }
       
-        SmartDashboard.putBoolean("DPadUp", gamepad1.getDPadUp());
-        SmartDashboard.putBoolean("DPadLeft", gamepad1.getDPadLeft());
-        SmartDashboard.putBoolean("DPadRight", gamepad1.getDPadRight());
-        SmartDashboard.putBoolean("DPadDown", gamepad1.getDPadDown());
-
-        SmartDashboard.putNumber("Best Position", TurnPosition.getBestPosition());
-        SmartDashboard.putNumber("Outputs FWD", driveFWDAmount);
-        SmartDashboard.putNumber("Outputs Strafe", driveStrafeAmount);
-
-        if (Math.abs(driveFWDAmount) > .5 || Math.abs(driveRotAmount) > .5) {
+         if (Math.abs(driveFWDAmount) > .5 || Math.abs(driveRotAmount) > .5) {
             if (mAutoProgram.isRunning())
                 mAutoProgram.stop();
         }
+
         if (!mAutoProgram.isRunning()) {
             if (gamepad1.getBackButton()) {
                 DriveTrain.humanDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
@@ -297,6 +277,10 @@ public class Robot extends TimedRobot {
             }
         }
         
+        if (mAutoProgram.isRunning()) {
+            mAutoProgram.tick();
+        }
+
         showDashboardInfo();
     }
 
@@ -309,6 +293,7 @@ public class Robot extends TimedRobot {
         } else {
             SmartDashboard.putBoolean("Pole Low", true);
         }
+
         VisionPlacer.periodic();
         DriveAuto.tick();
         Arm.tick();
@@ -339,9 +324,9 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
         // SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
         // SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
-        SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
-        SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
-        SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
+        // SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
+        // SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
+        // SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
         SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
         SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
         SmartDashboard.putNumber("Roll", RobotGyro.roll());
