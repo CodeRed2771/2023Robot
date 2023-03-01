@@ -2,7 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoLeaveTarmack extends AutoBaseClass{
+public class AutoCommunity extends AutoBaseClass{
 
 	public void start() {
 		super.start();
@@ -18,28 +18,34 @@ public class AutoLeaveTarmack extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0: 
-                    driveInches(24, 0, 1);
+                    driveInches(210, 0, 1);
                     setTimerAndAdvanceStep(6000);
                     break;
                 case 1:
                     if (driveCompleted()) {
-                        setTimerAndAdvanceStep(1000);
+                        advanceStep();
                     }
                     break;
-                case 2:
+                case 2: 
+                    Intake.deploy();
+                    Intake.run(1);
+                    driveInches(26, 0, 1);
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 3:
+                    if (driveCompleted()) {
+                        advanceStep();
+                    }
                     break;
-                case 4: 
-                    driveInches(-24, 0, 1);
-                    setTimerAndAdvanceStep(6000);
+                case 4:
+                    driveInches(-200, 0, 1);
+                    setTimerAndAdvanceStep(5000);
                     break;
                 case 5:
                     if (driveCompleted()) {
-                        setTimerAndAdvanceStep(1000);
+                        advanceStep();
                     }
-                    break;
+                break;
                 case 6:
                     stop();
                     break;

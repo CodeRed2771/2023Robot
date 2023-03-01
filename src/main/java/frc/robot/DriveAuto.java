@@ -45,8 +45,8 @@ public class DriveAuto {
         rotDrivePID = new PIDController(Calibration.AUTO_ROT_P, Calibration.AUTO_ROT_I, Calibration.AUTO_ROT_D);
         rotDrivePID.setTolerance(2); // degrees off
 
-        DriveTrain.setDriveMMAccel(Calibration.DT_MM_ACCEL);
-        DriveTrain.setDriveMMVelocity(Calibration.DT_MM_VELOCITY);
+        DriveTrain.setDriveMMAccel(Calibration.getDT_MM_ACCEL());
+        DriveTrain.setDriveMMVelocity(Calibration.getDT_MM_VELOCITY());
 
         driveCurrentBreaker = new CurrentBreaker(Wiring.DRIVE_PDP_PORT, 55, 400); 
         driveCurrentBreaker.reset();
@@ -56,8 +56,8 @@ public class DriveAuto {
         SmartDashboard.putNumber("AUTO DRIVE D", Calibration.getDriveD());
         SmartDashboard.putNumber("AUTO DRIVE F", Calibration.getDriveF());
 
-        SmartDashboard.putNumber("DRIVE MM VELOCITY", Calibration.DT_MM_VELOCITY);
-        SmartDashboard.putNumber("DRIVE MM ACCEL", Calibration.DT_MM_ACCEL);
+        SmartDashboard.putNumber("DRIVE MM VELOCITY", Calibration.getDT_MM_VELOCITY());
+        SmartDashboard.putNumber("DRIVE MM ACCEL", Calibration.getDT_MM_ACCEL());
 
         SmartDashboard.updateValues();
 
@@ -127,7 +127,7 @@ public class DriveAuto {
 
         isDriving = true;
 
-        DriveTrain.setDriveMMVelocity((int) (Calibration.DT_MM_VELOCITY * speedFactor));
+        DriveTrain.setDriveMMVelocity((int) (Calibration.getDT_MM_VELOCITY() * speedFactor));
 
         // angle at which the wheel modules should be turned
 
@@ -239,7 +239,7 @@ public class DriveAuto {
             e.printStackTrace();
         }
 
-        DriveTrain.setDriveMMVelocity((int) (Calibration.DT_MM_VELOCITY * turnSpeedFactor));
+        DriveTrain.setDriveMMVelocity((int) (Calibration.getDT_MM_VELOCITY() * turnSpeedFactor));
 
         double turnInches = degreesToInches(-degrees);
         SmartDashboard.putNumber("Turn Inches", turnInches);

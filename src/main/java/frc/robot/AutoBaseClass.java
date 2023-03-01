@@ -7,7 +7,8 @@ public abstract class AutoBaseClass {
     private Position mRobotPosition;
     private boolean mIsRunning = false;
     private Direction mDirection;
-    private boolean mAutoShoot = false;
+    private boolean mAutoPlace = false;
+    public int placeNumInAuto = 2;
 
     public static enum PlacePositions {
         LeftConeHigh,
@@ -67,8 +68,8 @@ public abstract class AutoBaseClass {
         start();
     }
 
-    public void start(boolean autoShoot){
-       mAutoShoot = autoShoot;
+    public void start(boolean autoPlace){
+       mAutoPlace = autoPlace;
        start(); 
     }
 
@@ -152,8 +153,8 @@ public abstract class AutoBaseClass {
         return mDirection;
     }
 
-    public boolean autoShoot(){
-        return mAutoShoot;
+    public boolean autoPlace(){
+        return mAutoPlace;
     }
 
     public void advanceStep() {

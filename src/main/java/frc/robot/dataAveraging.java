@@ -2,6 +2,10 @@ package frc.robot;
 
 import java.util.Arrays;
 
+
+import edu.wpi.first.wpilibj.SynchronousInterrupt;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class dataAveraging {
     String data;
     public dataAveraging(String data) {
@@ -14,10 +18,10 @@ public class dataAveraging {
     double gatheredData[][] = new double[6][50];
     double dataTotal[] = new double[6];
     double averagedData[] = new double[6];
+
     final double sanityCheckRange[] = {10, 10, 5, 45, 45, 360};
     final double adjustCheckRange[] = {.05, .05, .05, 2, 2, 45};
     final double nullArray[] = {0, 0, 0, 0, 0,0};
-
     // Signle Data
     int numberOfNonZeros = 0; 
     int cycle = 0;
@@ -89,7 +93,8 @@ public class dataAveraging {
                     averagedData[dataValue] = dataTotal[dataValue]/numberOfNonZeros;
                 }
             }
-
+        } else {
+            // System.out.println("No table found");
         }
     }
     // Getters 

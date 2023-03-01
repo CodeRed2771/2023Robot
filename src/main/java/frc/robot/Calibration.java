@@ -71,13 +71,6 @@ public class Calibration {
 
     public final static int INTAKE_DEPLOY_ZERO_INITIAL = 200;
     
-    public static final double SHOOTER_P = 0.3;
-    public static final double SHOOTER_I = 0.0;
-    public static final double SHOOTER_D = 0;
-    public static final double SHOOTER_F = 0.0505;
-    public static final int SHOOTER_DEFAULT_SPEED = 13000;
-    public static final int FEEDER_DEFAULT_SPEED = 13000;
-
     public final static double VISION_FWD_P = 0.05;
     public final static double VISION_FWD_I = 0;
     public final static double VISION_FWD_D = 0.15;
@@ -94,11 +87,11 @@ public class Calibration {
     public final static double VISION_DISTANCE_B = -90.5271;
     public final static double VISION_DISTANCE_C = 0.563257;
 
-    public static final double BISTABLE_MOTOR_P = .03;  //.07
+    public static final double BISTABLE_MOTOR_P = .019;  //.07
 	public static final double BISTABLE_MOTOR_I = 0;
 	public static final double BISTABLE_MOTOR_D = 0;
 	public static final double BISTABLE_MOTOR_IZONE = 40;
-    public static final double SHOULDER_MOTOR_P = .07;
+    public static final double SHOULDER_MOTOR_P = .02;
 	public static final double SHOULDER_MOTOR_I = 0;
 	public static final double SHOULDER_MOTOR_D = 0;
 	public static final double SHOULDER_MOTOR_IZONE = 40;
@@ -164,7 +157,7 @@ public class Calibration {
         if (isPracticeBot())
             return 8;  // zuni
         else    
-            return 20;  // competition
+            return 6;  // competition
     }
     public static double getTurnI() { 
         if (isPracticeBot())
@@ -197,7 +190,7 @@ public class Calibration {
         if (isPracticeBot())
             return .00115;  // zuni
         else    
-            return .3;  // competition
+            return 0.000190;  // competition was .3
     }
     public static double getDriveI() { 
         if (isPracticeBot())
@@ -229,16 +222,26 @@ public class Calibration {
     public final static double DT_ROT_PID_I = .0004;
     public final static double DT_ROT_PID_D = .000;
     public final static double DT_ROT_PID_IZONE = 18;
-
-	public final static int DT_MM_ACCEL = 8000; //(distance units per 100 ms) per second
-	public final static int DT_MM_VELOCITY = 35000;  //distance units per 100 ms
 	
+    public final static int getDT_MM_ACCEL() {
+        if(isPracticeBot())
+            return(8000);
+        else
+            return(5000);
+    }
+	public final static int getDT_MM_VELOCITY() {
+        if(isPracticeBot())
+            return(35000);
+        else
+            return(7000);
+    }
+
 	// COMPETIION AND PRACTICE
     public final static double getDriveTicksPerInch() {
         if (isPracticeBot()) 
             return(.39);  
         else
-            return(1230);
+            return(.659); //was 1230
     }
 
     // Loads the calibration numbers from the stored file which overrides the programmed values

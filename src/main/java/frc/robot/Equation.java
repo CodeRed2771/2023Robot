@@ -35,14 +35,26 @@ public class Equation {
         return sum;
     }
 
-    public float evaluateDistance(float side1, float side2) { // SIDE1 REPRESENTS Y-AXIS AND SIDE2 REPRESENTS X-AXIS
+    /**
+     * gets the distance between (0,0) and (x,y)<p>
+     * Notes: y REPRESENTS Y-AXIS AND x REPRESENTS X-AXIS
+     * @param y the value of x of the point
+     * @param x the value of y of the point
+     * @return the distance between (0,0) and (x,y) as a float
+     */
+    public float evaluateDistance(float y, float x) { // SIDE1 REPRESENTS Y-AXIS AND SIDE2 REPRESENTS X-AXIS
 
         float distance = 0;
 
-        distance = (float) Math.sqrt(side1 * side1 + side2 * side2);
+        distance = (float) Math.sqrt(y * y + x * x);
         return distance;
     }
-
+    /**
+     * Notes : SIDE1 REPRESENTS Y-AXIS AND SIDE2 REPRESENTS X-AXIS
+     * @param side1 one of the sides that touch the right angle
+     * @param side2 the other side that touches the right angle
+     * @return the angle that touchs side and isn't the right angle
+     */
     public float evaluateAngle(float side1, float side2) { // SIDE1 REPRESENTS Y-AXIS AND SIDE2 REPRESENTS X-AXIS
 
         float radianAngle = 0;
