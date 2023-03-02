@@ -252,15 +252,19 @@ public class Arm {
 
     private static boolean zeroActive = false;
     private static boolean zeroFast = false;
-    private static LimitSwitch shouldLimitSwitch = new LimitSwitch(Wiring.SHOULDER_LIMIT_SWITCH_CHANNEL);
+    private static LimitSwitch shoulderLimitSwitch = new LimitSwitch(Wiring.SHOULDER_LIMIT_SWITCH_CHANNEL);
 
     public static void zero(){
+        if(!shoulderLimitSwitch.isPressed()){
         zeroFast = false;
         zeroActive = true;
+        }
     }
     public static void zeroFast(){
-        zeroFast = true;
-        zeroActive = true;
+        if(!shoulderLimitSwitch.isPressed()){
+            zeroFast = true;
+            zeroActive = true;
+            }
     }
     public static void zeroCancel(){
         zeroFast = false;
@@ -268,20 +272,15 @@ public class Arm {
     }
     public static void zeroTick(){
         if(zeroActive){
-            if(!zeroFast){
-                if(!shouldLimitSwitch.isPressed()){
-                    shoulderRequestedPos -= .5;
-                    shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
-                } else {
-                    zeroActive = false;
-                }
-            } else {
-                if(!shouldLimitSwitch.isPressed()){
+            if(!shoulderLimitSwitch.isPressed()){
+                if(zeroFast){
                     shoulderRequestedPos -= 1;
-                    shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
-                } else {
-                    zeroActive = false;
+                }else{
+                    shoulderRequestedPos -= .5;
                 }
+                shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+            } else {
+                zeroActive = false;
             }
         }
     }

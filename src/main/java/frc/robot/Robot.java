@@ -190,6 +190,15 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
         }
 
+        if(gamepad1.getLeftBumper()){
+            Arm.zero();
+        }
+        if(gamepad1.getDPadLeft()){
+            Arm.zeroFast();
+        }
+        if(gamepad1.getDPadRight()){
+            Arm.zeroCancel();
+        }
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.Off);
         }
