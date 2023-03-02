@@ -121,6 +121,7 @@ public class Arm {
     }
 
     public static void tick() {
+        zeroTick();
         SmartDashboard.putNumber("Arm Extension Set Point", extendRequestedPos);
 		SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
@@ -280,6 +281,7 @@ public class Arm {
                 }
                 shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
             } else {
+                minShoulderPosition = shoulderRequestedPos;
                 zeroActive = false;
             }
         }
