@@ -297,8 +297,10 @@ public class Robot extends TimedRobot {
         VisionPlacer.periodic();
         DriveAuto.tick();
         Arm.tick();
+        Arm.zeroTick();
         LiveBottom.tick();
         TickTimer.tick();
+        
 
 
          // Sets the PID values based on input from the SmartDashboard

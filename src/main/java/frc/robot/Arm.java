@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -249,4 +250,39 @@ public class Arm {
         }
     }
 
+    private static boolean zeroActive = false;
+    private static boolean zeroFast = false;
+    private static LimitSwitch shouldLimitSwitch = new LimitSwitch(Wiring.SHOULDER_LIMIT_SWITCH_CHANNEL);
+
+    public static void zero(){
+        zeroFast = false;
+        zeroActive = true;
+    }
+    public static void zeroFast(){
+        zeroFast = true;
+        zeroActive = true;
+    }
+    public static void zeroCancel(){
+        zeroFast = false;
+        zeroActive = false;
+    }
+    public static void zeroTick(){
+        if(zeroActive){
+            if(!zeroFast){
+                if(!shouldLimitSwitch.isPressed()){
+                    shoulderRequestedPos -= .5;
+                    shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+                } else {
+                    zeroActive = false;
+                }
+            } else {
+                if(!shouldLimitSwitch.isPressed()){
+                    shoulderRequestedPos -= 1;
+                    shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+                } else {
+                    zeroActive = false;
+                }
+            }
+        }
+    }
 }
