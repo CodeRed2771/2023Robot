@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Arm.bistablePresets;
+import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 import frc.robot.AutoBaseClass.PlacePositions;
 import frc.robot.VisionPlacer.LimelightOn;
@@ -193,13 +193,8 @@ public class Robot extends TimedRobot {
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.Off);
         }
- 
-        if(gamepad2.getDPadUp()){
-            //Arm.presetExtend(bistablePresets.RETRACTED);
-            // LiveBottom.shuffle();
-        }
             
-        if(gamepad2.getDPadDown() || gamepad1.getDPadDown()) {
+        if(gamepad2.getDPadDown() || gamepad1.getDPadDown() || gamepad1.getDPadUp()) {
             if(gamepad2.getLeftBumper() || gamepad1.getDPadUp())
                 LiveBottom.forward();
             else   
@@ -215,6 +210,11 @@ public class Robot extends TimedRobot {
         } else {
             Arm.extend(gamepad2.getRightY());
             Arm.lift(-gamepad2.getLeftY());
+        }
+
+        if (gamepad2.getDPadUp()) {
+            Arm.presetLift(shoulderPresets.PICKUP_FEEDER_STATION);
+            Arm.presetExtend(extenderPresets.FEEDER_STATION);
         }
 
         if (gamepad2.getRightTriggerAxis()>.2){

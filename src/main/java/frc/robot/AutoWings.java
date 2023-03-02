@@ -1,7 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Arm.bistablePresets;
+import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 //probably just want to use Caleb's
 public class AutoWings extends AutoBaseClass{
@@ -27,7 +27,7 @@ public class AutoWings extends AutoBaseClass{
                 case 1:
                     break;
                 case 2:
-                    Arm.presetExtend(bistablePresets.RETRACTED);
+                    Arm.presetExtend(extenderPresets.RETRACTED);
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 3:
@@ -40,7 +40,7 @@ public class AutoWings extends AutoBaseClass{
                 case 5:
                     break;
                 case 6:
-                    Arm.presetExtend(bistablePresets.HIGH);
+                    Arm.presetExtend(extenderPresets.HIGH);
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 7:
@@ -54,7 +54,7 @@ public class AutoWings extends AutoBaseClass{
                 case 10:
                     Claw.closeClawA();
                     Intake.deploy();
-                    Arm.presetExtend(bistablePresets.RETRACTED);
+                    Arm.presetExtend(extenderPresets.RETRACTED);
                     Arm.presetLift(shoulderPresets.PICKUP_CUBE);
                     setTimerAndAdvanceStep(2000);
                     break;
