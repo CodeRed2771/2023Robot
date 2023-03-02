@@ -118,6 +118,7 @@ public class Arm {
         shoulderRequestedPos = 0;
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);   
         shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+        zeroCancel();
     }
 
     public static void tick() {

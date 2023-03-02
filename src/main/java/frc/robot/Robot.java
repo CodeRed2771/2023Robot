@@ -345,7 +345,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-
+        Arm.zeroCancel();
         RobotGyro.reset();
 
         DriveTrain.stopDriveAndTurnMotors();
