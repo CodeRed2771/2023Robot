@@ -36,7 +36,7 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
                 break;
             case 1:
                 angle = RobotGyro.getClosestTurn(0);
-                if (angle > 1 || angle < 1) {
+                if (angle > 1 || angle < -1) {
                     turnDegrees(angle, .3);
                     setTimerAndAdvanceStep(2000);
                 } else {
@@ -57,7 +57,7 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
                 advanceStep();
                 break;
             case 3:
-                if (Math.abs(strafeDistance) > 1){
+                if (Math.abs(strafeDistance) > 1 || Math.abs(strafeDistance) < 48){
                     driveInches(strafeDistance, 90,0.4);
                     setTimerAndAdvanceStep(2000);
                 } else {
