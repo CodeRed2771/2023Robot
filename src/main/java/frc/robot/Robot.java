@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Arm.bistablePresets;
+import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 import frc.robot.AutoBaseClass.PlacePositions;
 import frc.robot.VisionPlacer.LimelightOn;
@@ -145,17 +145,13 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
         Arm.reset();
-        // VisionElements.init();
+
+        VisionPlacer.setLED(LimelightOn.Off);
     }
 
     @Override
     public void teleopPeriodic() {
-        if(gamepad2.getXButton()) {
-            VisionPlacer.setAprilTagPipeline();
-        } else if (gamepad2.getYButton()) {
-            VisionPlacer.setRetroreflectivePipeline();
-        }
-        
+           
         SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
         
         if (gamepad2.getAButton()){
@@ -165,29 +161,7 @@ public class Robot extends TimedRobot {
         else
             Claw.stopClawTO();
 
-        if (gamepad1.getBButton()){
-           // Claw.closeClaw();
-            mAutoProgram.stop();
-            mAutoProgram = new AutoClimbAndBalance(); 
-            mAutoProgram.start();
-
-        }
-        if(gamepad1.getAButton()) {
-            mAutoProgram.stop();
-            mAutoProgram = new AutoRetroReflectiveAlign();
-            mAutoProgram.start();
-        }
-        if (gamepad1.getXButton()) {
-            // VisionPlacer.setLED(LimelightOn.Off);
-            mAutoProgram.stop();
-            mAutoProgram = new AutoAprilTagAlign();
-            mAutoProgram.start();
-        }
-        if (gamepad1.getYButton()) {
-            VisionPlacer.setLED(LimelightOn.On);
-        }
- 
-        if(gamepad2.getLeftTriggerAxis() > .5){
+            if(gamepad2.getLeftTriggerAxis() > .5){
             if (!clawFlippedPress){
                 Claw.flip();
                 clawFlippedPress = true;
@@ -195,16 +169,36 @@ public class Robot extends TimedRobot {
         } else{
             clawFlippedPress = false;
         }
-        if(gamepad2.getDPadUp()){
-            //Arm.presetExtend(bistablePresets.RETRACTED);
-            LiveBottom.shuffle();
+
+        if (gamepad1.getBButton()){
+            mAutoProgram.stop();
+            mAutoProgram = new AutoClimbAndBalance(); 
+            mAutoProgram.start();
+        }
+
+        if(gamepad1.getAButton()) {
+            VisionPlacer.setRetroreflectivePipeline();
+            mAutoProgram.stop();
+            mAutoProgram = new AutoRetroReflectiveAlign();
+            mAutoProgram.start();
+        }
+           
+        if (gamepad1.getXButton()) {
+            VisionPlacer.setAprilTagPipeline();
+            mAutoProgram.stop();
+            mAutoProgram = new AutoAprilTagAlign();
+            mAutoProgram.start();
+        }
+
+        if (gamepad1.getYButton()) {
+            VisionPlacer.setLED(LimelightOn.Off);
         }
             
-        if(gamepad2.getDPadDown()) {
-            if(gamepad2.getLeftBumper())
-                LiveBottom.backward();
-            else   
+        if(gamepad2.getDPadDown() || gamepad1.getDPadDown() || gamepad1.getDPadUp()) {
+            if(gamepad2.getLeftBumper() || gamepad1.getDPadUp())
                 LiveBottom.forward();
+            else   
+                LiveBottom.backward();
         }
         else {
             LiveBottom.off();
@@ -212,10 +206,15 @@ public class Robot extends TimedRobot {
 
         if (gamepad2.getLeftBumper()) {
             Arm.overrideExtend(gamepad2.getRightY());
-            Arm.overrideLift(gamepad2.getLeftY());
+            Arm.overrideLift(-gamepad2.getLeftY());
         } else {
             Arm.extend(gamepad2.getRightY());
-            Arm.lift(gamepad2.getLeftY());
+            Arm.lift(-gamepad2.getLeftY());
+        }
+
+        if (gamepad2.getDPadUp()) {
+            Arm.presetLift(shoulderPresets.PICKUP_FEEDER_STATION);
+            Arm.presetExtend(extenderPresets.FEEDER_STATION);
         }
 
         if (gamepad2.getRightTriggerAxis()>.2){
@@ -246,14 +245,6 @@ public class Robot extends TimedRobot {
 
             DriveTrain.setAllTurnOrientation(0, false);
         }
-        // DRIVE
-        if (mAutoProgram.isRunning()) {
-            mAutoProgram.tick();
-        }
-
-        //if (mAutoProgram.isRunning() && Math.abs(gamepad2.getRightY()) > 0.2) {
-        //    mAutoProgram.stop();
-        //}
 
         // DRIVER CONTROL MODE
         // Issue the drive command using the parameters from
@@ -262,40 +253,22 @@ public class Robot extends TimedRobot {
         double driveFWDAmount = -gamepad1.getLeftY();
         double driveStrafeAmount = -gamepad1.getLeftX();
 
-        // SmartDashboard.putNumber("SWERVE ROT AXIS", driveRotAmount);
-        // if (gamepad1.getAButton()) {
-        //     // Shooter.StartShooter();
-        //     rampCodeActive = true;
-        // } else if (gamepad1.getBButton()) {
-        //     rampCodeActive = false;
-        // }
-        
-        if (rampCodeActive) {
-            driveRotAmount = rotationalAdjust(driveRotAmount);
-            // SmartDashboard.putNumber("ADJUSTED SWERVE ROT AMOUNT", driveRotAmount);
-            driveFWDAmount = forwardAdjustV2(driveFWDAmount, true);
-            driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, true);
-        }
-
         if (gamepad1.getRightBumper() || Arm.getIsExtenderExtended()) {  // slow mode if arm is extended
-            driveFWDAmount = driveFWDAmount * .3;
-            driveStrafeAmount = driveStrafeAmount * .3;
-            driveRotAmount = driveRotAmount * .2;
+            driveRotAmount = rotationalAdjust(driveRotAmount, false);
+            driveFWDAmount = forwardAdjustV2(driveFWDAmount, false);
+            driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, false);   
         }
-
-        SmartDashboard.putBoolean("DPadUp", gamepad1.getDPadUp());
-        SmartDashboard.putBoolean("DPadLeft", gamepad1.getDPadLeft());
-        SmartDashboard.putBoolean("DPadRight", gamepad1.getDPadRight());
-        SmartDashboard.putBoolean("DPadDown", gamepad1.getDPadDown());
-
-        SmartDashboard.putNumber("Best Position", TurnPosition.getBestPosition());
-        SmartDashboard.putNumber("Outputs FWD", driveFWDAmount);
-        SmartDashboard.putNumber("Outputs Strafe", driveStrafeAmount);
-
-        if (Math.abs(driveFWDAmount) > .5 || Math.abs(driveRotAmount) > .5) {
+        else {
+            driveRotAmount = rotationalAdjust(driveRotAmount, true);
+            driveFWDAmount = forwardAdjustV2(driveFWDAmount, true);
+            driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, true);    
+        }
+      
+         if (Math.abs(driveFWDAmount) > .5 || Math.abs(driveRotAmount) > .5) {
             if (mAutoProgram.isRunning())
                 mAutoProgram.stop();
         }
+
         if (!mAutoProgram.isRunning()) {
             if (gamepad1.getBackButton()) {
                 DriveTrain.humanDrive(driveFWDAmount, driveStrafeAmount, driveRotAmount);
@@ -304,6 +277,10 @@ public class Robot extends TimedRobot {
             }
         }
         
+        if (mAutoProgram.isRunning()) {
+            mAutoProgram.tick();
+        }
+
         showDashboardInfo();
     }
 
@@ -316,6 +293,7 @@ public class Robot extends TimedRobot {
         } else {
             SmartDashboard.putBoolean("Pole Low", true);
         }
+
         VisionPlacer.periodic();
         DriveAuto.tick();
         Arm.tick();
@@ -346,9 +324,9 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
         // SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
         // SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
-        SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
-        SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
-        SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
+        // SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
+        // SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
+        // SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
         SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
         SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
         SmartDashboard.putNumber("Roll", RobotGyro.roll());
@@ -462,220 +440,141 @@ public class Robot extends TimedRobot {
     public void testPeriodic() {
     }
 
-    private double rotationalAdjust(double rotateAmt) {
+    private double rotationalAdjust(double rotateAmt, boolean normalDrive) {
         // put some rotational power restrictions in place to make it
         // more controlled movement
         double adjustedAmt = 0;
 
-        if (Math.abs(rotateAmt) < .08) {
-            adjustedAmt = 0;
+        if (!normalDrive) {
+            adjustedAmt = rotateAmt * .20;
         } else {
-            if (Math.abs(rotateAmt) < .5) {
-                adjustedAmt = .1 * Math.signum(rotateAmt); // take 10% of the input
+            if (Math.abs(rotateAmt) < .08) {
+                adjustedAmt = 0;
             } else {
-                if (Math.abs(rotateAmt) < .99) {
-                    adjustedAmt = .25 * rotateAmt;
+                if (Math.abs(rotateAmt) < .5) {
+                    adjustedAmt = .1 * Math.signum(rotateAmt); // take 10% of the input
                 } else {
-                    adjustedAmt = rotateAmt * .4;
+                    if (Math.abs(rotateAmt) < .99) {
+                        adjustedAmt = .25 * rotateAmt;
+                    } else {
+                        adjustedAmt = rotateAmt * .4;
+                    }
                 }
             }
         }
+
         return adjustedAmt;
     }
 
     private double forwardAdjustV2(double fwd, boolean normalDrive) {
         final double maxACCELchange = .03;
-        final double maxSTOPPINGchange = .05;
-        double lastSetSpeed; 
-        double adjustedSpeed = 0;
-
-        if (normalDrive) {
-            adjustedSpeed = fwd * 1;
-        } else {
-            adjustedSpeed = fwd * .45;
-        }
-
-        lastSetSpeed = lastFWDvalue;
-
-        if (Math.abs(adjustedSpeed) < .05) { // then we're stopping so handle that as
-                                             // a special case
-            if (lastSetSpeed > 0) {
-                if (lastSetSpeed > maxSTOPPINGchange) {
-                    adjustedSpeed = lastSetSpeed - maxSTOPPINGchange;
-                } 
-            } else {
-                if (lastSetSpeed < maxSTOPPINGchange) {
-                    adjustedSpeed = lastSetSpeed + maxSTOPPINGchange;
-                }
-            }
-
-        } else {
-            
-            // This next section is identical in forwardAdjust and strafeAdjust
-            if (adjustedSpeed >= 0) {
-                if (adjustedSpeed > lastSetSpeed && adjustedSpeed > .25) { // speeding up so control it
-                    if (adjustedSpeed >  lastSetSpeed + maxACCELchange) {
-                        adjustedSpeed = lastSetSpeed + maxACCELchange;
-                    } 
-                } else if (adjustedSpeed <= lastSetSpeed) { 
-                    // see if we're slowing down too fast
-                    if (adjustedSpeed < lastSetSpeed - maxSTOPPINGchange) {
-                        adjustedSpeed = lastSetSpeed - maxSTOPPINGchange;
-                    }
-                }
-            } else {
-                if (adjustedSpeed < lastSetSpeed && adjustedSpeed < -.2) { // speeding up in reverse
-                    if (adjustedSpeed < lastSetSpeed - maxACCELchange) {
-                        adjustedSpeed = lastSetSpeed - maxACCELchange;       
-                    }
-                } else if (adjustedSpeed >= lastSetSpeed) {
-                    // see if we're slowing down too fast
-                    if (adjustedSpeed > lastSetSpeed + maxSTOPPINGchange) {
-                        adjustedSpeed = lastSetSpeed + maxSTOPPINGchange;
-                    }
-                }
-            }
-
-        }
-
-        lastFWDvalue = adjustedSpeed;
-        return lastFWDvalue;
-    }
-
-    private double forwardAdjust(double fwd, boolean normalDrive) {
-        final double maxACCELchange = .02;
         final double maxSTOPPINGchange = .03;
         double lastSetSpeed; 
         double adjustedSpeed = 0;
 
-        if (normalDrive) {
-            adjustedSpeed = fwd * 1;
+        if (!normalDrive) {
+            adjustedSpeed = fwd * .30;
         } else {
-            adjustedSpeed = fwd * .45;
-        }
+            adjustedSpeed = fwd * 1;      
+            lastSetSpeed = lastFWDvalue;
 
-        lastSetSpeed = lastFWDvalue;
-
-        // This next section is identical in forwardAdjust and strafeAdjust
-        if (adjustedSpeed >= 0) {
-            if (adjustedSpeed > lastSetSpeed && adjustedSpeed > .2) { // speeding up so control it
-                if (adjustedSpeed >  lastSetSpeed + maxACCELchange) {
-                    adjustedSpeed = lastSetSpeed + maxACCELchange;
-                } 
-            } else if (adjustedSpeed < lastSetSpeed) { 
-                // see if we're slowing down too fast
-                if (adjustedSpeed < lastSetSpeed - maxSTOPPINGchange) {
-                    adjustedSpeed = lastSetSpeed - maxSTOPPINGchange;
+            if (Math.abs(adjustedSpeed) < .05) { // then we're stopping so handle that as
+                                                 // a special case
+                if (lastSetSpeed > 0) {
+                    if (lastSetSpeed > maxSTOPPINGchange) {
+                        adjustedSpeed = lastSetSpeed - maxSTOPPINGchange;
+                    } 
+                } else {
+                    if (lastSetSpeed < maxSTOPPINGchange) {
+                        adjustedSpeed = lastSetSpeed + maxSTOPPINGchange;
+                    }
                 }
-            }
-        } else {
-            if (adjustedSpeed < lastSetSpeed && adjustedSpeed < -.2) { // speeding up in reverse
-                if (adjustedSpeed < lastSetSpeed - maxACCELchange) {
-                    adjustedSpeed = lastSetSpeed - maxACCELchange;       
+    
+            } else {
+                
+                // This next section is identical in forwardAdjust and strafeAdjust
+                if (adjustedSpeed >= 0) {
+                    if (adjustedSpeed > lastSetSpeed && adjustedSpeed > .25) { // speeding up so control it
+                        if (adjustedSpeed >  lastSetSpeed + maxACCELchange) {
+                            adjustedSpeed = lastSetSpeed + maxACCELchange;
+                        } 
+                    } else if (adjustedSpeed <= lastSetSpeed) { 
+                        // see if we're slowing down too fast
+                        if (adjustedSpeed < lastSetSpeed - maxSTOPPINGchange) {
+                            adjustedSpeed = lastSetSpeed - maxSTOPPINGchange;
+                        }
+                    }
+                } else {
+                    if (adjustedSpeed < lastSetSpeed && adjustedSpeed < -.2) { // speeding up in reverse
+                        if (adjustedSpeed < lastSetSpeed - maxACCELchange) {
+                            adjustedSpeed = lastSetSpeed - maxACCELchange;       
+                        }
+                    } else if (adjustedSpeed >= lastSetSpeed) {
+                        // see if we're slowing down too fast
+                        if (adjustedSpeed > lastSetSpeed + maxSTOPPINGchange) {
+                            adjustedSpeed = lastSetSpeed + maxSTOPPINGchange;
+                        }
+                    }
                 }
-            } else if (adjustedSpeed > lastSetSpeed) {
-                // see if we're slowing down too fast
-                if (adjustedSpeed > lastSetSpeed + maxSTOPPINGchange) {
-                    adjustedSpeed = lastSetSpeed + maxSTOPPINGchange;
-                }
+    
             }
         }
 
         lastFWDvalue = adjustedSpeed;
         return lastFWDvalue;
     }
+
     private double strafeAdjustV2(double strafeAmt, boolean normalDrive) {
-        final double maxACCELchange = .02;
-        final double maxSTOPPINGchange = .05;
+        final double maxACCELchange = .03;
+        final double maxSTOPPINGchange = .03;
         double lastSetSpeed; 
         double adjustedSpeed = 0;
  
-        if (normalDrive) {
-            adjustedSpeed = strafeAmt * 1;
+        if (!normalDrive) {
+            if (Math.abs(strafeAmt) > 0.1 && Math.abs(strafeAmt)<.6) 
+                adjustedSpeed = .16 * Math.signum(strafeAmt);
+            else
+                adjustedSpeed = strafeAmt * .30;
         } else {
-            adjustedSpeed = strafeAmt * .45;
-        }
-
-        lastSetSpeed = lastSTRvalue;
-
-        if (Math.abs(adjustedSpeed) < .05) { // then we're stopping so handle that as
-                    // a special case
-            if (lastSetSpeed > 0) {
-                if (lastSetSpeed > maxSTOPPINGchange) {
-                adjustedSpeed = lastSetSpeed - maxSTOPPINGchange;
-                } 
-            } else {
-            if (lastSetSpeed < maxSTOPPINGchange) {
-            adjustedSpeed = lastSetSpeed + maxSTOPPINGchange;
-            }
-            }
-
-            } else {
-    // This next section is identical in forwardAdjust and strafeAdjust
-        if (adjustedSpeed >= 0) {
-                if (adjustedSpeed > lastSetSpeed && adjustedSpeed > .25) { // speeding up so control it
-                    if (adjustedSpeed >  lastSetSpeed + maxACCELchange) {
-                        adjustedSpeed = lastSetSpeed + maxACCELchange;
-                    } 
-                } else if (adjustedSpeed < lastSetSpeed) { 
-                    // see if we're slowing down too fast
-                    if (adjustedSpeed < lastSetSpeed - maxSTOPPINGchange) {
-                        adjustedSpeed = lastSetSpeed - maxSTOPPINGchange;
-                    }
-                }
-            } else {
-                if (adjustedSpeed < lastSetSpeed && adjustedSpeed < -.2) { // speeding up in reverse
-                    if (adjustedSpeed < lastSetSpeed - maxACCELchange) {
-                        adjustedSpeed = lastSetSpeed - maxACCELchange;       
-                    }
-                } else if (adjustedSpeed > lastSetSpeed) {
-                    // see if we're slowing down too fast
-                    if (adjustedSpeed > lastSetSpeed + maxSTOPPINGchange) {
-                        adjustedSpeed = lastSetSpeed + maxSTOPPINGchange;
-                    }
-                }
-            }
-        }
-
-        lastSTRvalue = adjustedSpeed;
-        
-        return lastSTRvalue;
-    }
-    private double strafeAdjust(double strafeAmt, boolean normalDrive) {
-        final double maxACCELchange = .02;
-        final double maxSTOPPINGchange = .04;
-        double lastSetSpeed; 
-        double adjustedSpeed = 0;
- 
-        if (normalDrive) {
             adjustedSpeed = strafeAmt * 1;
-        } else {
-            adjustedSpeed = strafeAmt * .45;
-        }
+            lastSetSpeed = lastSTRvalue;
 
-        lastSetSpeed = lastSTRvalue;
-
-       // This next section is identical in forwardAdjust and strafeAdjust
-       if (adjustedSpeed >= 0) {
-            if (adjustedSpeed > lastSetSpeed && adjustedSpeed > .2) { // speeding up so control it
-                if (adjustedSpeed >  lastSetSpeed + maxACCELchange) {
-                    adjustedSpeed = lastSetSpeed + maxACCELchange;
-                } 
-            } else if (adjustedSpeed < lastSetSpeed) { 
-                // see if we're slowing down too fast
-                if (adjustedSpeed < lastSetSpeed - maxSTOPPINGchange) {
+            if (Math.abs(adjustedSpeed) < .05) { // then we're stopping so handle that as
+                        // a special case
+                if (lastSetSpeed > 0) {
+                    if (lastSetSpeed > maxSTOPPINGchange) {
                     adjustedSpeed = lastSetSpeed - maxSTOPPINGchange;
-                }
-            }
-        } else {
-            if (adjustedSpeed < lastSetSpeed && adjustedSpeed < -.2) { // speeding up in reverse
-                if (adjustedSpeed < lastSetSpeed - maxACCELchange) {
-                    adjustedSpeed = lastSetSpeed - maxACCELchange;       
-                }
-            } else if (adjustedSpeed > lastSetSpeed) {
-                // see if we're slowing down too fast
-                if (adjustedSpeed > lastSetSpeed + maxSTOPPINGchange) {
+                    } 
+                } else {
+                    if (lastSetSpeed < maxSTOPPINGchange) {
                     adjustedSpeed = lastSetSpeed + maxSTOPPINGchange;
+                    }
+                }
+    
+            } else {
+        // This next section is identical in forwardAdjust and strafeAdjust
+            if (adjustedSpeed >= 0) {
+                    if (adjustedSpeed > lastSetSpeed && adjustedSpeed > .25) { // speeding up so control it
+                        if (adjustedSpeed >  lastSetSpeed + maxACCELchange) {
+                            adjustedSpeed = lastSetSpeed + maxACCELchange;
+                        } 
+                    } else if (adjustedSpeed < lastSetSpeed) { 
+                        // see if we're slowing down too fast
+                        if (adjustedSpeed < lastSetSpeed - maxSTOPPINGchange) {
+                            adjustedSpeed = lastSetSpeed - maxSTOPPINGchange;
+                        }
+                    }
+                } else {
+                    if (adjustedSpeed < lastSetSpeed && adjustedSpeed < -.2) { // speeding up in reverse
+                        if (adjustedSpeed < lastSetSpeed - maxACCELchange) {
+                            adjustedSpeed = lastSetSpeed - maxACCELchange;       
+                        }
+                    } else if (adjustedSpeed > lastSetSpeed) {
+                        // see if we're slowing down too fast
+                        if (adjustedSpeed > lastSetSpeed + maxSTOPPINGchange) {
+                            adjustedSpeed = lastSetSpeed + maxSTOPPINGchange;
+                        }
+                    }
                 }
             }
         }

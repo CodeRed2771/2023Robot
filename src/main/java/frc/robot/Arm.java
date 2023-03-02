@@ -12,16 +12,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Arm {
     
-    public static enum bistablePresets {
+    public static enum extenderPresets {
         RETRACTED,
         GROUND,
         LOW,
-        HIGH
+        HIGH,
+        FEEDER_STATION
     }
 
     public static enum shoulderPresets {
         PICKUP_CONE,
         PICKUP_CUBE,
+        PICKUP_FEEDER_STATION,
         PLACING_GROUND,
         PLACING_LOW,
         PLACING_HIGH
@@ -35,8 +37,8 @@ public class Arm {
     private static final int MAX_EXTEND_CURRENT = 30;
     private static final int MAX_SHOULDER_CURRENT = 30;
 
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 75;//65 was too low
-    private static final double MAX_GROUND_LEVEL_EXTENSION = 190;
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 95;//65 was too low
+    private static final double MAX_GROUND_LEVEL_EXTENSION = 220;
     private static final double MAX_IN_AIR_EXTENSION = 500; //420
 
     private static double MAX_SHOULDER_SPEED = 0;
@@ -123,8 +125,11 @@ public class Arm {
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
     }
 
-    public static void presetExtend(bistablePresets position) {
+    public static void presetExtend(extenderPresets position) {
         switch(position) {
+            case FEEDER_STATION:
+                extendRequestedPos = 32;
+                break;
             case RETRACTED:
                 extendRequestedPos = 50;//??
                 break;
@@ -182,6 +187,10 @@ public class Arm {
 
     public static void presetLift(shoulderPresets position) {
         switch(position) {
+            case PICKUP_FEEDER_STATION:
+                MAX_SHOULDER_SPEED = 1;
+                shoulderRequestedPos = 79;  // 3-1-23 seems very finicky
+                break;
             case PICKUP_CONE:
                 MAX_SHOULDER_SPEED=1;
                 shoulderRequestedPos = 50;//??
@@ -200,13 +209,17 @@ public class Arm {
                 shoulderRequestedPos = 150;//??
                 MAX_SHOULDER_SPEED = 0.4;
         }
+
+        shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
     }
 
     public static void lift(double pwr) {
+        
         if (Math.abs(pwr)>.05) {
-            if(extendRequestedPos > 100) {
-                if(pwr > (1/1500)*extendRequestedPos+0.75)
-                    pwr = (1/1500)*extendRequestedPos+0.75;
+            if(extendRequestedPos > 150) {
+                pwr = pwr * .3;
+                // if(pwr > (1/1500)*extendRequestedPos+0.75)
+                //     pwr = (1/1500)*extendRequestedPos+0.75;
             }
             shoulderRequestedPos = shoulderRequestedPos + (3.5 * -pwr);
             

@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 //robot is 31 in wide and each side is 15.5 (With Bumpers)
 //bars are 3 in wide
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Arm.bistablePresets;
+import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 
 public class AutoPlace3VROOOM extends AutoBaseClass{

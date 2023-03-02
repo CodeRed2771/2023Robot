@@ -1,7 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Arm.bistablePresets;
+import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 
 public class AutoAprilTag2Elements extends AutoBaseClass {
@@ -24,7 +24,7 @@ public class AutoAprilTag2Elements extends AutoBaseClass {
                 case 2:
                     break;
                 case 3:
-                    Arm.presetExtend(bistablePresets.HIGH);
+                    Arm.presetExtend(extenderPresets.HIGH);
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 4:
@@ -38,7 +38,7 @@ public class AutoAprilTag2Elements extends AutoBaseClass {
                 case 7: 
                     Claw.closeClawA();
                     Intake.deploy();
-                    Arm.presetExtend(bistablePresets.RETRACTED);
+                    Arm.presetExtend(extenderPresets.RETRACTED);
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 8:
