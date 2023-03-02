@@ -118,6 +118,7 @@ public class Arm {
         shoulderRequestedPos = 0;
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);   
         shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+        //zeroCancel();
     }
 
     public static void tick() {
@@ -253,7 +254,7 @@ public class Arm {
 
     private static boolean zeroActive = false;
     private static boolean zeroFast = false;
-    private static LimitSwitch shoulderLimitSwitch = new LimitSwitch(Wiring.SHOULDER_LIMIT_SWITCH_CHANNEL);
+    private static LimitSwitch shoulderLimitSwitch = new LimitSwitch(Wiring.SHOULDER_LIMIT_SWITCH_CHANNEL,true);
 
     public static void zero(){
         if(!shoulderLimitSwitch.isPressed()){
@@ -277,13 +278,16 @@ public class Arm {
                 if(zeroFast){
                     shoulderRequestedPos -= 1;
                 }else{
-                    shoulderRequestedPos -= .5;
+                    shoulderRequestedPos -= .8;
                 }
                 shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
             } else {
                 minShoulderPosition = shoulderRequestedPos;
+                shoulderRequestedPos +=40;
+                shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
                 zeroActive = false;
             }
         }
+        SmartDashboard.putBoolean("Shoulder Limit Switch", shoulderLimitSwitch.isPressed());
     }
 }

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class LimitSwitch {
     private DigitalInput switchInput;
+    private boolean isInverted = false;
 
     /**
      * 
@@ -12,12 +13,40 @@ public class LimitSwitch {
     public LimitSwitch(int channel) {
         switchInput = new DigitalInput(channel);
     }
+    /**
+     * 
+     * @param channel specifies the digital input channel to use for reading the switch state.
+     * @param isInverted whether the signal is inverted when being read
+     */
+    public LimitSwitch(int channel,boolean isInverted) {
+        switchInput = new DigitalInput(channel);
+        this.isInverted = isInverted;
+    }
 
     /**
      * 
      * @return returns true if switch is pressed
      */
     public boolean isPressed() {
-        return !switchInput.get(); // Returns true if the switch is pressed (input is low)
+        if(isInverted){
+            return switchInput.get(); // Returns true if the switch is pressed (input is low)
+        } else {
+            return !switchInput.get(); // Returns true if the switch is pressed (input is low)
+        }
+    }
+
+    /**
+     * 
+     * @return boolean whether the output is inverted or not
+     */
+    public boolean isInverted() {
+        return isInverted;
+    }
+    /**
+     * 
+     * @param isInverted set whether the output is inverted or not
+     */
+    public void isInverted(boolean isInverted) {
+        this.isInverted = isInverted;
     }
 }
