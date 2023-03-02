@@ -37,7 +37,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         positionMultiplier = 1;
                     if(DriverStation.getAlliance() == Alliance.Red && robotPosition() == Position.RIGHT)
                         positionMultiplier = -1;
-                    LiveBottom.eject();
+                    LiveBottom.backward();
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 1:
@@ -51,6 +51,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 4://go to pickup
+                    LiveBottom.off();
                     driveInches(216, 0, 1);
                     setTimerAndAdvanceStep(2000);
                     break;
@@ -70,7 +71,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 9://make element ready to eject
-                    LiveBottom.forward();
+                    //unneeded
                     break;
                 case 10://stop intake and go to place
                     Intake.stop();
@@ -82,7 +83,6 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 12://turn live bottom off and align for placing
-                    LiveBottom.off();
                     driveInches(-8*positionMultiplier, 90, 0.8);//TUNE LINE
                     setTimerAndAdvanceStep(1000);
                     break;
@@ -98,7 +98,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 16://eject the element
-                    LiveBottom.eject();
+                    LiveBottom.on();
                     setTimerAndAdvanceStep(750);
                     break;
                 case 17:
@@ -112,6 +112,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 20://drive to 3rd elemnet
+                    LiveBottom.off();
                     driveInches(216, 0, 1);
                     setTimerAndAdvanceStep(1500);
                     break;
@@ -138,7 +139,6 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                     break;
                 case 26://stop intake, start live bottom, and drive to go back
                     Intake.stop();
-                    LiveBottom.forward();
                     driveInches(48*positionMultiplier, 90, 1);//TUNE LINE
                     setTimerAndAdvanceStep(1500);
                     break;
@@ -155,7 +155,6 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 30://turn live bottom off, align horizontally
-                    LiveBottom.off();
                     driveInches(25.5*positionMultiplier, 90, 0.5);//TUNE LINE
                     setTimerAndAdvanceStep(1250);
                     break;
@@ -172,12 +171,13 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 34://eject elemnt
-                    LiveBottom.eject();
+                    LiveBottom.on();
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 35:
                     break;
                 case 36:
+                    LiveBottom.off();
                     stop();
                     break;
             }
