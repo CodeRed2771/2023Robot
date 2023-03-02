@@ -1,7 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Arm.bistablePresets;
+import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 
 public class AutoCP1CB extends AutoBaseClass{
@@ -32,7 +32,7 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 1:
                     break;
                 case 2:
-                    Arm.presetExtend(bistablePresets.RETRACTED);
+                    Arm.presetExtend(extenderPresets.RETRACTED);
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 3:
@@ -44,7 +44,7 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 5:
                     break;
                 case 6:
-                    Arm.presetExtend(bistablePresets.HIGH);
+                    Arm.presetExtend(extenderPresets.HIGH);
                     setTimerAndAdvanceStep(1500);
                 case 7:
                     break;
@@ -55,7 +55,7 @@ public class AutoCP1CB extends AutoBaseClass{
                     break;
                 case 10:
                     Claw.closeClawA();
-                    Arm.presetExtend(bistablePresets.RETRACTED);
+                    Arm.presetExtend(extenderPresets.RETRACTED);
                     setTimerAndAdvanceStep(2000);
                 case 11:
                     break;

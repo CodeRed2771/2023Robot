@@ -1,10 +1,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Arm.bistablePresets;
+import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 
-public class AutoCP1CB extends AutoBaseClass{
+public class AutoC_CB extends AutoBaseClass{
     private int counter = 0;
     private int dacount = 0;
     private int stopCount = 0;
@@ -32,52 +32,24 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 1:
                     break;
                 case 2:
-                    Arm.presetExtend(bistablePresets.RETRACTED);
-                    setTimerAndAdvanceStep(1250);
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    Arm.presetLift(shoulderPresets.PLACING_HIGH);
-                    setTimerAndAdvanceStep(750);
-                    break;
-                case 5:
-                    break;
-                case 6:
-                    Arm.presetExtend(bistablePresets.HIGH);
-                    setTimerAndAdvanceStep(1500);
-                case 7:
-                    break;
-                case 8:
-                    Claw.openClawA();
-                    setTimerAndAdvanceStep(750);
-                case 9:
-                    break;
-                case 10:
-                    Claw.closeClawA();
-                    Arm.presetExtend(bistablePresets.RETRACTED);
-                    setTimerAndAdvanceStep(2000);
-                case 11:
-                    break;
-                case 12:
                     driveInches(250, 0, 0.8);
                     setTimerAndAdvanceStep(6000);
-                case 13:
+                case 3:
                     if(driveCompleted())
                         advanceStep();
-                case 14:
+                case 4:
                     driveInches(150, 0, 0.8);
                     setTimerAndAdvanceStep(6000);
-                case 15:
+                case 5:
                     if(driveCompleted())
                         advanceStep();
-                case 16:
+                case 6:
                     driveInches(-50, 0, 0.5);
                     setTimerAndAdvanceStep(6000);
-                case 17:
+                case 7:
                         if(driveCompleted())
                             advanceStep();
-                case 18:
+                case 8:
                     stop();
                     break;
             }
