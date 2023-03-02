@@ -254,7 +254,7 @@ public class Arm {
 
     private static boolean zeroActive = false;
     private static boolean zeroFast = false;
-    private static LimitSwitch shoulderLimitSwitch = new LimitSwitch(Wiring.SHOULDER_LIMIT_SWITCH_CHANNEL);
+    private static LimitSwitch shoulderLimitSwitch = new LimitSwitch(Wiring.SHOULDER_LIMIT_SWITCH_CHANNEL,true);
 
     public static void zero(){
         if(!shoulderLimitSwitch.isPressed()){
