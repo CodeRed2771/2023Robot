@@ -285,5 +285,6 @@ public class Arm {
                 zeroActive = false;
             }
         }
+        SmartDashboard.putBoolean("Shoulder Limit Switch", shoulderLimitSwitch.isPressed());
     }
 }
