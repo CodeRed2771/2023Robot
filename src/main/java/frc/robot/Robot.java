@@ -306,7 +306,6 @@ public class Robot extends TimedRobot {
         VisionPlacer.periodic();
         DriveAuto.tick();
         Arm.tick();
-        Arm.zeroTick();
         LiveBottom.tick();
         TickTimer.tick();
         

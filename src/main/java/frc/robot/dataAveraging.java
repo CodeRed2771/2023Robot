@@ -19,7 +19,7 @@ public class dataAveraging {
     double dataTotal[] = new double[6];
     double averagedData[] = new double[6];
 
-    final double sanityCheckRange[] = {10, 10, 5, 45, 45, 360};
+    final double sanityCheckRange[] = {20, 3, 1, 2, 2, 360};
     final double adjustCheckRange[] = {.05, .05, .05, 2, 2, 45};
     final double nullArray[] = {0, 0, 0, 0, 0,0};
     // Signle Data
