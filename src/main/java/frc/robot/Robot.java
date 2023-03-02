@@ -387,7 +387,8 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
             break;
         case AutoLeaveTarmac:
-            mAutoProgram = new AutoLeaveTarmack();
+            //mAutoProgram = new AutoLeaveTarmack();
+            mAutoProgram = new AutoDoNothing();
             mAutoProgram.start();
             break;
         }
