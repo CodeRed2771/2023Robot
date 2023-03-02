@@ -20,6 +20,8 @@ public class Wiring {
 	/**
 	 * DIO ID PORTS
 	 */
+	
+	public static final int SHOULDER_LIMIT_SWITCH_CHANNEL = 0;
 	public static final int TURN_ABS_ENC_A = 5;
 	public static final int TURN_ABS_ENC_B = 6;
 	public static final int TURN_ABS_ENC_C = 7;
