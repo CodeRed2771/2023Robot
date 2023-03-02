@@ -118,7 +118,7 @@ public class Arm {
         shoulderRequestedPos = 0;
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);   
         shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
-        zeroCancel();
+        //zeroCancel();
     }
 
     public static void tick() {
@@ -278,11 +278,13 @@ public class Arm {
                 if(zeroFast){
                     shoulderRequestedPos -= 1;
                 }else{
-                    shoulderRequestedPos -= .5;
+                    shoulderRequestedPos -= .8;
                 }
                 shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
             } else {
                 minShoulderPosition = shoulderRequestedPos;
+                shoulderRequestedPos +=40;
+                shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
                 zeroActive = false;
             }
         }

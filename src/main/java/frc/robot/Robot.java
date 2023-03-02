@@ -190,11 +190,8 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
         }
 
-        if(gamepad1.getLeftBumper()){
+        if(gamepad1.getBackButton()){
             Arm.zero();
-        }
-        if(gamepad1.getDPadLeft()){
-            Arm.zeroFast();
         }
         if(gamepad1.getDPadRight()){
             Arm.zeroCancel();
