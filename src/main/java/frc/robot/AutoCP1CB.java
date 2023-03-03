@@ -66,7 +66,7 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 11:
                     break;
                 case 12:
-                    driveInches(60, 0, 0.75);
+                    driveInches(80, 0, 0.75);
                     setTimerAndAdvanceStep(2500);
                     break;
                 case 13:
