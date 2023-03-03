@@ -18,7 +18,7 @@ public class AutoCommunity extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0: 
-                    driveInches(210, 0, 1);
+                    driveInches(210, 0, 0.6);
                     setTimerAndAdvanceStep(6000);
                     break;
                 case 1:
@@ -27,9 +27,7 @@ public class AutoCommunity extends AutoBaseClass{
                     }
                     break;
                 case 2: 
-                    Intake.deploy();
-                    Intake.run(1);
-                    driveInches(26, 0, 1);
+                    driveInches(26, 0, 0.6);
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 3:
@@ -38,15 +36,11 @@ public class AutoCommunity extends AutoBaseClass{
                     }
                     break;
                 case 4:
-                    driveInches(-200, 0, 1);
-                    setTimerAndAdvanceStep(5000);
-                    break;
-                case 5:
                     if (driveCompleted()) {
                         advanceStep();
                     }
                 break;
-                case 6:
+                case 5:
                     stop();
                     break;
             }

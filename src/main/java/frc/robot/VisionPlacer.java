@@ -34,6 +34,7 @@ public class VisionPlacer {
     public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         setAprilTagPipeline();
+        setLED(LimelightOn.Off);
         botpose_targetspace.init();
         botpose_wpired.init();
         botpose_wpiblue.init();

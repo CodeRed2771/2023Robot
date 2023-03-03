@@ -141,8 +141,10 @@ public class Arm {
                 break;
             case LOW:
                 extendRequestedPos = 150;//??
+                break;
             case HIGH:
-                extendRequestedPos = 200;//??
+                extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
+                break;
         }
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
     }
@@ -206,12 +208,16 @@ public class Arm {
             case PLACING_GROUND:
                 shoulderRequestedPos = 150;//??
                 MAX_SHOULDER_SPEED=0.7;
+                break;
             case PLACING_LOW:
                 shoulderRequestedPos = 150;//??
                 MAX_SHOULDER_SPEED=0.55;
+                break;
             case PLACING_HIGH:
-                shoulderRequestedPos = 150;//??
+                shoulderRequestedPos = 0;//??
                 MAX_SHOULDER_SPEED = 0.4;
+                break;
+                
         }
 
         shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
@@ -257,12 +263,14 @@ public class Arm {
 
     private static boolean zeroActive = false;
     private static boolean zeroFast = false;
+    private static long endTimeForZeroCalib = 0;
     private static LimitSwitch shoulderLimitSwitch = new LimitSwitch(Wiring.SHOULDER_LIMIT_SWITCH_CHANNEL,true);
 
     public static void zero(){
         if(!shoulderLimitSwitch.isPressed()){
-        zeroFast = false;
-        zeroActive = true;
+            zeroFast = false;
+            zeroActive = true;
+            endTimeForZeroCalib = System.currentTimeMillis() + 2000 ;
         }
     }
     public static void zeroFast(){
@@ -277,18 +285,26 @@ public class Arm {
     }
     public static void zeroTick(){
         if(zeroActive){
-            if(!shoulderLimitSwitch.isPressed()){
-                if(zeroFast){
-                    shoulderRequestedPos -= 1;
-                }else{
-                    shoulderRequestedPos -= .8;
-                }
-                shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
-            } else {
-                minShoulderPosition = shoulderRequestedPos;
+            if (System.currentTimeMillis() >= endTimeForZeroCalib) {
+                zeroActive = false;
                 shoulderRequestedPos +=40;
                 shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
-                zeroActive = false;
+            } else {
+                if(!shoulderLimitSwitch.isPressed()){
+                    if(zeroFast){
+                        shoulderRequestedPos -= 1;
+                    }else{
+                        shoulderRequestedPos -= .8;
+                    }
+                    shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+                    if (minShoulderPosition > shoulderRequestedPos) {
+                        minShoulderPosition = shoulderRequestedPos;
+                    }
+                } else {
+                    shoulderRequestedPos +=40;
+                    shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+                    zeroActive = false;
+                }
             }
         }
         SmartDashboard.putBoolean("Shoulder Limit Switch", shoulderLimitSwitch.isPressed());
