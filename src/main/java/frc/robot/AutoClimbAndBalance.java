@@ -58,9 +58,9 @@ public class AutoClimbAndBalance extends AutoBaseClass {
                     driveDistance = driveRatio  * currentPitch;
                     DriveAuto.driveInches(driveDistance, 0, .5); 
                     timeToNextDrive = (int)(Math.abs(driveDistance) * 10);       
-                    timesLevel = 0;
                     SmartDashboard.putNumber("Auto Drive Call", dacount++);
                }
+               timesLevel = 0;
             }
         }
     }

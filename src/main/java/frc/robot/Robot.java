@@ -194,12 +194,6 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
         }
 
-        if(gamepad1.getBackButton()){
-            Arm.zero();
-        }
-        if(gamepad1.getDPadRight()){
-            Arm.zeroCancel();
-        }
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.Off);
         }
@@ -220,6 +214,17 @@ public class Robot extends TimedRobot {
         } else {
             Arm.extend(gamepad2.getRightY());
             Arm.lift(-gamepad2.getLeftY());
+        }
+        if(gamepad2.getBackButton()){
+            Arm.zero();
+        }
+        
+        if(gamepad1.getDPadRight()){
+            Arm.zeroCancel();
+        }
+
+        if(Math.abs(gamepad2.getRightY()) > .2 || Math.abs(gamepad2.getLeftY()) > .2) {
+            Arm.zeroCancel();
         }
 
         if (gamepad2.getDPadUp()) {
@@ -408,15 +413,15 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData("Position", positionChooser);
 
         autoChooser = new SendableChooser<String>();
-        autoChooser.addOption(autoCalibrator, autoCalibrator);
+        // autoChooser.addOption(autoCalibrator, autoCalibrator);
         //autoChooser.addOption(autoWheelAlign, autoWheelAlign);
-        autoChooser.addOption(autoAlign, autoAlign);
+        // autoChooser.addOption(autoAlign, autoAlign);
         //autoChooser.addOption(ballPickUp, ballPickUp);
-        autoChooser.setDefaultOption(AutoCommunity, AutoCommunity);
-        autoChooser.addOption(AutoCPlace1, AutoCPlace1);
+        autoChooser.addOption(AutoCommunity, AutoCommunity);
+        autoChooser.setDefaultOption(AutoCPlace1, AutoCPlace1);
         autoChooser.addOption(AutoCP1CB, AutoCP1CB);
-        autoChooser.addOption(AutoC_CB, AutoC_CB);
-        autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
+     //   autoChooser.addOption(AutoC_CB, AutoC_CB);
+     //   autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
         
      
         SmartDashboard.putData("Auto Chose:", autoChooser);

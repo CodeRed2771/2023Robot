@@ -11,6 +11,7 @@ public class AutoCP1CB extends AutoBaseClass{
     private int timeToNextDrive = 0;
     boolean test= true;
     private final static double driveRatio = .5;
+    private static AutoBaseClass balance = new AutoClimbAndBalance();
 
 	public void start() {
 		super.start();
@@ -26,15 +27,15 @@ public class AutoCP1CB extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    Claw.closeClawA();
-                    setTimerAndAdvanceStep(2000);
+                    Claw.closeClawTO();
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 1:
-                    Claw.tickAuto();
                     break;
                 case 2:
+                    Claw.stopClawTO();
                     Claw.flip();
-                    Arm.presetExtend(extenderPresets.RETRACTED);
+                    //Arm.presetExtend(extenderPresets.RETRACTED);
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 3:
@@ -47,43 +48,60 @@ public class AutoCP1CB extends AutoBaseClass{
                     break;
                 case 6:
                     Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(1500);
+                    setTimerAndAdvanceStep(3500);
+                    break;
                 case 7:
                     break;
                 case 8:
-                    Claw.openClawA();
-                    setTimerAndAdvanceStep(1500);
+                    Claw.openClawTO();
+                    setTimerAndAdvanceStep(2000);
+                    break;
                 case 9:
                     break;
                 case 10:
-                    Claw.closeClawA();
+                    Claw.stopClawTO();
                     Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(2000);
+                    setTimerAndAdvanceStep(1400);
+                    break;
                 case 11:
                     break;
                 case 12:
-                    driveInches(250, 0, 0.8);
-                    setTimerAndAdvanceStep(6000);
+                    driveInches(48, 0, 0.6);
+                    setTimerAndAdvanceStep(3000);
+                    break;
                 case 13:
                     if(driveCompleted())
-                        advanceStep();
+                        // advanceStep();
+                        setStep(18);
+                    break;
                 case 14:
-                    driveInches(150, 0, 0.8);
-                    setTimerAndAdvanceStep(6000);
+                    setStep(18);
+                    driveInches(20, 0, 0.6);
+                    setTimerAndAdvanceStep(3000);
+                    break;
                 case 15:
                     if(driveCompleted())
-                        advanceStep();
+                        advanceStep(); 
+                    break;
                 case 16:
-                    driveInches(-50, 0, 0.5);
-                    setTimerAndAdvanceStep(6000);
+                    //driveInches(-20, 0, 0.6);
+                    setStep(18);
+                    // setTimerAndAdvanceStep(50);
+                    break;
                 case 17:
                         if(driveCompleted())
                             advanceStep();
+                        break;
                 case 18:
+                    balance.start();
+                    setTimerAndAdvanceStep(6000);
+                    break;
+                case 19:
+                    break;
+                case 20:
                     stop();
                     break;
             }
         }
     }
-
 }

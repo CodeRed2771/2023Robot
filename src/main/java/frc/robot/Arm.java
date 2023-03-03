@@ -134,7 +134,7 @@ public class Arm {
                 extendRequestedPos = 32;
                 break;
             case RETRACTED:
-                extendRequestedPos = 50;//??
+                extendRequestedPos = 10;//??
                 break;
             case GROUND:
                 extendRequestedPos = 100;//??

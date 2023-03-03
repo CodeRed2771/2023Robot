@@ -62,11 +62,11 @@ public class Claw {
     
 
     public static void tickAuto() {
-        if(clawRecordedTicks < 2000*50 && clawCurrentCall == clawCalls.POWERED_OPEN) {
+        if(clawRecordedTicks < 10000 && clawCurrentCall == clawCalls.POWERED_OPEN) {
             clawMotor.set(1);
             clawRecordedTicks++;
         }
-        if(clawRecordedTicks > 0 && clawCurrentCall == clawCalls.POWERED_CLOSED) {
+        if(clawRecordedTicks > -5000 && clawCurrentCall == clawCalls.POWERED_CLOSED) {
             clawMotor.set(-1);
             clawRecordedTicks--;
         }
@@ -76,7 +76,7 @@ public class Claw {
     }
     
     public static void closeClawA() {
-        clawRecordedTicks = 2000*50;
+        clawRecordedTicks = 1000*50;
         clawCurrentCall = clawCalls.POWERED_CLOSED;
     }
     public static void openClawA() {
