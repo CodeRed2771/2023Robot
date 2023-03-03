@@ -51,7 +51,7 @@ public class Arm {
     private static double shoulderRequestedPos = minShoulderPosition;
 
     public static void init() {
-
+        zeroCancel();
         //motor responsible of extension of bistable material
         extendMotor = new CANSparkMax(Wiring.BISTABLE_MOTOR, MotorType.kBrushless);
         extendMotor.restoreFactoryDefaults();
@@ -189,6 +189,7 @@ public class Arm {
     }
 
     public static void presetLift(shoulderPresets position) {
+        zeroCancel();
         switch(position) {
             case PICKUP_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
@@ -219,6 +220,7 @@ public class Arm {
     public static void lift(double pwr) {
         
         if (Math.abs(pwr)>.05) {
+            zeroCancel();
             if(extendRequestedPos > 150) {
                 pwr = pwr * .3;
                 // if(pwr > (1/1500)*extendRequestedPos+0.75)
@@ -237,6 +239,7 @@ public class Arm {
 
     public static void overrideLift(double pwr) {
         if (Math.abs(pwr)>.05) {
+            zeroCancel();
             pwr = pwr * .25;
             shoulderRequestedPos = shoulderRequestedPos + (-pwr);
 
