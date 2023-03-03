@@ -198,13 +198,17 @@ public class Robot extends TimedRobot {
         }
             
         if(gamepad2.getDPadDown() || gamepad1.getDPadDown() || gamepad1.getDPadUp()) {
-            if(gamepad2.getLeftBumper() || gamepad1.getDPadUp())
+            if(gamepad2.getLeftBumper() || gamepad1.getDPadUp()) {
                 LiveBottom.forward();
+                Intake.liveBottomIntake();
+            }
             else   
                 LiveBottom.backward();
+                Intake.liveBottomIntake();
         }
         else {
             LiveBottom.off();
+            Intake.liveBottomIntakeStop();
         }
 
         if (gamepad2.getLeftBumper()) {

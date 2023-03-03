@@ -1,5 +1,7 @@
 package frc.robot;
 
+import javax.naming.ldap.ExtendedRequest;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -41,6 +43,8 @@ public class Arm {
     private static final double MAX_INSIDE_ROBOT_EXTENSION = 100;//95 was too low
     private static final double MAX_GROUND_LEVEL_EXTENSION = 220;
     private static final double MAX_IN_AIR_EXTENSION = 500; //420
+
+    private static final double MIN_RETRACTION_INSIDE_ROBOT = 30;
 
     private static double MAX_SHOULDER_SPEED = 0;
     private final static double MAX_SHOULDER_TRAVEL = 500;
@@ -155,12 +159,16 @@ public class Arm {
         
             if (extendRequestedPos < minExtension) 
                 extendRequestedPos = minExtension;
-            if (shoulderRequestedPos > 290 && extendRequestedPos > (minExtension + MAX_INSIDE_ROBOT_EXTENSION))  
+            if ((shoulderRequestedPos+minShoulderPosition) > 290 && (extendRequestedPos+minExtension) > (minExtension + MAX_INSIDE_ROBOT_EXTENSION))  
                 extendRequestedPos = (minExtension + MAX_INSIDE_ROBOT_EXTENSION);
-            else if (shoulderRequestedPos > 162 && extendRequestedPos > (minExtension + MAX_GROUND_LEVEL_EXTENSION))  
+            else if ((shoulderRequestedPos + minShoulderPosition) > 162 && (extendRequestedPos+minExtension) > (minExtension + MAX_GROUND_LEVEL_EXTENSION))  
                 extendRequestedPos = (minExtension + MAX_GROUND_LEVEL_EXTENSION);
-            else if (extendRequestedPos > (minExtension + MAX_IN_AIR_EXTENSION))  
+            else if ((extendRequestedPos+minExtension) > (minExtension + MAX_IN_AIR_EXTENSION))  
                 extendRequestedPos = (minExtension + MAX_IN_AIR_EXTENSION);
+            
+            if((extendRequestedPos+minExtension) <= (minExtension +MIN_RETRACTION_INSIDE_ROBOT) && (shoulderRequestedPos+minShoulderPosition) >= 290) {
+                extendRequestedPos = minExtension + MIN_RETRACTION_INSIDE_ROBOT;
+            }
             extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);        
         }        
      }

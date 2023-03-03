@@ -36,13 +36,13 @@ public class AutoCP1CB extends AutoBaseClass{
                     Claw.stopClawTO();
                     Claw.flip();
                     //Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(1250);
+                    setTimerAndAdvanceStep(100);
                     break;
                 case 3:
                     break;
                 case 4:
                     Arm.presetLift(shoulderPresets.PLACING_HIGH);
-                    setTimerAndAdvanceStep(750);
+                    setTimerAndAdvanceStep(100);
                     break;
                 case 5:
                     break;
@@ -61,13 +61,13 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 10:
                     Claw.stopClawTO();
                     Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(1400);
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 11:
                     break;
                 case 12:
-                    driveInches(60, 0, 0.6);
-                    setTimerAndAdvanceStep(3000);
+                    driveInches(60, 0, 0.75);
+                    setTimerAndAdvanceStep(2500);
                     break;
                 case 13:
                     if(driveCompleted())
@@ -76,8 +76,8 @@ public class AutoCP1CB extends AutoBaseClass{
                     break;
                 case 14:
                     setStep(18);
-                    driveInches(20, 0, 0.6);
-                    setTimerAndAdvanceStep(3000);
+                    //driveInches(20, 0, 0.6);
+                    //setTimerAndAdvanceStep(3000);
                     break;
                 case 15:
                     if(driveCompleted())
@@ -97,6 +97,7 @@ public class AutoCP1CB extends AutoBaseClass{
                     setTimerAndAdvanceStep(6000);
                     break;
                 case 19:
+                    balance.tick();
                     break;
                 case 20:
                     stop();
