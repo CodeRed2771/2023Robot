@@ -44,15 +44,15 @@ public class Claw {
     // public static double getPotentionmeterDegree() {
     //     return potentiometer.get();
     // }
-    public static void openClaw() {
+    // public static void openClaw() {
         
-    }
+    // }
     
-    public static void openClawTOPos() {
+    public static void openClawTO() {
         clawMotor.set(1);
     }
     
-    public static void closeClawTONeg() {
+    public static void closeClawTO() {
         clawMotor.set(-1);
     }
 
@@ -62,12 +62,12 @@ public class Claw {
     
 
     public static void tickAuto() {
-        if(clawRecordedTicks < 1000 && clawCurrentCall == clawCalls.POWERED_OPEN) {
-            clawMotor.set(0.7);
+        if(clawRecordedTicks < 2000*50 && clawCurrentCall == clawCalls.POWERED_OPEN) {
+            clawMotor.set(1);
             clawRecordedTicks++;
         }
         if(clawRecordedTicks > 0 && clawCurrentCall == clawCalls.POWERED_CLOSED) {
-            clawMotor.set(-0.7);
+            clawMotor.set(-1);
             clawRecordedTicks--;
         }
         if(clawRecordedTicks == 0 || clawRecordedTicks == 1000 || clawCurrentBreaker.tripped()) {
@@ -76,9 +76,11 @@ public class Claw {
     }
     
     public static void closeClawA() {
+        clawRecordedTicks = 2000*50;
         clawCurrentCall = clawCalls.POWERED_CLOSED;
     }
     public static void openClawA() {
+        clawRecordedTicks = 0;
         clawCurrentCall = clawCalls.POWERED_OPEN;
     }
 

@@ -94,7 +94,11 @@ public class Robot extends TimedRobot {
     final String autoCalibrator = "Auto Calibrator";
     final String autoWheelAlign = "Auto Wheel Align";
     final String autoAlign = "Auto Align";
-    final String AutoLeaveTarmac = "Auto Leave Tarmac";
+    final String AutoCommunity = "Auto Community";
+    final String AutoC_CB = "Auto Community Climb+Balance";
+    final String AutoCP1CB = "Auto Community Place 1 Climb+Balance";
+    final String AutoCPlace1 = "Auto Community Place 1";
+    final String AutoCPlace3VROOOM = "Auto Community Place 3 (TEST ONLY)";
 
     private double lastFWDvalue = 0; 
     private double lastSTRvalue = 0;
@@ -155,9 +159,9 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
         
         if (gamepad2.getAButton()){
-            Claw.openClawTOPos();
+            Claw.openClawTO();
         } else if (gamepad2.getBButton()) 
-            Claw.closeClawTONeg();
+            Claw.closeClawTO();
         else
             Claw.stopClawTO();
 
@@ -371,14 +375,29 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoWheelAlignment();
             mAutoProgram.start();
             break;
-        case AutoLeaveTarmac:
-            //mAutoProgram = new AutoLeaveTarmack();
-            mAutoProgram = new AutoDoNothing();
+        case AutoCommunity:
+            mAutoProgram = new AutoCommunity();
+            mAutoProgram.start();
+            break;
+        case AutoCPlace1:
+            mAutoProgram = new AutoCPlace1();
+            mAutoProgram.start();
+            break;
+        case AutoC_CB:
+            mAutoProgram = new AutoC_CB();
+            mAutoProgram.start();
+            break;
+        case AutoCP1CB:
+            mAutoProgram = new AutoCP1CB();
+            mAutoProgram.start();
+            break;
+        case AutoCPlace3VROOOM:
+            mAutoProgram = new AutoPlace3VROOOM();
             mAutoProgram.start();
             break;
         }
-      
-    }
+        }
+
 
     private void setupAutoChoices() {
         // Position Chooser
@@ -393,7 +412,12 @@ public class Robot extends TimedRobot {
         //autoChooser.addOption(autoWheelAlign, autoWheelAlign);
         autoChooser.addOption(autoAlign, autoAlign);
         //autoChooser.addOption(ballPickUp, ballPickUp);
-        autoChooser.setDefaultOption(AutoLeaveTarmac, AutoLeaveTarmac);
+        autoChooser.setDefaultOption(AutoCommunity, AutoCommunity);
+        autoChooser.addOption(AutoCPlace1, AutoCPlace1);
+        autoChooser.addOption(AutoCP1CB, AutoCP1CB);
+        autoChooser.addOption(AutoC_CB, AutoC_CB);
+        autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
+        
      
         SmartDashboard.putData("Auto Chose:", autoChooser);
 

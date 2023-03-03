@@ -21,12 +21,14 @@ public class AutoCPlace1 extends AutoBaseClass{
             switch (getCurrentStep()) {
                 case 0:
                     Claw.closeClawA();
-                    setTimerAndAdvanceStep(250);
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 1:
+                    Claw.tickAuto();
                     break;
                 case 2:
-                    Arm.presetExtend(extenderPresets.RETRACTED);
+                    Claw.flip();
+                    //Arm.presetExtend(extenderPresets.RETRACTED);
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 3:
@@ -44,7 +46,7 @@ public class AutoCPlace1 extends AutoBaseClass{
                     break;
                 case 8:
                     Claw.openClawA();
-                    setTimerAndAdvanceStep(750);
+                    setTimerAndAdvanceStep(1500);
                 case 9:
                     break;
                 case 10:
