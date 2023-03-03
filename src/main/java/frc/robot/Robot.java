@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
         gamepad2 = new Gamepad(1);
         SmartDashboard.putString("Alliance Decided", DriverStation.getAlliance().toString());
         compressor.enableAnalog(100, 120);
-  
+        
         Calibration.loadSwerveCalibration();
         if (Calibration.isPracticeBot()) 
             DriveTrain.init("FALCON");
@@ -124,6 +124,7 @@ public class Robot extends TimedRobot {
         Arm.init();
         Intake.init();
         VisionPlacer.init();
+        VisionPlacer.setLED(LimelightOn.Off);
         TickTimer.init();
 
         SmartDashboard.putNumber("Current Position", 0);
@@ -135,8 +136,6 @@ public class Robot extends TimedRobot {
         mAutoProgram = new AutoDoNothing();
 
         RobotGyro.init();
-        VisionPlacer.init();
-
     }
 
     @Override
@@ -302,6 +301,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         SmartDashboard.updateValues();
+        
+        autoSelected = (String) autoChooser.getSelected();
+        SmartDashboard.putString("Auto Selected: ", autoSelected);
 
         if(VisionPlacer.getPole() == Pole.HighPole) {
             SmartDashboard.putBoolean("Pole Low", false);

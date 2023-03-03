@@ -38,7 +38,7 @@ public class Arm {
     private static final int MAX_EXTEND_CURRENT = 30;
     private static final int MAX_SHOULDER_CURRENT = 30;
 
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 95;//65 was too low
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 100;//95 was too low
     private static final double MAX_GROUND_LEVEL_EXTENSION = 220;
     private static final double MAX_IN_AIR_EXTENSION = 500; //420
 
@@ -195,7 +195,7 @@ public class Arm {
         switch(position) {
             case PICKUP_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 79;  // 3-1-23 seems very finicky
+                shoulderRequestedPos = 84 + minShoulderPosition;  // 3-1-23 seems very finicky
                 break;
             case PICKUP_CONE:
                 MAX_SHOULDER_SPEED=1;

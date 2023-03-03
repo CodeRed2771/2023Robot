@@ -20,6 +20,10 @@ public class Claw {
     private static double position;
     private static int clawRecordedTicks = 0;
     private static CurrentBreaker clawCurrentBreaker;
+
+    private static final double MIN_WRIST_POSITION = 0;
+    private static final double MAX_WRIST_POSITION = .56;
+
     private static enum clawCalls {
         POWERED_OPEN,
         POWERED_CLOSED,
@@ -36,8 +40,8 @@ public class Claw {
         clawMotor = new CANSparkMax(Wiring.CLAW_MOTOR_ID, MotorType.kBrushed);
 
         wrist = new Servo(Wiring.CLAW_CHANNEL_ID);
-        wrist.set(.0);
-        position = .0;
+        wrist.set(MIN_WRIST_POSITION);
+        position = MIN_WRIST_POSITION;
 
     }
 
@@ -86,10 +90,10 @@ public class Claw {
 
 
     public static void flip() {
-        if (position == .0) {
-            position = .58;
+        if (position == MIN_WRIST_POSITION) {
+            position = MAX_WRIST_POSITION;
         } else {
-            position = .0;
+            position = MIN_WRIST_POSITION;
         }
         wrist.set(position);
     }
