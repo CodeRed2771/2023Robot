@@ -34,9 +34,9 @@ public class Claw {
 
 
     public static void init() {
-    //     analogInput = new AnalogInput(0);
+    //     analogInput = new AnalogInput(Wiring.POTENTIOMETER_CHANNEL);
     //     analogInput.setAverageBits(2);
-    //    potentiometer = new AnalogPotentiometer(analogInput, 0, 180);
+    //     potentiometer = new AnalogPotentiometer(analogInput, 0, 180);
         clawMotor = new CANSparkMax(Wiring.CLAW_MOTOR_ID, MotorType.kBrushed);
 
         wrist = new Servo(Wiring.CLAW_CHANNEL_ID);
@@ -48,6 +48,7 @@ public class Claw {
     // public static double getPotentionmeterDegree() {
     //     return potentiometer.get();
     // }
+
     // public static void openClaw() {
         
     // }
