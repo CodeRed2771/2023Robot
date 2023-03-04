@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
         gamepad2 = new Gamepad(1);
         SmartDashboard.putString("Alliance Decided", DriverStation.getAlliance().toString());
         compressor.enableAnalog(100, 120);
-  
+        
         Calibration.loadSwerveCalibration();
         if (Calibration.isPracticeBot()) 
             DriveTrain.init("FALCON");
@@ -124,6 +124,7 @@ public class Robot extends TimedRobot {
         Arm.init();
         Intake.init();
         VisionPlacer.init();
+        VisionPlacer.setLED(LimelightOn.Off);
         TickTimer.init();
 
         SmartDashboard.putNumber("Current Position", 0);
@@ -135,8 +136,6 @@ public class Robot extends TimedRobot {
         mAutoProgram = new AutoDoNothing();
 
         RobotGyro.init();
-        VisionPlacer.init();
-
     }
 
     @Override
@@ -194,24 +193,22 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
         }
 
-        if(gamepad1.getBackButton()){
-            Arm.zero();
-        }
-        if(gamepad1.getDPadRight()){
-            Arm.zeroCancel();
-        }
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.Off);
         }
             
         if(gamepad2.getDPadDown() || gamepad1.getDPadDown() || gamepad1.getDPadUp()) {
-            if(gamepad2.getLeftBumper() || gamepad1.getDPadUp())
+            if(gamepad2.getLeftBumper() || gamepad1.getDPadUp()) {
                 LiveBottom.forward();
+                Intake.liveBottomIntake();
+            }
             else   
                 LiveBottom.backward();
+                Intake.liveBottomIntake();
         }
         else {
             LiveBottom.off();
+            Intake.liveBottomIntakeStop();
         }
 
         if (gamepad2.getLeftBumper()) {
@@ -220,6 +217,17 @@ public class Robot extends TimedRobot {
         } else {
             Arm.extend(gamepad2.getRightY());
             Arm.lift(-gamepad2.getLeftY());
+        }
+        if(gamepad2.getBackButton()){
+            Arm.zero();
+        }
+        
+        if(gamepad1.getDPadRight()){
+            Arm.zeroCancel();
+        }
+
+        if(Math.abs(gamepad2.getRightY()) > .2 || Math.abs(gamepad2.getLeftY()) > .2) {
+            Arm.zeroCancel();
         }
 
         if (gamepad2.getDPadUp()) {
@@ -297,6 +305,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         SmartDashboard.updateValues();
+        
+        autoSelected = (String) autoChooser.getSelected();
+        SmartDashboard.putString("Auto Selected: ", autoSelected);
 
         if(VisionPlacer.getPole() == Pole.HighPole) {
             SmartDashboard.putBoolean("Pole Low", false);
@@ -408,15 +419,15 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData("Position", positionChooser);
 
         autoChooser = new SendableChooser<String>();
-        autoChooser.addOption(autoCalibrator, autoCalibrator);
+        // autoChooser.addOption(autoCalibrator, autoCalibrator);
         //autoChooser.addOption(autoWheelAlign, autoWheelAlign);
-        autoChooser.addOption(autoAlign, autoAlign);
+        // autoChooser.addOption(autoAlign, autoAlign);
         //autoChooser.addOption(ballPickUp, ballPickUp);
-        autoChooser.setDefaultOption(AutoCommunity, AutoCommunity);
-        autoChooser.addOption(AutoCPlace1, AutoCPlace1);
+        autoChooser.addOption(AutoCommunity, AutoCommunity);
+        autoChooser.setDefaultOption(AutoCPlace1, AutoCPlace1);
         autoChooser.addOption(AutoCP1CB, AutoCP1CB);
-        autoChooser.addOption(AutoC_CB, AutoC_CB);
-        autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
+     //   autoChooser.addOption(AutoC_CB, AutoC_CB);
+     //   autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
         
      
         SmartDashboard.putData("Auto Chose:", autoChooser);
