@@ -176,14 +176,15 @@ public class Robot extends TimedRobot {
 
         if (gamepad1.getBButton()){
             mAutoProgram.stop();
-            mAutoProgram = new AutoClimbAndBalance(); 
+            // mAutoProgram = new AutoClimbAndBalance();
+            mAutoProgram = new AutoParkingBrake(); 
             mAutoProgram.start();
         }
 
         if(gamepad1.getAButton()) {
             VisionPlacer.setRetroreflectivePipeline();
             mAutoProgram.stop();
-            mAutoProgram = new AutoParkingBrake();
+            mAutoProgram = new AutoRetroReflectiveAlign();
             mAutoProgram.start();
         }
            

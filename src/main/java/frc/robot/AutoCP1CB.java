@@ -37,7 +37,7 @@ public class AutoCP1CB extends AutoBaseClass{
                     Claw.flip();
                     Arm.presetLift(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(3500);
+                    setTimerAndAdvanceStep(3800);
                     break;
                 case 3:
                     break;
@@ -68,7 +68,7 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 11:
                     break;
                 case 12:
-                    driveInches(84, 0, 0.75);
+                    driveInches(86, 0, 0.75);
                     setTimerAndAdvanceStep(2500);
                     break;
                 case 13:
