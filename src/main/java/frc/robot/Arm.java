@@ -105,7 +105,7 @@ public class Arm {
         shoulderRequestedPos = 0;
  
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
-        shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+        updateShoulderPos();
 
         MAX_SHOULDER_SPEED = 0;
 
@@ -119,8 +119,9 @@ public class Arm {
         // minShoulderPosition = 0;
         shoulderRequestedPos = 0;
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);   
-        shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+        updateShoulderPos();
         //zeroCancel();
+        SmartDashboard.putBoolean("Arm reset being called", true);
     }
     public static void resetShoulderEncoder(double position) {
         shoulderMotor.getEncoder().setPosition(position);
@@ -131,6 +132,7 @@ public class Arm {
 
     public static void tick() {
         zeroTick();
+        SmartDashboard.putBoolean("Arm reset being called", false);
         SmartDashboard.putNumber("Arm Extension Set Point", extendRequestedPos);
 		SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
@@ -247,7 +249,7 @@ public class Arm {
                 
         }
 
-        shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+        updateShoulderPos();
     }
 
     public static void lift(double pwr) {
@@ -266,7 +268,7 @@ public class Arm {
             if (shoulderRequestedPos > MAX_SHOULDER_TRAVEL)  
                 shoulderRequestedPos =  MAX_SHOULDER_TRAVEL;
 
-            shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+            updateShoulderPos();
         }
      }
 
@@ -287,7 +289,7 @@ public class Arm {
                 shoulderRequestedPos = MAX_SHOULDER_TRAVEL;
             }
 
-            shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+            updateShoulderPos();
         }
     }
 
@@ -303,6 +305,9 @@ public class Arm {
             endTimeForZeroCalib = System.currentTimeMillis() + 2000 ;
         }
     }
+    /**
+     * @deprecated use {@code zero()} instead
+     */
     public static void zeroFast(){
         if(!shoulderLimitSwitch.isPressed()){
             zeroFast = true;
@@ -320,25 +325,27 @@ public class Arm {
                 resetShoulderEncoder(shoulderRequestedPos);
                 zeroActive = false;
                 shoulderRequestedPos +=40;
-                shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+                updateShoulderPos();
             } else {
                 if(!shoulderLimitSwitch.isPressed()){
-                    if(zeroFast){
-                        shoulderRequestedPos -= 1;
-                    }else{
-                        shoulderRequestedPos -= .8;
-                    }
-                    shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+                    shoulderRequestedPos -= .8;
+                    updateShoulderPos();
                 }
                 else {
                     shoulderRequestedPos = 0;
                     resetShoulderEncoder(shoulderRequestedPos);
                     shoulderRequestedPos +=40;
-                    shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+                    updateShoulderPos();
                     zeroActive = false;
                 }
             }
         }
         SmartDashboard.putBoolean("Shoulder Limit Switch", shoulderLimitSwitch.isPressed());
+    }
+    /**
+     * updates the shoulder pos using {@code shoulderRequestedPos} var and the {@code shoulder.setReference} method
+     */
+    public static void updateShoulderPos() {
+        shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
     }
 }
