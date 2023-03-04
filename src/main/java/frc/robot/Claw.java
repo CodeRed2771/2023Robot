@@ -98,6 +98,10 @@ public class Claw {
         wrist.set(position);
     }
 
+    public static void setStartingPosition() {
+        wrist.set(MIN_WRIST_POSITION);
+        position = MIN_WRIST_POSITION;
+    }
 
 
 }

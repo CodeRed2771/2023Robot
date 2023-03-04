@@ -161,7 +161,7 @@ public class Arm {
 
     public static void extend(double pwr) {
         if (Math.abs(pwr)>.05) {
-            extendRequestedPos = extendRequestedPos + (2.2 * pwr);
+            extendRequestedPos = extendRequestedPos + (2.4 * pwr); // was 2.2 
         
             // if (extendRequestedPos < minExtension) 
             //     extendRequestedPos = minExtension;
@@ -194,10 +194,10 @@ public class Arm {
 
     public static void overrideExtend(double pwr) {
         if (Math.abs(pwr)>.05) {
-            pwr = pwr * .25;
-            extendRequestedPos = extendRequestedPos + (3 * pwr);
+            extendRequestedPos = extendRequestedPos + (1.5 * pwr);
 
             if (extendRequestedPos < 0) {
+                extendRequestedPos = extendRequestedPos + (5 * pwr);
                 resetExtendEncoder(Math.abs(extendRequestedPos));
                 extendRequestedPos = 0;
             }
@@ -275,14 +275,23 @@ public class Arm {
     public static void overrideLift(double pwr) {
         if (Math.abs(pwr)>.05) {
             zeroCancel();
-            pwr = pwr * .25;
+            // pwr = pwr * .25;
+
+            // shoulderRequestedPos = shoulderRequestedPos + (-pwr);
+
+            // if (shoulderRequestedPos < 0) {
+            //     resetShoulderEncoder(Math.abs(shoulderRequestedPos));
+            //     shoulderRequestedPos = 0;
+            // }
 
             shoulderRequestedPos = shoulderRequestedPos + (-pwr);
 
             if (shoulderRequestedPos < 0) {
+                shoulderRequestedPos = shoulderRequestedPos + (5 * -pwr);
                 resetShoulderEncoder(Math.abs(shoulderRequestedPos));
                 shoulderRequestedPos = 0;
             }
+          
           
             // limit shoulder travel
             if (shoulderRequestedPos > (MAX_SHOULDER_TRAVEL)) {

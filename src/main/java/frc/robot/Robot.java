@@ -148,6 +148,7 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
         Arm.reset();
+        Claw.setStartingPosition();
 
         VisionPlacer.setLED(LimelightOn.Off);
     }

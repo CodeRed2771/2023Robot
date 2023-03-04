@@ -28,26 +28,29 @@ public class AutoCPlace1 extends AutoBaseClass{
                 case 2:
                     Claw.stopClawTO();
                     Claw.flip();
+                    Arm.presetLift(shoulderPresets.PLACING_HIGH);
+                    Arm.presetExtend(extenderPresets.HIGH);
                     //Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(1250);
+                    setTimerAndAdvanceStep(3500);
                     break;
                 case 3:
                     break;
                 case 4:
-                    Arm.presetLift(shoulderPresets.PLACING_HIGH);
-                    setTimerAndAdvanceStep(750);
+                    setStep(8);
+                    // Arm.presetLift(shoulderPresets.PLACING_HIGH);
+                    // setTimerAndAdvanceStep(750);
                     break;
                 case 5:
                     break;
                 case 6:
-                    Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(3500);
+                    // Arm.presetExtend(extenderPresets.HIGH);
+                    // setTimerAndAdvanceStep(3500);
                     break;
                 case 7:
                     break;
                 case 8:
                     Claw.openClawTO();
-                    setTimerAndAdvanceStep(2000);
+                    setTimerAndAdvanceStep(1800);
                     break;
                 case 9:
                     break;

@@ -35,38 +35,40 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 2:
                     Claw.stopClawTO();
                     Claw.flip();
-                    //Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(100);
+                    Arm.presetLift(shoulderPresets.PLACING_HIGH);
+                    Arm.presetExtend(extenderPresets.HIGH);
+                    setTimerAndAdvanceStep(3500);
                     break;
                 case 3:
                     break;
                 case 4:
-                    Arm.presetLift(shoulderPresets.PLACING_HIGH);
-                    setTimerAndAdvanceStep(100);
+                    setStep(8);
+                    // Arm.presetLift(shoulderPresets.PLACING_HIGH);
+                    // setTimerAndAdvanceStep(100);
                     break;
                 case 5:
                     break;
                 case 6:
-                    Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(3500);
+                    // Arm.presetExtend(extenderPresets.HIGH);
+                    // setTimerAndAdvanceStep(3500);
                     break;
                 case 7:
                     break;
                 case 8:
                     Claw.openClawTO();
-                    setTimerAndAdvanceStep(2000);
+                    setTimerAndAdvanceStep(1800);
                     break;
                 case 9:
                     break;
                 case 10:
                     Claw.stopClawTO();
                     Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(1000);
+                    setTimerAndAdvanceStep(1500);
                     break;
                 case 11:
                     break;
                 case 12:
-                    driveInches(80, 0, 0.75);
+                    driveInches(84, 0, 0.75);
                     setTimerAndAdvanceStep(2500);
                     break;
                 case 13:
@@ -89,9 +91,9 @@ public class AutoCP1CB extends AutoBaseClass{
                     // setTimerAndAdvanceStep(50);
                     break;
                 case 17:
-                        if(driveCompleted())
-                            advanceStep();
-                        break;
+                    if(driveCompleted())
+                        advanceStep();
+                    break;
                 case 18:
                     balance.start();
                     setTimerAndAdvanceStep(6000);
