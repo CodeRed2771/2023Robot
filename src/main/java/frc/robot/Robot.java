@@ -183,7 +183,7 @@ public class Robot extends TimedRobot {
         if(gamepad1.getAButton()) {
             VisionPlacer.setRetroreflectivePipeline();
             mAutoProgram.stop();
-            mAutoProgram = new AutoRetroReflectiveAlign();
+            mAutoProgram = new AutoParkingBrake();
             mAutoProgram.start();
         }
            
@@ -272,6 +272,12 @@ public class Robot extends TimedRobot {
         double driveFWDAmount = -gamepad1.getLeftY();
         double driveStrafeAmount = -gamepad1.getLeftX();
 
+              
+        if (Math.abs(driveFWDAmount) > .5 || Math.abs(driveRotAmount) > .5) {
+            if (mAutoProgram.isRunning())
+                mAutoProgram.stop();
+        }
+        
         if (gamepad1.getRightBumper() || Arm.getIsExtenderExtended()) {  // slow mode if arm is extended
             driveRotAmount = rotationalAdjust(driveRotAmount, false);
             driveFWDAmount = forwardAdjustV2(driveFWDAmount, false);
@@ -282,11 +288,7 @@ public class Robot extends TimedRobot {
             driveFWDAmount = forwardAdjustV2(driveFWDAmount, true);
             driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, true);    
         }
-      
-         if (Math.abs(driveFWDAmount) > .5 || Math.abs(driveRotAmount) > .5) {
-            if (mAutoProgram.isRunning())
-                mAutoProgram.stop();
-        }
+
 
         if (!mAutoProgram.isRunning()) {
             if (gamepad1.getBackButton()) {
@@ -425,8 +427,8 @@ public class Robot extends TimedRobot {
         // autoChooser.addOption(autoAlign, autoAlign);
         //autoChooser.addOption(ballPickUp, ballPickUp);
         autoChooser.addOption(AutoCommunity, AutoCommunity);
-        autoChooser.setDefaultOption(AutoCPlace1, AutoCPlace1);
-        autoChooser.addOption(AutoCP1CB, AutoCP1CB);
+        autoChooser.addOption(AutoCPlace1, AutoCPlace1);
+        autoChooser.setDefaultOption(AutoCP1CB, AutoCP1CB);
      //   autoChooser.addOption(AutoC_CB, AutoC_CB);
      //   autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
         
