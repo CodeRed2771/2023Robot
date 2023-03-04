@@ -42,7 +42,7 @@ public class Arm {
 
     private static final double MAX_INSIDE_ROBOT_EXTENSION = 100;//95 was too low
     private static final double MAX_GROUND_LEVEL_EXTENSION = 220;
-    private static final double MAX_IN_AIR_EXTENSION = 540; //420
+    private static final double MAX_IN_AIR_EXTENSION = 550; //420
 
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 30;
 
