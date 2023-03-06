@@ -27,8 +27,9 @@ public class AutoCP1CB extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    Claw.closeClawTO();
-                    setTimerAndAdvanceStep(1000);
+                    // Claw.closeClawTO();
+                    // setTimerAndAdvanceStep(1000);
+                    setStep(2);
                     break;
                 case 1:
                     break;
@@ -37,7 +38,7 @@ public class AutoCP1CB extends AutoBaseClass{
                     Claw.flip();
                     Arm.presetLift(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(3800);
+                    setTimerAndAdvanceStep(4800);
                     break;
                 case 3:
                     break;
