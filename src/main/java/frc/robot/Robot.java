@@ -187,7 +187,7 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoRetroReflectiveAlign();
             mAutoProgram.start();
         }
-           
+
         if (gamepad1.getXButton()) {
             VisionPlacer.setAprilTagPipeline();
             mAutoProgram.stop();
@@ -198,14 +198,15 @@ public class Robot extends TimedRobot {
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.Off);
         }
-            
+
         if(gamepad2.getDPadDown() || gamepad1.getDPadDown() || gamepad1.getDPadUp()) {
             if(gamepad2.getLeftBumper() || gamepad1.getDPadUp()) {
                 LiveBottom.forward();
-            }
-            else   
-                LiveBottom.backward();
                 Intake.liveBottomIntake();
+            }
+            else  {
+                LiveBottom.backward();
+            } 
         }
         else {
             LiveBottom.off();
