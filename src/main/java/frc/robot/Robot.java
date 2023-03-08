@@ -202,7 +202,6 @@ public class Robot extends TimedRobot {
         if(gamepad2.getDPadDown() || gamepad1.getDPadDown() || gamepad1.getDPadUp()) {
             if(gamepad2.getLeftBumper() || gamepad1.getDPadUp()) {
                 LiveBottom.forward();
-                Intake.liveBottomIntake();
             }
             else   
                 LiveBottom.backward();
@@ -237,7 +236,7 @@ public class Robot extends TimedRobot {
             Arm.presetExtend(extenderPresets.FEEDER_STATION);
         }
 
-        if (gamepad2.getRightTriggerAxis()>.2){
+        if (gamepad2.getRightTriggerAxis()>.2 || gamepad1.getRightTriggerAxis()>.2){
             if (gamepad2.getLeftBumper()){
                 Intake.deploy();
                 Intake.reverse(1);
