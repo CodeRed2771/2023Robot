@@ -27,7 +27,9 @@ public class Wiring {
 	public static final int TURN_ABS_ENC_C = 7;
 	public static final int TURN_ABS_ENC_D = 8;
 	public static final int PRACTICE_BOT_INDICATOR = 9;
-
+	
+	// Analog Inputs
+	public static final int POTENTIOMETER_CHANNEL = 0;
 	/*
 	 * PDP PORTS
 	 */

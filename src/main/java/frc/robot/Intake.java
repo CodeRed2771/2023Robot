@@ -49,7 +49,7 @@ public class Intake {
     }
 
     public static void liveBottomIntake() {
-        reverse(1);
+        run(1);
         liveBottomIntakeRunning = true;
     }
 

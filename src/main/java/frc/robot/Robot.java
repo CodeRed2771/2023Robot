@@ -148,6 +148,7 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
         Arm.reset();
+        Claw.setStartingPosition();
 
         VisionPlacer.setLED(LimelightOn.Off);
     }
@@ -175,7 +176,8 @@ public class Robot extends TimedRobot {
 
         if (gamepad1.getBButton()){
             mAutoProgram.stop();
-            mAutoProgram = new AutoClimbAndBalance(); 
+            // mAutoProgram = new AutoClimbAndBalance();
+            mAutoProgram = new AutoParkingBrake(); 
             mAutoProgram.start();
         }
 
@@ -200,7 +202,6 @@ public class Robot extends TimedRobot {
         if(gamepad2.getDPadDown() || gamepad1.getDPadDown() || gamepad1.getDPadUp()) {
             if(gamepad2.getLeftBumper() || gamepad1.getDPadUp()) {
                 LiveBottom.forward();
-                Intake.liveBottomIntake();
             }
             else   
                 LiveBottom.backward();
@@ -235,7 +236,7 @@ public class Robot extends TimedRobot {
             Arm.presetExtend(extenderPresets.FEEDER_STATION);
         }
 
-        if (gamepad2.getRightTriggerAxis()>.2){
+        if (gamepad2.getRightTriggerAxis()>.2 || gamepad1.getRightTriggerAxis()>.2){
             if (gamepad2.getLeftBumper()){
                 Intake.deploy();
                 Intake.reverse(1);
@@ -271,6 +272,12 @@ public class Robot extends TimedRobot {
         double driveFWDAmount = -gamepad1.getLeftY();
         double driveStrafeAmount = -gamepad1.getLeftX();
 
+              
+        if (Math.abs(driveFWDAmount) > .5 || Math.abs(driveRotAmount) > .5) {
+            if (mAutoProgram.isRunning())
+                mAutoProgram.stop();
+        }
+        
         if (gamepad1.getRightBumper() || Arm.getIsExtenderExtended()) {  // slow mode if arm is extended
             driveRotAmount = rotationalAdjust(driveRotAmount, false);
             driveFWDAmount = forwardAdjustV2(driveFWDAmount, false);
@@ -281,11 +288,7 @@ public class Robot extends TimedRobot {
             driveFWDAmount = forwardAdjustV2(driveFWDAmount, true);
             driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, true);    
         }
-      
-         if (Math.abs(driveFWDAmount) > .5 || Math.abs(driveRotAmount) > .5) {
-            if (mAutoProgram.isRunning())
-                mAutoProgram.stop();
-        }
+
 
         if (!mAutoProgram.isRunning()) {
             if (gamepad1.getBackButton()) {
@@ -424,8 +427,8 @@ public class Robot extends TimedRobot {
         // autoChooser.addOption(autoAlign, autoAlign);
         //autoChooser.addOption(ballPickUp, ballPickUp);
         autoChooser.addOption(AutoCommunity, AutoCommunity);
-        autoChooser.setDefaultOption(AutoCPlace1, AutoCPlace1);
-        autoChooser.addOption(AutoCP1CB, AutoCP1CB);
+        autoChooser.addOption(AutoCPlace1, AutoCPlace1);
+        autoChooser.setDefaultOption(AutoCP1CB, AutoCP1CB);
      //   autoChooser.addOption(AutoC_CB, AutoC_CB);
      //   autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
         
