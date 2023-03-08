@@ -15,6 +15,7 @@ public class Intake {
     private static final int MAX_INTAKE_CURRENT = 50;
     private static DoubleSolenoid deploySolenoid;
     private static boolean liveBottomIntakeRunning = false;
+    private static double liveBottomTicks = 0;
 
     public static void init() {
         intakeMotor = new CANSparkMax(Wiring.INTAKE_MOTOR_ID, MotorType.kBrushless);
@@ -49,13 +50,21 @@ public class Intake {
     }
 
     public static void liveBottomIntake() {
-        run(1);
         liveBottomIntakeRunning = true;
+        liveBottomTicks ++;
+        if (liveBottomIntakeRunning) {
+            if (liveBottomTicks < 25) {
+                run(1);
+            } else {
+                reverse(1);
+            }
+        }
     }
 
     public static void liveBottomIntakeStop() {
         liveBottomIntakeRunning = false;
         stop();
+        liveBottomTicks = 0;
     }
 }
 
