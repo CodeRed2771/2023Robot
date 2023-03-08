@@ -20,6 +20,7 @@ public class Arm {
         GROUND,
         LOW,
         HIGH,
+        GATE_MODE,
         FEEDER_STATION
     }
 
@@ -27,6 +28,7 @@ public class Arm {
         PICKUP_CONE,
         PICKUP_CUBE,
         PICKUP_FEEDER_STATION,
+        GATE_MODE,
         PLACING_GROUND,
         PLACING_LOW,
         PLACING_HIGH
@@ -40,7 +42,7 @@ public class Arm {
     private static final int MAX_EXTEND_CURRENT = 30;
     private static final int MAX_SHOULDER_CURRENT = 30;
 
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 100;//95 was too low
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 100; //95 was too low
     private static final double MAX_GROUND_LEVEL_EXTENSION = 220;
     private static final double MAX_IN_AIR_EXTENSION = 550; //420
 
@@ -149,6 +151,9 @@ public class Arm {
             case GROUND:
                 extendRequestedPos = 100;//??
                 break;
+            case GATE_MODE:
+                extendRequestedPos = MAX_INSIDE_ROBOT_EXTENSION;
+                break;
             case LOW:
                 extendRequestedPos = 150;//??
                 break;
@@ -226,6 +231,9 @@ public class Arm {
                 MAX_SHOULDER_SPEED = 1;
                 shoulderRequestedPos = 110;  // 3-1-23 seems very finicky//116
                 break;
+            case GATE_MODE:
+                MAX_SHOULDER_SPEED = 1;
+                shoulderRequestedPos = 400;
             case PICKUP_CONE:
                 MAX_SHOULDER_SPEED=1;
                 shoulderRequestedPos = 50;//??

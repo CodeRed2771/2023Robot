@@ -237,8 +237,13 @@ public class Robot extends TimedRobot {
             Arm.presetExtend(extenderPresets.FEEDER_STATION);
         }
 
+        if (gamepad2.getYButton()) {
+            Arm.presetLift(shoulderPresets.PICKUP_FEEDER_STATION);
+            Arm.presetExtend(extenderPresets.FEEDER_STATION);
+        }
+
         if (gamepad2.getRightTriggerAxis()>.2 || gamepad1.getRightTriggerAxis()>.2){
-            if (gamepad2.getLeftBumper()){
+            if (gamepad2.getLeftBumper() || gamepad1.getLeftBumper()){
                 Intake.deploy();
                 Intake.reverse(1);
             } 
