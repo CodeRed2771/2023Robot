@@ -233,7 +233,8 @@ public class Arm {
                 break;
             case GATE_MODE:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 400;
+                shoulderRequestedPos = 390;
+                break;
             case PICKUP_CONE:
                 MAX_SHOULDER_SPEED=1;
                 shoulderRequestedPos = 50;//??

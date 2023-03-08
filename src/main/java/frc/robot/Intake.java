@@ -54,7 +54,7 @@ public class Intake {
         liveBottomTicks ++;
         if (liveBottomTicks < 25) {
             run(1);
-        } else if (liveBottomTicks > 25 && liveBottomTicks < 50) {
+        } else if (liveBottomTicks >= 25 && liveBottomTicks < 50) {
             reverse(1);
         } else {
             liveBottomTicks = 0;
