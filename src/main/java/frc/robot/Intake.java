@@ -52,12 +52,12 @@ public class Intake {
     public static void liveBottomIntake() {
         liveBottomIntakeRunning = true;
         liveBottomTicks ++;
-        if (liveBottomIntakeRunning) {
-            if (liveBottomTicks < 25) {
-                run(1);
-            } else {
-                reverse(1);
-            }
+        if (liveBottomTicks < 25) {
+            run(1);
+        } else if (liveBottomTicks > 25 && liveBottomTicks < 50) {
+            reverse(1);
+        } else {
+            liveBottomTicks = 0;
         }
     }
 
