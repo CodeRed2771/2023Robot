@@ -187,7 +187,7 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoRetroReflectiveAlign();
             mAutoProgram.start();
         }
-           
+
         if (gamepad1.getXButton()) {
             VisionPlacer.setAprilTagPipeline();
             mAutoProgram.stop();
@@ -198,15 +198,14 @@ public class Robot extends TimedRobot {
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.Off);
         }
-            
-        if(gamepad2.getDPadDown() || gamepad1.getDPadDown() || gamepad1.getDPadUp()) {
-            if(gamepad2.getLeftBumper() || gamepad1.getDPadUp()) {
+
+        if(gamepad1.getDPadUp() || gamepad2.getDPadUp()) {
                 LiveBottom.forward();
             }
-            else   
+        else if (gamepad1.getDPadDown() || gamepad2.getDPadDown())  {
                 LiveBottom.backward();
                 Intake.liveBottomIntake();
-        }
+            } 
         else {
             LiveBottom.off();
             Intake.liveBottomIntakeStop();
@@ -231,13 +230,18 @@ public class Robot extends TimedRobot {
             Arm.zeroCancel();
         }
 
-        if (gamepad2.getDPadUp()) {
+        if (gamepad2.getXButton()) {
             Arm.presetLift(shoulderPresets.PICKUP_FEEDER_STATION);
             Arm.presetExtend(extenderPresets.FEEDER_STATION);
         }
 
+        if (gamepad2.getYButton()) {
+            Arm.presetLift(shoulderPresets.GATE_MODE);
+            Arm.presetExtend(extenderPresets.GATE_MODE);
+        }
+
         if (gamepad2.getRightTriggerAxis()>.2 || gamepad1.getRightTriggerAxis()>.2){
-            if (gamepad2.getLeftBumper()){
+            if (gamepad2.getLeftBumper() || gamepad1.getLeftBumper()){
                 Intake.deploy();
                 Intake.reverse(1);
             } 
