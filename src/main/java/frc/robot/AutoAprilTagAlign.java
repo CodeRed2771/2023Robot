@@ -10,7 +10,6 @@ import frc.robot.VisionPlacer.LimelightOn;
 public class AutoAprilTagAlign extends AutoBaseClass{
 	
     int IDSwitch; 
-    PlacePositions positions;
     double[] data = new double[6];
     double lenghtDisplacement = 0;
     double angle = 0;

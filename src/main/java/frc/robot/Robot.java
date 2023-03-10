@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
-import frc.robot.AutoBaseClass.PlacePositions;
+import frc.robot.AutoBaseClass.AutoType;
 import frc.robot.VisionPlacer.LimelightOn;
 import frc.robot.VisionPlacer.Pole;
 import frc.robot.libs.HID.Gamepad;
@@ -90,6 +90,7 @@ public class Robot extends TimedRobot {
     boolean rampCodeActive = true;
 
     AutoBaseClass mAutoProgram;
+    AutoBaseClass mNonDriveAutoProgram;
 
     final String autoCalibrator = "Auto Calibrator";
     final String autoWheelAlign = "Auto Wheel Align";
@@ -239,6 +240,11 @@ public class Robot extends TimedRobot {
             Arm.presetLift(shoulderPresets.GATE_MODE);
             Arm.presetExtend(extenderPresets.GATE_MODE);
         }
+        
+        if(gamepad2.getStartButton()) {
+            mNonDriveAutoProgram = new Test(AutoType.NonDriveAuto);
+            mNonDriveAutoProgram.start();
+        }
 
         if (gamepad2.getRightTriggerAxis()>.2 || gamepad1.getRightTriggerAxis()>.2){
             if (gamepad2.getLeftBumper() || gamepad1.getLeftBumper()){
@@ -304,6 +310,8 @@ public class Robot extends TimedRobot {
         
         if (mAutoProgram.isRunning()) {
             mAutoProgram.tick();
+        } else if (mNonDriveAutoProgram.isRunning()) {
+            mNonDriveAutoProgram.tick();
         }
 
         showDashboardInfo();
@@ -312,6 +320,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         SmartDashboard.updateValues();
+
+        SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getPotentionmeterDegree());
         
         autoSelected = (String) autoChooser.getSelected();
         SmartDashboard.putString("Auto Selected: ", autoSelected);
