@@ -20,6 +20,7 @@ public class Arm {
         GROUND,
         LOW,
         HIGH,
+        ROBOT_PICKUP,
         FEEDER_STATION
     }
 
@@ -154,6 +155,9 @@ public class Arm {
                 break;
             case HIGH:
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
+                break;
+            case ROBOT_PICKUP:
+                extendRequestedPos = 15;//???????
                 break;
         }
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
