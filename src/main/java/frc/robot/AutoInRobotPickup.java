@@ -37,8 +37,9 @@ public class AutoInRobotPickup extends AutoBaseClass {
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 1:
-                    if(extensionCompleted)
-                        advanceStep();
+                    // if(extensionCompleted())
+                        // advanceStep();
+                    break;
                 case 5:
                     stop();
                     break;
