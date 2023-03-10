@@ -9,17 +9,11 @@ public abstract class AutoBaseClass {
     private Direction mDirection;
     private boolean mAutoPlace = false;
     public int placeNumInAuto = 2;
+    private AutoType autoMode;
 
-    public static enum PlacePositions {
-        LeftConeHigh,
-        LeftConeLow,
-        LeftConeNuetral,
-        CubeHigh,
-        CubeLow,
-        CubeNuetral,
-        RightConeHigh,
-        RightConeLow,
-        RightConeNuetral,
+    public static enum AutoType {
+        NonDriveAuto,
+        DriveAuto,
     }
 
     public static enum Direction {
@@ -30,7 +24,12 @@ public abstract class AutoBaseClass {
         LEFT, CENTER, RIGHT
     };
 
+    public AutoBaseClass(AutoType autoMode) {
+        this.autoMode = autoMode;
+        mAutoTimer = new Timer();
+    }
     public AutoBaseClass() {
+        autoMode = AutoType.DriveAuto;
         mAutoTimer = new Timer();
     }
 
@@ -40,11 +39,13 @@ public abstract class AutoBaseClass {
         mAutoTimer.setStep(0);
         mIsRunning = true;
 
-        DriveAuto.reset();
+        if(autoMode == AutoType.DriveAuto) {
+            DriveAuto.reset();
 
-        // set current position equal to Gyro
-        // otherwise turns will be relative to 0
-        DriveAuto.setTurnDegreesToCurrentAngle();
+            // set current position equal to Gyro
+            // otherwise turns will be relative to 0
+            DriveAuto.setTurnDegreesToCurrentAngle();
+        }
     }
 
     public void start(Position robotPosition) {
@@ -73,10 +74,6 @@ public abstract class AutoBaseClass {
        start(); 
     }
 
-    public void start(int IDSwitch, PlacePositions positions) {
-		start();
-	}
-
     public void stop() {
         mIsRunning = false;
         DriveAuto.stop();
@@ -84,7 +81,9 @@ public abstract class AutoBaseClass {
 
     public boolean isRunning() {
         mAutoTimer.tick(); // we need to tick the timer and this is a good place to do it.
-        DriveAuto.tick();
+        if(autoMode == AutoType.DriveAuto) {
+            DriveAuto.tick();
+        }
         return mIsRunning;
     }
 
@@ -110,15 +109,21 @@ public abstract class AutoBaseClass {
     }
 
     public void driveInches(double distance, double angle, double maxPower) {
-        DriveAuto.driveInches(distance, angle, maxPower, false);
+        if(autoMode == AutoType.DriveAuto) {
+            DriveAuto.driveInches(distance, angle, maxPower, false);
+        }
     }
 
     public void driveInches(double distance, double angle, double maxPower, boolean followTarget, boolean fieldCentric) {
-        DriveAuto.driveInches(distance, angle, maxPower, followTarget, fieldCentric);
+        if(autoMode == AutoType.DriveAuto) {
+            DriveAuto.driveInches(distance, angle, maxPower, followTarget, fieldCentric);
+        }
     }
 
     public void turnToHeading(double desiredHeading, double turnSpeedFactor) {
-        DriveAuto.turnToHeading(desiredHeading, turnSpeedFactor);
+        if(autoMode == AutoType.DriveAuto) {
+            DriveAuto.turnToHeading(desiredHeading, turnSpeedFactor);
+        }
     }
 
     public boolean driveCompleted() {
@@ -134,11 +139,15 @@ public abstract class AutoBaseClass {
     }
 
     public void turnDegrees(double degrees, double maxPower) {
-        DriveAuto.turnDegrees(degrees, maxPower);
+        if(autoMode == AutoType.DriveAuto) {
+            DriveAuto.turnDegrees(degrees, maxPower);
+        }
     }
 
     public void continuousDrive(double inches, double maxPower) {
-        DriveAuto.continuousDrive(inches, maxPower);
+        if(autoMode == AutoType.DriveAuto) {
+            DriveAuto.continuousDrive(inches, maxPower);
+        }
     }
 
     public Position robotPosition() {
