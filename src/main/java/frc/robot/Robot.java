@@ -98,6 +98,7 @@ public class Robot extends TimedRobot {
     final String AutoC_CB = "Auto Community Climb+Balance";
     final String AutoCP1CB = "Auto Community Place 1 Climb+Balance";
     final String AutoCPlace1 = "Auto Community Place 1";
+    final String AutoCPlace2 = "Auto Community Place 2";
     final String AutoCPlace3VROOOM = "Auto Community Place 3 (TEST ONLY)";
 
     private double lastFWDvalue = 0; 
@@ -256,6 +257,12 @@ public class Robot extends TimedRobot {
             Intake.retract();
         }
 
+        if (gamepad2.getStartButton()) {//test only
+            mAutoProgram.stop();
+            mAutoProgram = new AutoInRobotPickup(); 
+            mAutoProgram.start();
+        }
+
         SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
         // --------------------------------------------------
         // RESET - allow manual reset of systems by pressing Start
@@ -409,6 +416,10 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoCP1CB();
             mAutoProgram.start();
             break;
+        case AutoCPlace2:
+            mAutoProgram = new AutoCPlace2();
+            mAutoProgram.start();
+            break;
         case AutoCPlace3VROOOM:
             mAutoProgram = new AutoPlace3VROOOM();
             mAutoProgram.start();
@@ -432,6 +443,7 @@ public class Robot extends TimedRobot {
         //autoChooser.addOption(ballPickUp, ballPickUp);
         autoChooser.addOption(AutoCommunity, AutoCommunity);
         autoChooser.addOption(AutoCPlace1, AutoCPlace1);
+        autoChooser.addOption(AutoCPlace2, AutoCPlace2);
         autoChooser.setDefaultOption(AutoCP1CB, AutoCP1CB);
      //   autoChooser.addOption(AutoC_CB, AutoC_CB);
      //   autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);

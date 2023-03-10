@@ -21,6 +21,7 @@ public class Arm {
         LOW,
         HIGH,
         GATE_MODE,
+        PICKUP,
         FEEDER_STATION
     }
 
@@ -156,6 +157,9 @@ public class Arm {
                 break;
             case LOW:
                 extendRequestedPos = 150;//??
+                break;
+            case PICKUP:
+                extendRequestedPos = 20;//??
                 break;
             case HIGH:
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
@@ -360,6 +364,21 @@ public class Arm {
         }
         SmartDashboard.putBoolean("Shoulder Limit Switch", shoulderLimitSwitch.isPressed());
     }
+
+    public static boolean liftCompleted() {
+        if(shoulderMotor.getEncoder().getPosition() > shoulderRequestedPos)
+            return true;
+        else
+            return false;
+    }
+
+    public static boolean extensionCompleted() {
+        if(extendMotor.getEncoder().getPosition() > extendRequestedPos)
+            return true;
+        else
+            return false;
+    }
+
     /**
      * updates the shoulder pos using {@code shoulderRequestedPos} var and the {@code shoulder.setReference} method
      */

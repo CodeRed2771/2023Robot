@@ -37,12 +37,43 @@ public class AutoInRobotPickup extends AutoBaseClass {
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 1:
-                    // if(extensionCompleted)
-                        // advanceStep();
-                    // break;
+                    if(Arm.extensionCompleted())
+                        advanceStep();
+                    break;
                 case 2:
                     Arm.presetLift(shoulderPresets.PICKUP_CONE);
+                    setTimerAndAdvanceStep(1500);
+                    break;
+                case 3:
+                    if(Arm.liftCompleted())
+                        advanceStep();
+                    break;
+                case 4:
+                    Arm.presetExtend(extenderPresets.PICKUP);
+                    setTimerAndAdvanceStep(1200);
+                    break;
                 case 5:
+                    if(Arm.extensionCompleted())
+                        advanceStep();
+                    break;
+                case 6:
+                    Claw.closeClawTO();//closing claw to the closed position
+                    setTimerAndAdvanceStep(2200);
+                    break;
+                case 7:
+                    // if(clawMovementCompleted)
+                        // advanceStep();
+                    // break;
+                    break;
+                case 8:
+                    Arm.presetLift(shoulderPresets.PLACING_LOW);
+                    setTimerAndAdvanceStep(1500);
+                    break;
+                case 9:
+                    if(Arm.liftCompleted())
+                        advanceStep();
+                    break;
+                case 10:
                     stop();
                     break;
             }
