@@ -197,6 +197,12 @@ public class Arm {
             if(extendRequestedPos <= MIN_RETRACTION_INSIDE_ROBOT && shoulderRequestedPos >= 290) {
                 extendRequestedPos = MIN_RETRACTION_INSIDE_ROBOT;
             }
+
+            // if(ColorSensor.getRed() > 100) {
+            //     extendRequestedPos = 0;
+            // } else if(ColorSensor.getBlue() > 100) {
+            //     extendRequestedPos = MAX_IN_AIR_EXTENSION;
+            // }
             extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);        
         }        
      }
@@ -205,6 +211,11 @@ public class Arm {
         if (Math.abs(pwr)>.05) {
             extendRequestedPos = extendRequestedPos + (1.5 * pwr);
 
+            // if (extendRequestedPos < 0 && ColorSensor.getBlue() < 100) {
+            //     extendRequestedPos = extendRequestedPos + (5 * pwr);
+            //     resetExtendEncoder(Math.abs(extendRequestedPos));
+            //     extendRequestedPos = 0;
+            // }
             if (extendRequestedPos < 0) {
                 extendRequestedPos = extendRequestedPos + (5 * pwr);
                 resetExtendEncoder(Math.abs(extendRequestedPos));
@@ -212,6 +223,9 @@ public class Arm {
             }
           
             // limit extension
+            // if (extendRequestedPos > (MAX_IN_AIR_EXTENSION) || ColorSensor.getRed() > 0) {
+            //     extendRequestedPos = MAX_IN_AIR_EXTENSION;
+            // }
             if (extendRequestedPos > (MAX_IN_AIR_EXTENSION)) {
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;
             }
