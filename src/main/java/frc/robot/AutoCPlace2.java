@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 
-public class AutoCPlace2 extends AutoBaseClass{
+public class AutoCPlace2 extends AutoBaseClass{//didn't change much
 
 	public void start() {
 		super.start();
