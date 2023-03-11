@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -8,14 +9,13 @@ import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorSensorV3;
 
 public class ColorSensor {
-    private static final I2C.Port i2cPort = I2C.Port.kMXP;
 
     /**
      * A Rev Color Sensor V3 object is constructed with an I2C port as a 
      * parameter. The device will be automatically initialized with default 
      * parameters.
      */
-    private static final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+    private static final ColorSensorV3 m_colorSensor = new ColorSensorV3(Port.kMXP);
 
     public static void getColor() {
         Color detectedColor = m_colorSensor.getColor();
@@ -29,9 +29,9 @@ public class ColorSensor {
      * Open Smart Dashboard or Shuffleboard to see the color detected by the 
      * sensor.
      */
-        SmartDashboard.putNumber("Red", detectedColor.red);
-        SmartDashboard.putNumber("Green", detectedColor.green);
-        SmartDashboard.putNumber("Blue", detectedColor.blue);
+        SmartDashboard.putNumber("Red", m_colorSensor.getRed());        
+        SmartDashboard.putNumber("Green", m_colorSensor.getGreen());
+        SmartDashboard.putNumber("Blue", m_colorSensor.getBlue());
         SmartDashboard.putNumber("IR", IR);
 
     /**
