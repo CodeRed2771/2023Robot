@@ -19,6 +19,7 @@ public class Arm {
         RETRACTED,
         GROUND,
         LOW,
+        LOW_CUBE,
         HIGH,
         GATE_MODE,
         PICKUP,
@@ -32,6 +33,7 @@ public class Arm {
         GATE_MODE,
         PLACING_GROUND,
         PLACING_LOW,
+        PLACING_LOW_CUBE,
         PLACING_HIGH
     }
 
@@ -43,17 +45,19 @@ public class Arm {
     private static final int MAX_EXTEND_CURRENT = 30;
     private static final int MAX_SHOULDER_CURRENT = 30;
 
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 100; //95 was too low
-    private static final double MAX_GROUND_LEVEL_EXTENSION = 220;
-    private static final double MAX_IN_AIR_EXTENSION = 550; //420
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 7.57; //100 in ticks
+    private static final double MAX_GROUND_LEVEL_EXTENSION = 16.66;//220 in ticks
+    private static final double MAX_IN_AIR_EXTENSION = 41.64; //550 in ticks
 
-    private static final double MIN_RETRACTION_INSIDE_ROBOT = 30;
+    private static final double MIN_RETRACTION_INSIDE_ROBOT = 2.27;//30 in ticks
 
     private static double MAX_SHOULDER_SPEED = 0;
     private final static double MAX_SHOULDER_TRAVEL = 500;
 
     private static double extendRequestedPos = 0;
     private static double shoulderRequestedPos = 0;
+
+    private static double extenderTicksPerInch = 396.23/30;
 
     public static void init() {
         zeroCancel();
@@ -107,7 +111,7 @@ public class Arm {
         extendRequestedPos = 0;
         shoulderRequestedPos = 0;
  
-        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
+        extendPID.setReference(extenderConvertToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);
         updateShoulderPos();
 
         MAX_SHOULDER_SPEED = 0;
@@ -121,7 +125,7 @@ public class Arm {
         // minExtension = 0;
         // minShoulderPosition = 0;
         shoulderRequestedPos = 0;
-        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);   
+        extendPID.setReference(extenderConvertToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);   
         updateShoulderPos();
         //zeroCancel();
         SmartDashboard.putBoolean("Arm reset being called", true);
@@ -141,31 +145,41 @@ public class Arm {
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
     }
 
+    private static double extenderConvertToTicks(double inches) {
+        return inches/extenderTicksPerInch;
+    }
+    private static double extenderConvertToInches(double ticks) {
+        return ticks*extenderTicksPerInch;
+    }
+
     public static void presetExtend(extenderPresets position) {
         switch(position) {
             case FEEDER_STATION:
-                extendRequestedPos = 32;
+                extendRequestedPos = 2.42;
                 break;
             case RETRACTED:
-                extendRequestedPos = 10;//??
+                extendRequestedPos = 0;
                 break;
             case GROUND:
-                extendRequestedPos = 100;//??
+                extendRequestedPos = 6;
                 break;
             case GATE_MODE:
                 extendRequestedPos = MAX_INSIDE_ROBOT_EXTENSION;
                 break;
             case LOW:
-                extendRequestedPos = 150;//??
+                extendRequestedPos = 22.75;
+                break;
+            case LOW_CUBE:
+                extendRequestedPos = 28;
                 break;
             case PICKUP:
-                extendRequestedPos = 20;//??
+                extendRequestedPos = 7;//??
                 break;
             case HIGH:
-                extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
+                extendRequestedPos = MAX_IN_AIR_EXTENSION;
                 break;
         }
-        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
+        extendPID.setReference(extenderConvertToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);
     }
 
     public static void extend(double pwr) {
@@ -187,15 +201,15 @@ public class Arm {
 
             if (extendRequestedPos < 0) 
                 extendRequestedPos = 0;
-            if (shoulderRequestedPos > 290 && extendRequestedPos > MAX_INSIDE_ROBOT_EXTENSION)  
-                extendRequestedPos = MAX_INSIDE_ROBOT_EXTENSION;
-            else if (shoulderRequestedPos > 162 && extendRequestedPos > + MAX_GROUND_LEVEL_EXTENSION)  
-                extendRequestedPos = MAX_GROUND_LEVEL_EXTENSION;
-            else if (extendRequestedPos > MAX_IN_AIR_EXTENSION)  
-                extendRequestedPos = MAX_IN_AIR_EXTENSION;
+            if (shoulderRequestedPos > 290 && extendRequestedPos > extenderConvertToTicks(MAX_INSIDE_ROBOT_EXTENSION))  
+                extendRequestedPos = extenderConvertToTicks(MAX_INSIDE_ROBOT_EXTENSION);
+            else if (shoulderRequestedPos > 162 && extendRequestedPos > extenderConvertToTicks(MAX_GROUND_LEVEL_EXTENSION))  
+                extendRequestedPos = extenderConvertToTicks(MAX_GROUND_LEVEL_EXTENSION);
+            else if (extendRequestedPos > extenderConvertToTicks(MAX_IN_AIR_EXTENSION))  
+                extendRequestedPos = extenderConvertToTicks(MAX_IN_AIR_EXTENSION);
             
-            if(extendRequestedPos <= MIN_RETRACTION_INSIDE_ROBOT && shoulderRequestedPos >= 290) {
-                extendRequestedPos = MIN_RETRACTION_INSIDE_ROBOT;
+            if(extendRequestedPos <= extenderConvertToTicks(MIN_RETRACTION_INSIDE_ROBOT) && shoulderRequestedPos >= 290) {
+                extendRequestedPos = extenderConvertToTicks(MIN_RETRACTION_INSIDE_ROBOT);
             }
             extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);        
         }        
@@ -206,14 +220,14 @@ public class Arm {
             extendRequestedPos = extendRequestedPos + (1.5 * pwr);
 
             if (extendRequestedPos < 0) {
-                extendRequestedPos = extendRequestedPos + (5 * pwr);
+                extendRequestedPos = extendRequestedPos + (7 * pwr);
                 resetExtendEncoder(Math.abs(extendRequestedPos));
                 extendRequestedPos = 0;
             }
           
             // limit extension
-            if (extendRequestedPos > (MAX_IN_AIR_EXTENSION)) {
-                extendRequestedPos = MAX_IN_AIR_EXTENSION;
+            if (extendRequestedPos > extenderConvertToTicks(MAX_IN_AIR_EXTENSION)) {
+                extendRequestedPos = extenderConvertToTicks(MAX_IN_AIR_EXTENSION);
             }
 
             extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
@@ -225,7 +239,7 @@ public class Arm {
     }
 
     public static boolean getIsExtenderExtended() {
-        return extendRequestedPos > (MAX_IN_AIR_EXTENSION / 3); // extened 1/3 out or more
+        return extendRequestedPos > (extenderConvertToTicks(MAX_IN_AIR_EXTENSION) / 3); // extened 1/3 out or more
     }
 
     public static void presetLift(shoulderPresets position) {
@@ -253,6 +267,10 @@ public class Arm {
                 break;
             case PLACING_LOW:
                 shoulderRequestedPos = 150;//??
+                MAX_SHOULDER_SPEED=0.55;
+                break;
+            case PLACING_LOW_CUBE:
+                shoulderRequestedPos = 93;
                 MAX_SHOULDER_SPEED=0.55;
                 break;
             case PLACING_HIGH:
