@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Test extends AutoBaseClass {
     public Test(AutoType type) {
         super(type);
@@ -13,17 +15,18 @@ public class Test extends AutoBaseClass {
 
     @Override
     public void tick() {
+        SmartDashboard.putNumber("Test NonDrive Auto step", getCurrentStep());
         if(isRunning()) {
             switch(getCurrentStep()) {
                 case 0:
                     LiveBottom.forward();
-                    setTimerAndAdvanceStep(1000);
+                    setTimerAndAdvanceStep(2000);
                     break;
                 case 1:
                     break;
                 case 2:
                     LiveBottom.reverse();
-                    setTimerAndAdvanceStep(1000);
+                    setTimerAndAdvanceStep(2000);
                     break;
                 case 3:
                     break;
