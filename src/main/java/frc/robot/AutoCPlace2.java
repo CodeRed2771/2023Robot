@@ -40,7 +40,8 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                 case 5:
                     break;
                 case 6:
-                    driveInches(Math.sqrt(64+46656), Math.atan((8/216)), 1);
+                    //driveInches(Math.sqrt(64+46656), Math.atan((8/216)), 1);
+                    driveInches((18*12)+8,0,1);
                     setTimerAndAdvanceStep(4000);
                     break;
                 case 7:
@@ -48,6 +49,7 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                         advanceStep();
                     break;
                 case 8:
+                    setStep(14);
                     Intake.deploy();
                     Intake.run(1);
                     driveInches(12, 0, 0.5);
