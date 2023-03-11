@@ -337,7 +337,8 @@ public class DriveAuto {
     }
     
     public static void parkingBrake(){
-        DriveTrain.setTurnOrientation(45, -45, 45, -45, false);
+        // DriveTrain.setTurnOrientation(.125, .875, .125, .875, true);
+        DriveTrain.setTurnOrientation(.875, .875, .125, .125, true);
     }
 
     private static Double round2(Double val) {

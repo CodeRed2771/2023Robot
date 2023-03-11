@@ -210,6 +210,9 @@ public class Robot extends TimedRobot {
                 Intake.liveBottomIntake();
             } 
         else {
+            // if(!mNonDriveAutoProgram.isRunning()) {
+                
+            // }
             LiveBottom.off();
             Intake.liveBottomIntakeStop();
         }
@@ -243,10 +246,10 @@ public class Robot extends TimedRobot {
             Arm.presetExtend(extenderPresets.GATE_MODE);
         }
         
-        if(gamepad2.getStartButton()) {
-            mNonDriveAutoProgram = new Test(AutoType.NonDriveAuto);
-            mNonDriveAutoProgram.start();
-        }
+        // if(gamepad2.getStartButton()) {
+        //     mNonDriveAutoProgram = new Test(AutoType.NonDriveAuto);
+        //     mNonDriveAutoProgram.start();
+        // }
 
         if (gamepad2.getRightTriggerAxis()>.2 || gamepad1.getRightTriggerAxis()>.2){
             if (gamepad2.getLeftBumper() || gamepad1.getLeftBumper()){
@@ -318,7 +321,8 @@ public class Robot extends TimedRobot {
         
         if (mAutoProgram.isRunning()) {
             mAutoProgram.tick();
-        } else if (mNonDriveAutoProgram.isRunning()) {
+        } 
+        if (mNonDriveAutoProgram.isRunning()) {
             mNonDriveAutoProgram.tick();
         }
 

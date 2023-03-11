@@ -19,7 +19,7 @@ public class AutoParkingBrake extends AutoBaseClass{
                 case 0:
                     // turnDegrees(1, 0);
                     DriveAuto.parkingBrake();
-                    setTimerAndAdvanceStep(100);
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 1:
                     break;
