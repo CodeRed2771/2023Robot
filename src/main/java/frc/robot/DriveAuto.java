@@ -335,6 +335,10 @@ public class DriveAuto {
         // rightDrivePID.getSetpoint());
 
     }
+    
+    public static void parkingBrake(){
+        DriveTrain.setTurnOrientation(45, -45, 45, -45, false);
+    }
 
     private static Double round2(Double val) {
         // added this back in on 1/15/18

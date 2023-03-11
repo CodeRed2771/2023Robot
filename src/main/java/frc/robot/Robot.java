@@ -136,6 +136,7 @@ public class Robot extends TimedRobot {
 
         setupAutoChoices();
         mAutoProgram = new AutoDoNothing();
+        mNonDriveAutoProgram = new AutoDoNothing();
 
         RobotGyro.init();
     }
