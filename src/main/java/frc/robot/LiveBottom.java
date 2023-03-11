@@ -122,7 +122,7 @@ public class LiveBottom {
      * forward is toward the front of the robot
      */
     public static void forward() {
-        LBmotor.set(.5);
+        LBmotor.set(.8);
         dir = 1;
     }
 
@@ -131,7 +131,7 @@ public class LiveBottom {
      * backwarad is toward the back of the robot
      */
     public static void backward() {
-        LBmotor.set(-.5);
+        LBmotor.set(-.8);
         dir = -1;
     }
 

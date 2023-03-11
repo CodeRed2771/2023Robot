@@ -288,7 +288,7 @@ public class Arm {
                 // if(pwr > (1/1500)*extendRequestedPos+0.75)
                 //     pwr = (1/1500)*extendRequestedPos+0.75;
             }
-            shoulderRequestedPos = shoulderRequestedPos + (3.5 * -pwr);
+            shoulderRequestedPos = shoulderRequestedPos + (4.5 * -pwr);
             
             if (shoulderRequestedPos < 0) 
                 shoulderRequestedPos = 0;
