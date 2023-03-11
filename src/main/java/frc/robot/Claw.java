@@ -24,11 +24,25 @@ public class Claw {
     private static final double MIN_WRIST_POSITION = 0;
     private static final double MAX_WRIST_POSITION = .56;
 
+    private static final double MAX_CLAW_OPEN = .05;
+    private static final double MIN_CLAW_CLOSE = .001;
+
+    private static final double CONE_PICKUP = .035;
+    private static final double CUBE_PICKUP = .02;
+    private static boolean closing;
+    private static clawPositions clawDesiredPosition;
+
     private static enum clawCalls {
         POWERED_OPEN,
         POWERED_CLOSED,
         UNPOWERED
     }
+
+    public static enum clawPositions{
+        ConePickUp,
+        CubePickUp,
+    }
+
     private static clawCalls clawCurrentCall = clawCalls.UNPOWERED;
 
 
@@ -36,13 +50,37 @@ public class Claw {
     public static void init() {
         analogInput = new AnalogInput(Wiring.POTENTIOMETER_CHANNEL);
         analogInput.setAverageBits(2);
-        potentiometer = new AnalogPotentiometer(analogInput, 0, 180);
+        potentiometer = new AnalogPotentiometer(analogInput, .1, 0);
         clawMotor = new CANSparkMax(Wiring.CLAW_MOTOR_ID, MotorType.kBrushed);
 
         wrist = new Servo(Wiring.CLAW_CHANNEL_ID);
         wrist.set(MIN_WRIST_POSITION);
         position = MIN_WRIST_POSITION;
 
+    }
+
+    public static void tick() {
+        if(!closing){
+            if(clawDesiredPosition == clawPositions.ConePickUp) {
+                if(Math.abs(getPotentionmeterDegree() - CONE_PICKUP)>.01) {
+                    openClawTO();
+                }
+            } else {
+                if(Math.abs(getPotentionmeterDegree() - CUBE_PICKUP)>.01) {
+                    openClawTO();
+                }
+            }
+        } else {
+            if(clawDesiredPosition == clawPositions.ConePickUp) {
+                if(Math.abs(getPotentionmeterDegree() - CONE_PICKUP)>.01) {
+                    closeClawTO();
+                }
+            } else {
+                if(Math.abs(getPotentionmeterDegree() - CUBE_PICKUP)>.01) {
+                    closeClawTO();
+                }
+            }
+        }
     }
 
     public static double getPotentionmeterDegree() {
@@ -54,11 +92,15 @@ public class Claw {
     // }
     
     public static void openClawTO() {
-        clawMotor.set(1);
+        if(getPotentionmeterDegree() < MAX_CLAW_OPEN) {
+            clawMotor.set(1);
+        }
     }
     
     public static void closeClawTO() {
-        clawMotor.set(-1);
+        if(getPotentionmeterDegree() > MIN_CLAW_CLOSE) {
+            clawMotor.set(-1);
+        }
     }
 
     public static void stopClawTO() {
@@ -104,6 +146,26 @@ public class Claw {
         position = MIN_WRIST_POSITION;
     }
 
+    public static void setClawPosition(clawPositions position) {
+        switch(position) {
+            case ConePickUp:
+                clawDesiredPosition = clawPositions.ConePickUp;
+                if(getPotentionmeterDegree() > CONE_PICKUP) {
+                    closing = true;
+                } else {
+                    closing = false;
+                }
+                break;
+            case CubePickUp:
+                clawDesiredPosition = clawPositions.CubePickUp;
+                if(getPotentionmeterDegree() > CUBE_PICKUP) {
+                    closing = true;
+                } else {
+                    closing = false;
+                }
+                break;
+        }
+    }
 
 }
 
