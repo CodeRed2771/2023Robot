@@ -146,10 +146,10 @@ public class Arm {
     }
 
     private static double extenderConvertToTicks(double inches) {
-        return inches/extenderTicksPerInch;
+        return inches*extenderTicksPerInch;
     }
     private static double extenderConvertToInches(double ticks) {
-        return ticks*extenderTicksPerInch;
+        return ticks/extenderTicksPerInch;
     }
 
     public static void presetExtend(extenderPresets position) {
@@ -220,7 +220,7 @@ public class Arm {
             extendRequestedPos = extendRequestedPos + (1.5 * pwr);
 
             if (extendRequestedPos < 0) {
-                extendRequestedPos = extendRequestedPos + (7 * pwr);
+                extendRequestedPos = extendRequestedPos + (3 * pwr);
                 resetExtendEncoder(Math.abs(extendRequestedPos));
                 extendRequestedPos = 0;
             }
