@@ -50,5 +50,14 @@ public class ColorSensor {
         SmartDashboard.putNumber("Proximity", proximity);
 
     }
-   
+    
+    public static double getRed() {
+        return m_colorSensor.getRed();
+    }
+    public static double getBlue() {
+        return m_colorSensor.getBlue();
+    }
+    public static double getGreen() {
+        return m_colorSensor.getGreen();
+    }
 }
