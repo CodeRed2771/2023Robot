@@ -50,7 +50,8 @@ public class Claw {
     public static void init() {
         analogInput = new AnalogInput(Wiring.POTENTIOMETER_CHANNEL);
         analogInput.setAverageBits(2);
-        potentiometer = new AnalogPotentiometer(analogInput, .1, 0);
+        potentiometer = new AnalogPotentiometer(analogInput, 180, 0);
+        
         clawMotor = new CANSparkMax(Wiring.CLAW_MOTOR_ID, MotorType.kBrushed);
 
         wrist = new Servo(Wiring.CLAW_CHANNEL_ID);

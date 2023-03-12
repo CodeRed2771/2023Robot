@@ -22,13 +22,15 @@ public class Arm {
         HIGH,
         GATE_MODE,
         PICKUP,
-        FEEDER_STATION
+        FEEDER_STATION,
+        BACK_FEEDER_STATION
     }
 
     public static enum shoulderPresets {
         PICKUP_CONE,
         PICKUP_CUBE,
         PICKUP_FEEDER_STATION,
+        PICKUP_BACK_FEEDER_STATION,
         GATE_MODE,
         PLACING_GROUND,
         PLACING_LOW,
@@ -146,6 +148,9 @@ public class Arm {
             case FEEDER_STATION:
                 extendRequestedPos = 32;
                 break;
+            case BACK_FEEDER_STATION:
+                extendRequestedPos = 300;
+                break;
             case RETRACTED:
                 extendRequestedPos = 10;//??
                 break;
@@ -248,6 +253,10 @@ public class Arm {
             case PICKUP_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
                 shoulderRequestedPos = 110;  // 3-1-23 seems very finicky//116
+                break;
+            case PICKUP_BACK_FEEDER_STATION:
+                MAX_SHOULDER_SPEED = 1;
+                shoulderRequestedPos = 0;
                 break;
             case GATE_MODE:
                 MAX_SHOULDER_SPEED = 1;
