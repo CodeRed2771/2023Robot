@@ -120,7 +120,7 @@ public class AdvancedArm {
         extendRequestedPos = 0;
         shoulderRequestedPos = 0;
  
-        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);
+        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);
         updateShoulderPos();
 
         MAX_SHOULDER_SPEED = 0;
@@ -136,7 +136,7 @@ public class AdvancedArm {
         // minExtension = 0;
         // minShoulderPosition = 0;
         shoulderRequestedPos = 0;
-        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);   
+        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);   
         updateShoulderPos();
         //zeroCancel();
         SmartDashboard.putBoolean("Arm reset being called", true);
@@ -195,12 +195,12 @@ public class AdvancedArm {
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;
                 break;
         }
-        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);
+        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);
     }
 
     public static void extend(double pwr) {
         if (Math.abs(pwr)>.05) {
-            extendRequestedPos = extendRequestedPos + (0.2 * pwr); // was 2.4/2.2 in prev. 
+            extendRequestedPos = extendRequestedPos + (0.1 * pwr); // was 2.4/2.2 in prev. 
         
             // if (extendRequestedPos < minExtension) 
             //     extendRequestedPos = minExtension;
@@ -233,7 +233,7 @@ public class AdvancedArm {
             // } else if(ColorSensor.getBlue() > 100) {
             //     extendRequestedPos = MAX_IN_AIR_EXTENSION;
             // }
-            extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);        
+            extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);        
         }        
      }
 
@@ -260,7 +260,7 @@ public class AdvancedArm {
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;
             }
 
-            extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);
+            extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);
         }
     }
 

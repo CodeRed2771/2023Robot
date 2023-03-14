@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
             DriveTrain.init("NEO");
         
         Claw.init();
-        LiveBottom.init();
+        LiveBottom2.init();
         DriveAuto.init();
         Arm.init();
         Intake.init();
@@ -151,7 +151,9 @@ public class Robot extends TimedRobot {
         DriveTrain.allowTurnEncoderReset();
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
+
         Arm.reset();
+        LiveBottom2.autoZero();
 
         VisionPlacer.setLED(LimelightOn.Off);
     }
@@ -201,17 +203,17 @@ public class Robot extends TimedRobot {
         }
 
         if(gamepad1.getDPadUp() || gamepad2.getDPadUp()) {
-                LiveBottom.forward();
+                LiveBottom2.forward();
             }
         else if (gamepad1.getDPadDown() || gamepad2.getDPadDown())  {
-                LiveBottom.backward();
+                LiveBottom2.backward();
                 Intake.liveBottomIntake();
             } 
         else {
             // if(!mNonDriveAutoProgram.isRunning()) {
                 
             // }
-            LiveBottom.off();
+          //  LiveBottom.off();
             Intake.liveBottomIntakeStop();
         }
 
@@ -223,7 +225,7 @@ public class Robot extends TimedRobot {
             Arm.lift(-gamepad2.getLeftY());
         }
         if(gamepad2.getBackButton()){
-            Arm.zero();
+            Arm.zeroShoulder();
         }
         
         if(gamepad1.getDPadRight()){
@@ -297,7 +299,7 @@ public class Robot extends TimedRobot {
                 mAutoProgram.stop();
         }
         
-        if (gamepad1.getRightBumper() || Arm.getIsExtenderExtended()) {  // slow mode if arm is extended
+        if (gamepad1.getRightBumper() || Arm.getIsExtenderExtended()) {  // slow mode if Arm is extended
             driveRotAmount = rotationalAdjust(driveRotAmount, false);
             driveFWDAmount = forwardAdjustV2(driveFWDAmount, false);
             driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, false);   
@@ -345,7 +347,7 @@ public class Robot extends TimedRobot {
         VisionPlacer.periodic();
         DriveAuto.tick();
         Arm.tick();
-        LiveBottom.tick();
+        LiveBottom2.tick();
         TickTimer.tick();
         Claw.tick();
         
