@@ -601,7 +601,7 @@ public class Robot extends TimedRobot {
     }
 
     private double strafeAdjustV2(double strafeAmt, boolean normalDrive) {
-        final double maxACCELchange = .03;
+        final double maxACCELchange = .01;
         final double maxSTOPPINGchange = .03;
         double lastSetSpeed; 
         double adjustedSpeed = 0;
