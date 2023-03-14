@@ -95,6 +95,11 @@ public class Calibration {
 	public static final double SHOULDER_MOTOR_I = 0;
 	public static final double SHOULDER_MOTOR_D = 0;
 	public static final double SHOULDER_MOTOR_IZONE = 40;
+
+    public static final double LIVE_BOTTOM_MOTOR_P = .019;  //.07
+	public static final double LIVE_BOTTOM_MOTOR_I = 0;
+	public static final double LIVE_BOTTOM_MOTOR_D = 0;
+	public static final double LIVE_BOTTOM_MOTOR_IZONE = 40;
 	
     public static double getInitialTurnZeroPos(char moduleLetter) {
         double zeroPos = 0;
