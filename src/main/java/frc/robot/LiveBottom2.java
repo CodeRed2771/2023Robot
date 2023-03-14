@@ -6,6 +6,8 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 public class LiveBottom2 {
     private static CANSparkMax liveBottomMotor;
@@ -14,8 +16,10 @@ public class LiveBottom2 {
     private static final int MAX_LIVE_BOTTOM_CURRENT = 25;
     private static final double MIN_TO_INTAKE =  0;
     private static final double MAX_AWAY_INTAKE = 30;
-
+    private static boolean autoZeroModeEnabled = false;
+    private static double autoZeroEndTime = 0;
     private static double desiredPosition; 
+
     public static void init() {
         liveBottomMotor = new CANSparkMax(Wiring.LIVE_BOTTOM_MOTOR_ID, MotorType.kBrushless);
         liveBottomMotor.restoreFactoryDefaults();
@@ -39,20 +43,28 @@ public class LiveBottom2 {
         desiredPosition = 0;
     }
 
+    public static void tick() {
+        if (autoZeroModeEnabled) {
+            if (System.currentTimeMillis() > autoZeroEndTime) {
+                autoZeroModeEnabled = false;
+                liveBottomMotor.set(0);
+                liveBottomMotor.getEncoder().setPosition(0);
+            }
+        }    
+
+        SmartDashboard.putNumber("LiveBottom Encoder", liveBottomMotor.getEncoder().getPosition());
+    }
+
     public static double getEncoder() {
         return liveBottomMotor.getEncoder().getPosition();
     }
 
     public static void forward() {
-        if (getEncoder() < MAX_AWAY_INTAKE){ 
-            liveBottomMotor.set(.8);
-        }
+        liveBottomPID.setReference(MIN_TO_INTAKE, ControlType.kPosition);
     }
 
     public static void backward() {
-        if (getEncoder() > MIN_TO_INTAKE) {
-            liveBottomMotor.set(.8);
-        }
+        liveBottomPID.setReference(MAX_AWAY_INTAKE, ControlType.kPosition);
     }
     
     public static void smartPosition(double power){
@@ -81,5 +93,11 @@ public class LiveBottom2 {
             liveBottomPID.setReference(desiredPosition, ControlType.kPosition);
         }
         
+    }
+
+    public static void autoZero() {
+        autoZeroModeEnabled = true;
+        autoZeroEndTime = System.currentTimeMillis() + 2000;
+        liveBottomMotor.set(-.2);
     }
 }

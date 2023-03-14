@@ -87,7 +87,7 @@ public class Calibration {
     public final static double VISION_DISTANCE_B = -90.5271;
     public final static double VISION_DISTANCE_C = 0.563257;
 
-    public static final double BISTABLE_MOTOR_P = .019;  //.07
+    public static final double BISTABLE_MOTOR_P = .045;  //.07
 	public static final double BISTABLE_MOTOR_I = 0;
 	public static final double BISTABLE_MOTOR_D = 0;
 	public static final double BISTABLE_MOTOR_IZONE = 40;

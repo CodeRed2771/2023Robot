@@ -3,12 +3,14 @@ package frc.robot;//the inch arm that needs to be updated
 import javax.naming.ldap.ExtendedRequest;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ColorSensorV3;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -64,6 +66,8 @@ public class AdvancedArm {
     private static final double extenderTicksPerInch = 1/30;//ticks/inches
     private static final double shoulderTicksPerDegree = 1/30;//ticks/degrees
 
+    private static ColorSensorV3 armColorSensor;
+
     public static void init() {
         zeroCancel();
         //motor responsible of extension of bistable material
@@ -116,11 +120,13 @@ public class AdvancedArm {
         extendRequestedPos = 0;
         shoulderRequestedPos = 0;
  
-        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);
+        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);
         updateShoulderPos();
 
         MAX_SHOULDER_SPEED = 0;
 
+        armColorSensor = new ColorSensorV3(Port.kMXP);
+        
     }
 
     public static void reset() {
@@ -130,7 +136,7 @@ public class AdvancedArm {
         // minExtension = 0;
         // minShoulderPosition = 0;
         shoulderRequestedPos = 0;
-        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);   
+        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);   
         updateShoulderPos();
         //zeroCancel();
         SmartDashboard.putBoolean("Arm reset being called", true);
@@ -148,6 +154,13 @@ public class AdvancedArm {
         SmartDashboard.putNumber("Arm Extension Set Point", extendRequestedPos);
         SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
+
+
+        SmartDashboard.putNumber("Arm Color Sensor - Red", armColorSensor.getRed());
+        SmartDashboard.putNumber("Arm Color Sensor - Green", armColorSensor.getGreen());
+        SmartDashboard.putNumber("Arm Color Sensor - Blue", armColorSensor.getBlue());
+        SmartDashboard.putNumber("Arm Color Sensor - IR", armColorSensor.getIR());
+        SmartDashboard.putNumber("Arm Color Sensor - Proximity", armColorSensor.getProximity());
     }
 
     public static double extenderConvertInchesToTicks(double inches) {
@@ -182,12 +195,12 @@ public class AdvancedArm {
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;
                 break;
         }
-        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);
+        extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);
     }
 
     public static void extend(double pwr) {
         if (Math.abs(pwr)>.05) {
-            extendRequestedPos = extendRequestedPos + (0.2 * pwr); // was 2.4/2.2 in prev. 
+            extendRequestedPos = extendRequestedPos + (0.1 * pwr); // was 2.4/2.2 in prev. 
         
             // if (extendRequestedPos < minExtension) 
             //     extendRequestedPos = minExtension;
@@ -220,7 +233,7 @@ public class AdvancedArm {
             // } else if(ColorSensor.getBlue() > 100) {
             //     extendRequestedPos = MAX_IN_AIR_EXTENSION;
             // }
-            extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);        
+            extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);        
         }        
      }
 
@@ -247,7 +260,7 @@ public class AdvancedArm {
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;
             }
 
-            extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kSmartMotion);
+            extendPID.setReference(extenderConvertInchesToTicks(extendRequestedPos), CANSparkMax.ControlType.kPosition);
         }
     }
 
@@ -400,14 +413,14 @@ public class AdvancedArm {
     }
 
     public static boolean liftCompleted() {
-        if(shoulderMotor.getEncoder().getPosition() > shoulderRequestedPos)
+        if(Math.abs(shoulderMotor.getEncoder().getPosition() - shoulderRequestedPos) < .1) // TODO check value
             return true;
         else
             return false;
     }
 
     public static boolean extensionCompleted() {
-        if(extendMotor.getEncoder().getPosition() > extendRequestedPos)
+        if(Math.abs(extendMotor.getEncoder().getPosition() - extendRequestedPos) < .1) // TODO check value
             return true;
         else
             return false;
