@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Arm.extenderPresets;
-import frc.robot.Arm.shoulderPresets;
+import frc.robot.AdvancedArm.extenderPresets;
+import frc.robot.AdvancedArm.shoulderPresets;
 import frc.robot.AutoBaseClass.AutoType;
 import frc.robot.VisionPlacer.LimelightOn;
 import frc.robot.VisionPlacer.Pole;
@@ -123,7 +123,7 @@ public class Robot extends TimedRobot {
         Claw.init();
         LiveBottom.init();
         DriveAuto.init();
-        Arm.init();
+        AdvancedArm.init();
         Intake.init();
         VisionPlacer.init();
         VisionPlacer.setLED(LimelightOn.Off);
@@ -150,7 +150,7 @@ public class Robot extends TimedRobot {
         DriveTrain.allowTurnEncoderReset();
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
-        Arm.reset();
+        AdvancedArm.reset();
         Claw.setStartingPosition();
 
         VisionPlacer.setLED(LimelightOn.Off);
@@ -218,32 +218,32 @@ public class Robot extends TimedRobot {
         }
 
         if (gamepad2.getLeftBumper()) {
-            Arm.overrideExtend(gamepad2.getRightY());
-            Arm.overrideLift(-gamepad2.getLeftY());
+            AdvancedArm.overrideExtend(gamepad2.getRightY());
+            AdvancedArm.overrideLift(-gamepad2.getLeftY());
         } else {
-            Arm.extend(gamepad2.getRightY());
-            Arm.lift(-gamepad2.getLeftY());
+            AdvancedArm.extend(gamepad2.getRightY());
+            AdvancedArm.lift(-gamepad2.getLeftY());
         }
         if(gamepad2.getBackButton()){
-            Arm.zero();
+            AdvancedArm.zero();
         }
         
         if(gamepad1.getDPadRight()){
-            Arm.zeroCancel();
+            AdvancedArm.zeroCancel();
         }
 
         if(Math.abs(gamepad2.getRightY()) > .2 || Math.abs(gamepad2.getLeftY()) > .2) {
-            Arm.zeroCancel();
+            AdvancedArm.zeroCancel();
         }
 
         if (gamepad2.getXButton()) {
-            Arm.presetLift(shoulderPresets.PICKUP_FEEDER_STATION);
-            Arm.presetExtend(extenderPresets.FEEDER_STATION);
+            AdvancedArm.presetLift(shoulderPresets.PICKUP_FEEDER_STATION);
+            AdvancedArm.presetExtend(extenderPresets.FEEDER_STATION);
         }
 
         if (gamepad2.getYButton()) {
-            Arm.presetLift(shoulderPresets.GATE_MODE);
-            Arm.presetExtend(extenderPresets.GATE_MODE);
+            AdvancedArm.presetLift(shoulderPresets.GATE_MODE);
+            AdvancedArm.presetExtend(extenderPresets.GATE_MODE);
         }
         
         // if(gamepad2.getStartButton()) {
@@ -299,7 +299,7 @@ public class Robot extends TimedRobot {
                 mAutoProgram.stop();
         }
         
-        if (gamepad1.getRightBumper() || Arm.getIsExtenderExtended()) {  // slow mode if arm is extended
+        if (gamepad1.getRightBumper() || AdvancedArm.getIsExtenderExtended()) {  // slow mode if arm is extended
             driveRotAmount = rotationalAdjust(driveRotAmount, false);
             driveFWDAmount = forwardAdjustV2(driveFWDAmount, false);
             driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, false);   
@@ -346,7 +346,7 @@ public class Robot extends TimedRobot {
 
         VisionPlacer.periodic();
         DriveAuto.tick();
-        Arm.tick();
+        AdvancedArm.tick();
         LiveBottom.tick();
         TickTimer.tick();
         
@@ -386,7 +386,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        Arm.zeroCancel();
+        AdvancedArm.zeroCancel();
         RobotGyro.reset();
 
         DriveTrain.stopDriveAndTurnMotors();
@@ -475,7 +475,7 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         if (mAutoProgram.isRunning()) {
             mAutoProgram.tick();
-            Arm.tick();
+            AdvancedArm.tick();
             
         }
         showDashboardInfo();
