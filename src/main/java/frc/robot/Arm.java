@@ -61,7 +61,7 @@ public class Arm {
 
     private static double MAX_SHOULDER_SPEED = 0;
     private static double SHOULDER_START_POSITION = 0;
-    private final static double MAX_SHOULDER_TRAVEL = 500;
+    private final static double MAX_SHOULDER_TRAVEL = 1;
 
     private static double extendRequestedPos = 0;
     private static double shoulderRequestedPos = 0;
@@ -92,6 +92,7 @@ public class Arm {
         shoulderPID = shoulderMotor.getPIDController();
 
         thruBoreEncoder = shoulderMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192);
+        thruBoreEncoder.setInverted(true);
         shoulderPID.setFeedbackDevice(thruBoreEncoder);
 
         //Setting PID
@@ -157,6 +158,7 @@ public class Arm {
 		SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Shoulder Thru Bore", thruBoreEncoder.getPosition());
+        SmartDashboard.putNumber("Shoulder Requested", shoulderRequestedPos);
 
         SmartDashboard.putNumber("Arm Color Sensor - Red", armColorSensor.getRed());
 
@@ -324,14 +326,14 @@ public class Arm {
             // zeroCancel();
             if(extendRequestedPos > MAX_GROUND_LEVEL_EXTENSION) {
                 // reduced speed when arm is extended
-                pwr = pwr * .3;
+                pwr = pwr * .01;
                 // if(pwr > (1/1500)*extendRequestedPos+0.75)
                 //     pwr = (1/1500)*extendRequestedPos+0.75;
             }
-            shoulderRequestedPos = shoulderRequestedPos + (4.5 * -pwr);
+            shoulderRequestedPos = shoulderRequestedPos + (.01 * -pwr);
             
-            if (shoulderRequestedPos < 0) 
-                shoulderRequestedPos = 0;
+            // if (shoulderRequestedPos < 0) 
+            //     shoulderRequestedPos = 0;
             if (shoulderRequestedPos > MAX_SHOULDER_TRAVEL)  
                 shoulderRequestedPos =  MAX_SHOULDER_TRAVEL;
 
