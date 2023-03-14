@@ -3,12 +3,14 @@ package frc.robot;//should be fixed now 3/11
 import javax.naming.ldap.ExtendedRequest;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ColorSensorV3;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -63,6 +65,8 @@ public class AdvancedArm {
 
     private static final double extenderTicksPerInch = 1/30;//ticks/inches
     private static final double shoulderTicksPerDegree = 1/30;//ticks/degrees
+
+    private static ColorSensorV3 armColorSensor;
 
     public static void init() {
         zeroCancel();
@@ -121,6 +125,8 @@ public class AdvancedArm {
 
         MAX_SHOULDER_SPEED = 0;
 
+        armColorSensor = new ColorSensorV3(Port.kMXP);
+        
     }
 
     public static void reset() {
@@ -148,6 +154,13 @@ public class AdvancedArm {
         SmartDashboard.putNumber("Arm Extension Set Point", extendRequestedPos);
         SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
+
+
+        SmartDashboard.putNumber("Arm Color Sensor - Red", armColorSensor.getRed());
+        SmartDashboard.putNumber("Arm Color Sensor - Green", armColorSensor.getGreen());
+        SmartDashboard.putNumber("Arm Color Sensor - Blue", armColorSensor.getBlue());
+        SmartDashboard.putNumber("Arm Color Sensor - IR", armColorSensor.getIR());
+        SmartDashboard.putNumber("Arm Color Sensor - Proximity", armColorSensor.getProximity());
     }
 
     public static double extenderConvertInchesToTicks(double inches) {
