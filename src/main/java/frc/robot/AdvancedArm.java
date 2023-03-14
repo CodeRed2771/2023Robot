@@ -413,14 +413,14 @@ public class AdvancedArm {
     }
 
     public static boolean liftCompleted() {
-        if(shoulderMotor.getEncoder().getPosition() > shoulderRequestedPos)
+        if(Math.abs(shoulderMotor.getEncoder().getPosition() - shoulderRequestedPos) < .1) // TODO check value
             return true;
         else
             return false;
     }
 
     public static boolean extensionCompleted() {
-        if(extendMotor.getEncoder().getPosition() > extendRequestedPos)
+        if(Math.abs(extendMotor.getEncoder().getPosition() - extendRequestedPos) < .1) // TODO check value
             return true;
         else
             return false;

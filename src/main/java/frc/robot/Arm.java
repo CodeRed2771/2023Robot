@@ -114,7 +114,7 @@ public class Arm {
         extendRequestedPos = 0;
         shoulderRequestedPos = 0;
  
-        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kSmartMotion);
+        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
         updateShoulderPos();
 
         MAX_SHOULDER_SPEED = 0;
@@ -129,7 +129,7 @@ public class Arm {
         // minExtension = 0;
         // minShoulderPosition = 0;
         shoulderRequestedPos = 0;
-        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kSmartMotion);   
+        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);   
         updateShoulderPos();
         //zeroCancel();
         SmartDashboard.putBoolean("Arm reset being called", true);
@@ -183,7 +183,7 @@ public class Arm {
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
                 break;
         }
-        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kSmartMotion);
+        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
     }
 
     public static void extend(double pwr) {
@@ -221,7 +221,7 @@ public class Arm {
             // } else if(ColorSensor.getBlue() > 100) {
             //     extendRequestedPos = MAX_IN_AIR_EXTENSION;
             // }
-            extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kSmartMotion);        
+            extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);        
         }        
      }
 
