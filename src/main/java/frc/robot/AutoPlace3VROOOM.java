@@ -8,7 +8,6 @@ import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 
 public class AutoPlace3VROOOM extends AutoBaseClass{
-    //TODO: TUNE
     int positionMultiplier = 0;
     int posRLOffset = 0;
     int posRROffset = 0;
