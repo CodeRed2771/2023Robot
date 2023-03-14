@@ -44,9 +44,9 @@ public class LimitSwitch {
     }
     /**
      * 
-     * @param isInverted set whether the output is inverted or not
+     * @param invert set whether the output is inverted or not
      */
-    public void isInverted(boolean isInverted) {
-        this.isInverted = isInverted;
+    public void invert(boolean invert) {
+        this.isInverted = invert;
     }
 }
