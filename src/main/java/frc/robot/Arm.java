@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
@@ -47,10 +48,14 @@ public class Arm {
     private static CANSparkMax extendMotor;
     private static SparkMaxPIDController shoulderPID;
     private static SparkMaxPIDController extendPID;
-    private static RelativeEncoder thruBoreEncoder; 
+    // private static RelativeEncoder thruBoreEncoder;
+    private static DutyCycleEncoder shoulderAbsEncoder; 
 
     private static final int MAX_EXTEND_CURRENT = 30;
     private static final int MAX_SHOULDER_CURRENT = 30;
+
+    private static final double MAX_BACK_SHOULDER = .55;
+    private static final double MAX_IN_ROBOT_SHOULDER = .27;
 
     //                                            ticks per inch = 2.132 (with new motor 3/13)
     private static final double MAX_INSIDE_ROBOT_EXTENSION = 18; //95 was too low
@@ -61,7 +66,7 @@ public class Arm {
 
     private static double MAX_SHOULDER_SPEED = 0;
     private static double SHOULDER_START_POSITION = 0;
-    private final static double MAX_SHOULDER_TRAVEL = 1;
+    private final static double MAX_SHOULDER_TRAVEL = 14;
 
     private static double extendRequestedPos = 0;
     private static double shoulderRequestedPos = 0;
@@ -91,9 +96,9 @@ public class Arm {
         extendPID = extendMotor.getPIDController();
         shoulderPID = shoulderMotor.getPIDController();
 
-        thruBoreEncoder = shoulderMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192);
-        thruBoreEncoder.setInverted(true);
-        shoulderPID.setFeedbackDevice(thruBoreEncoder);
+        // thruBoreEncoder = shoulderMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192);
+        // thruBoreEncoder.setInverted(true);
+        // shoulderPID.setFeedbackDevice();
 
         //Setting PID
         extendPID.setP(Calibration.BISTABLE_MOTOR_P);
@@ -130,6 +135,8 @@ public class Arm {
         MAX_SHOULDER_SPEED = 0;
 
         armColorSensor = new ColorSensorV3(Port.kMXP);
+
+        shoulderAbsEncoder = new DutyCycleEncoder(Wiring.SHOULDER_ABS_ENC);
     }
 
     public static void reset() {
@@ -151,13 +158,39 @@ public class Arm {
         extendMotor.getEncoder().setPosition(position);
     }
 
+    public static void resetShoulderEncoder(double position) {
+        shoulderMotor.getEncoder().setPosition(position);
+    }
+
+    public static double absoluteShoulderEncoderPositionRaw() {
+        return shoulderAbsEncoder.get();
+    }
+
+    public static double absoluteShoulderEncoderPosition() {
+        double encoderPosition;
+        
+        if(shoulderAbsEncoder.get() >= 1) {
+            encoderPosition = shoulderAbsEncoder.get() - (int)shoulderAbsEncoder.get();
+        } else {
+            encoderPosition = ((int)Math.abs(shoulderAbsEncoder.get()) + 1 - Math.abs(shoulderAbsEncoder.get()));
+        }
+
+        if(encoderPosition <= .5) {
+            encoderPosition = 1 - encoderPosition;
+        } else {
+            encoderPosition = .5 - (encoderPosition -.5);
+        }
+
+        return encoderPosition;
+    }
+
     public static void tick() {
         // zeroTick();
         SmartDashboard.putBoolean("Arm reset being called", false);
         SmartDashboard.putNumber("Arm Extension Set Point", extendRequestedPos);
 		SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
-        SmartDashboard.putNumber("Shoulder Thru Bore", thruBoreEncoder.getPosition());
+        // SmartDashboard.putNumber("Shoulder Thru Bore", thruBoreEncoder.getPosition());
         SmartDashboard.putNumber("Shoulder Requested", shoulderRequestedPos);
 
         SmartDashboard.putNumber("Arm Color Sensor - Red", armColorSensor.getRed());
@@ -326,11 +359,11 @@ public class Arm {
             // zeroCancel();
             if(extendRequestedPos > MAX_GROUND_LEVEL_EXTENSION) {
                 // reduced speed when arm is extended
-                pwr = pwr * .01;
+                pwr = pwr * .1;
                 // if(pwr > (1/1500)*extendRequestedPos+0.75)
                 //     pwr = (1/1500)*extendRequestedPos+0.75;
             }
-            shoulderRequestedPos = shoulderRequestedPos + (.01 * -pwr);
+            shoulderRequestedPos = shoulderRequestedPos + (.1 * -pwr);
             
             // if (shoulderRequestedPos < 0) 
             //     shoulderRequestedPos = 0;
@@ -344,7 +377,7 @@ public class Arm {
     public static void overrideLift(double pwr) {
         if (Math.abs(pwr)>.07) {
             // zeroCancel();
-            // pwr = pwr * .25;
+            pwr = pwr * .25;
 
             // shoulderRequestedPos = shoulderRequestedPos + (-pwr);
 
@@ -429,4 +462,21 @@ public class Arm {
     public static void updateShoulderPos() {
         shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
     }
+    
+    public static void zeroAbsoluteEncoder(){
+        if(zeroActive){
+            if(absoluteShoulderEncoderPosition() == 0) {
+                if(MAX_BACK_SHOULDER- absoluteShoulderEncoderPosition() > .2) {
+                    shoulderRequestedPos -= 5;
+                    updateShoulderPos();
+                } else {
+                    shoulderRequestedPos = 0;
+                    resetShoulderEncoder(0);
+                    zeroActive = false;
+                }
+            }
+        }
+    }
 }
+// .55 back
+// .27 

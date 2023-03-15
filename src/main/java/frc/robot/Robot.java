@@ -153,7 +153,7 @@ public class Robot extends TimedRobot {
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
 
         Arm.reset();
-        LiveBottom2.autoZero();
+        // LiveBottom2.autoZero();
 
         VisionPlacer.setLED(LimelightOn.Off);
     }
@@ -225,7 +225,7 @@ public class Robot extends TimedRobot {
             Arm.lift(-gamepad2.getLeftY());
         }
         if(gamepad2.getBackButton()){
-            Arm.zeroShoulder();
+            Arm.zeroAbsoluteEncoder();
         }
         
         if(gamepad1.getDPadRight()){
@@ -334,6 +334,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.updateValues();
 
         SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
+        SmartDashboard.putNumber("Raw Absolute Encoder Data", Arm.absoluteShoulderEncoderPositionRaw());
+        SmartDashboard.putNumber("Calculated Absolute Encoder Data", Arm.absoluteShoulderEncoderPosition());
         
         autoSelected = (String) autoChooser.getSelected();
         SmartDashboard.putString("Auto Selected: ", autoSelected);
