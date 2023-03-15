@@ -152,7 +152,6 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
 
-        Arm.reset();
         LiveBottom2.autoZero();
 
         VisionPlacer.setLED(LimelightOn.Off);
@@ -160,9 +159,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-           
-        SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
-        
+               
         if (gamepad2.getAButton()){
             Claw.setClawPosition(ClawPresets.OPEN);
         } else if (gamepad2.getBButton()) 
@@ -175,6 +172,65 @@ public class Robot extends TimedRobot {
             } 
         } else{
             clawFlippedPress = false;
+        }
+
+        if (gamepad1.getYButton()) {
+            VisionPlacer.setLED(LimelightOn.Off);
+        }
+
+        if(gamepad1.getDPadUp() || gamepad2.getDPadUp()) {
+            LiveBottom2.forward();
+        }
+        else if (gamepad1.getDPadDown() || gamepad2.getDPadDown())  {
+            LiveBottom2.backward();
+            Intake.liveBottomIntake();
+        } 
+        else {
+            Intake.liveBottomIntakeStop();
+        }
+
+        if (gamepad2.getLeftBumper()) {
+            Arm.overrideExtenderMove(gamepad2.getRightY());
+            Arm.overrideShoulderMove(gamepad2.getLeftY());
+        } else {
+            Arm.extenderMove(gamepad2.getRightY());
+            Arm.shoulderMove(gamepad2.getLeftY());
+        }
+
+        if(gamepad2.getBackButton()){
+            Arm.reset();
+        }
+        
+        if (gamepad2.getXButton()) {
+            Arm.presetShoulder(shoulderPresets.PICKUP_FEEDER_STATION);
+            Arm.presetExtend(extenderPresets.FEEDER_STATION);
+        }
+
+        if (gamepad2.getYButton()) {
+            Arm.presetShoulder(shoulderPresets.GATE_MODE);
+            Arm.presetExtend(extenderPresets.GATE_MODE);
+        }
+ 
+        if (gamepad2.getRightTriggerAxis()>.2 || gamepad1.getRightTriggerAxis()>.2){
+            if (gamepad2.getLeftBumper() || gamepad1.getLeftBumper()){
+                Intake.deploy();
+                Intake.reverse(1);
+            } 
+            else{
+                Intake.deploy();
+                Intake.run(1);
+            }
+        } else
+            Intake.stop();
+
+        if (gamepad2.getRightBumper()){
+            Intake.retract();
+        }
+
+        if (gamepad2.getStartButton()) {//test only
+            mAutoProgram.stop();
+            mAutoProgram = new AutoInRobotPickup(); 
+            mAutoProgram.start();
         }
 
         if (gamepad1.getBButton()){
@@ -198,74 +254,11 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
         }
 
-        if (gamepad1.getYButton()) {
-            VisionPlacer.setLED(LimelightOn.Off);
-        }
-
-        if(gamepad1.getDPadUp() || gamepad2.getDPadUp()) {
-                LiveBottom2.forward();
-            }
-        else if (gamepad1.getDPadDown() || gamepad2.getDPadDown())  {
-                LiveBottom2.backward();
-                Intake.liveBottomIntake();
-            } 
-        else {
-            // if(!mNonDriveAutoProgram.isRunning()) {
-                
-            // }
-          //  LiveBottom.off();
-            Intake.liveBottomIntakeStop();
-        }
-
-        if (gamepad2.getLeftBumper()) {
-            Arm.overrideExtend(gamepad2.getRightY());
-            Arm.overrideLift(gamepad2.getLeftY());
-        } else {
-            Arm.extend(gamepad2.getRightY());
-            Arm.lift(gamepad2.getLeftY());
-        }
-        // if(gamepad2.getBackButton()){
-        //     Arm.zeroAbsoluteEncoder();
-        // }
-        
-        if (gamepad2.getXButton()) {
-            Arm.presetLift(shoulderPresets.PICKUP_FEEDER_STATION);
-            Arm.presetExtend(extenderPresets.FEEDER_STATION);
-        }
-
-        if (gamepad2.getYButton()) {
-            Arm.presetLift(shoulderPresets.GATE_MODE);
-            Arm.presetExtend(extenderPresets.GATE_MODE);
-        }
-        
         // if(gamepad2.getStartButton()) {
         //     mNonDriveAutoProgram = new Test(AutoType.NonDriveAuto);
         //     mNonDriveAutoProgram.start();
         // }
 
-        if (gamepad2.getRightTriggerAxis()>.2 || gamepad1.getRightTriggerAxis()>.2){
-            if (gamepad2.getLeftBumper() || gamepad1.getLeftBumper()){
-                Intake.deploy();
-                Intake.reverse(1);
-            } 
-            else{
-                Intake.deploy();
-                Intake.run(1);
-            }
-        } else
-            Intake.stop();
-
-        if (gamepad2.getRightBumper()){
-            Intake.retract();
-        }
-
-        if (gamepad2.getStartButton()) {//test only
-            mAutoProgram.stop();
-            mAutoProgram = new AutoInRobotPickup(); 
-            mAutoProgram.start();
-        }
-
-        SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
         // --------------------------------------------------
         // RESET - allow manual reset of systems by pressing Start
         // --------------------------------------------------
@@ -323,10 +316,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        SmartDashboard.updateValues();
+ 
+        VisionPlacer.periodic();
+        DriveAuto.tick();
+        Arm.tick();
+        LiveBottom2.tick();
+        TickTimer.tick();
+        Claw.tick();
+ 
+        RobotGyro.position(); // i don't think this does anything - dvv
 
-        SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
-         
         autoSelected = (String) autoChooser.getSelected();
         SmartDashboard.putString("Auto Selected: ", autoSelected);
 
@@ -336,13 +335,6 @@ public class Robot extends TimedRobot {
             SmartDashboard.putBoolean("Pole Low", true);
         }
 
-        VisionPlacer.periodic();
-        DriveAuto.tick();
-        Arm.tick();
-        LiveBottom2.tick();
-        TickTimer.tick();
-        Claw.tick();
-        
         // Sets the PID values based on input from the SmartDashboard
         // This is only needed during tuning
         if (SmartDashboard.getBoolean("Tune Drive-Turn PIDs", false)) {
@@ -362,7 +354,7 @@ public class Robot extends TimedRobot {
             DriveTrain.setDriveMMVelocity(
                     (int) SmartDashboard.getNumber("DRIVE MM VELOCITY", Calibration.getDT_MM_VELOCITY()));
         }
-        RobotGyro.position();
+
         // SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
         // SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
         // SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
@@ -373,6 +365,13 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
         SmartDashboard.putNumber("Roll", RobotGyro.roll());
         SmartDashboard.putNumber("Yaw", RobotGyro.yaw());
+
+
+        SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
+        SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
+        SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
+ 
+        SmartDashboard.updateValues();
     }
 
     @Override

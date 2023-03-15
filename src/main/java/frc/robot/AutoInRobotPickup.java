@@ -41,11 +41,11 @@ public class AutoInRobotPickup extends AutoBaseClass {
                         advanceStep();
                     break;
                 case 2:
-                    Arm.presetLift(shoulderPresets.PICKUP_CONE);
+                    Arm.presetShoulder(shoulderPresets.PICKUP_CONE);
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 3:
-                    if(Arm.liftCompleted())
+                    if(Arm.shoulderMoveCompleted())
                         advanceStep();
                     break;
                 case 4:
@@ -66,11 +66,11 @@ public class AutoInRobotPickup extends AutoBaseClass {
                     // break;
                     break;
                 case 8:
-                    Arm.presetLift(shoulderPresets.PLACING_LOW);
+                    Arm.presetShoulder(shoulderPresets.PLACING_LOW);
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 9:
-                    if(Arm.liftCompleted())
+                    if(Arm.shoulderMoveCompleted())
                         advanceStep();
                     break;
                 case 10:

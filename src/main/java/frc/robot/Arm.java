@@ -45,23 +45,25 @@ public class Arm {
     }
 
     private static int RED_THRESHOLD = 300;
+    private static int BLUE_THRESHOLD = 300;
+
     private static CANSparkMax shoulderMotor;
     private static CANSparkMax extendMotor;
     private static SparkMaxPIDController shoulderPID;
     private static SparkMaxPIDController extendPID;
-    // private static RelativeEncoder thruBoreEncoder;
+    
     private static DutyCycleEncoder shoulderAbsEncoder; 
 
     private static final int MAX_EXTEND_CURRENT = 50;
     private static final int MAX_SHOULDER_CURRENT = 50;
 
-    private static final double MAX_BACK_SHOULDER = .55;
-    private static final double MAX_IN_ROBOT_SHOULDER = .27;
+    private static final double SHOULDER_ABS_MAX_UP = .56;
+    private static final double SHOULDER_ABS_MAX_DOWN = .12;
 
     //                                            ticks per inch = 2.132 (with new motor 3/13)
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 18; //95 was too low
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 18; 
     private static final double MAX_GROUND_LEVEL_EXTENSION = 60;
-    private static final double MAX_IN_AIR_EXTENSION = 110; //420
+    private static final double MAX_IN_AIR_EXTENSION = 110; 
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
 
@@ -75,6 +77,9 @@ public class Arm {
     private static ColorSensorV3 armColorSensor;
 
     public static void init() {
+        armColorSensor = new ColorSensorV3(Port.kMXP);
+        shoulderAbsEncoder = new DutyCycleEncoder(Wiring.SHOULDER_ABS_ENC);
+
         //motor responsible of extension of bistable material
         extendMotor = new CANSparkMax(Wiring.BISTABLE_MOTOR, MotorType.kBrushless);
         extendMotor.restoreFactoryDefaults();
@@ -84,7 +89,7 @@ public class Arm {
         extendMotor.setIdleMode(IdleMode.kBrake);
         extendMotor.setInverted(true);
 
-        //motor responsible of lifting motor that claw+lift is connected to
+        //motor responsible of lifting motor that claw+shoulderMove is connected to
         shoulderMotor = new CANSparkMax(Wiring.SHOULDER_MOTOR, MotorType.kBrushless);
         shoulderMotor.restoreFactoryDefaults();
         shoulderMotor.setClosedLoopRampRate(0.5);
@@ -126,36 +131,21 @@ public class Arm {
         shoulderRequestedPos = SHOULDER_START_POSITION;
  
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
-        updateShoulderPos();
+        setShoulderPositon();
 
         MAX_SHOULDER_SPEED = 0;
-
-        armColorSensor = new ColorSensorV3(Port.kMXP);
-
-        shoulderAbsEncoder = new DutyCycleEncoder(Wiring.SHOULDER_ABS_ENC);
-    }
-
-    public static double getNewEncoderPos() {
-        double IN_MIN = .560;
-        double IN_MAX = .12;
-        double OUT_MIN = 0;
-        double OUT_MAX = 20.11;
-        double curPos = shoulderAbsEncoder.get();
-
-        return ((curPos-IN_MIN)*(OUT_MAX-OUT_MIN)/(IN_MAX-IN_MIN)+OUT_MIN);
     }
 
     public static void reset() {
         extendMotor.getEncoder().setPosition(0);
-        // shoulderMotor.getEncoder().setPosition(0);
+
         extendRequestedPos = 0;
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);   
         
         resetShoulderEncoder();
         shoulderMotor.getEncoder().setPosition(getNewEncoderPos()); // reset using absolute encoder
         shoulderRequestedPos = SHOULDER_START_POSITION;
-        updateShoulderPos();
-    
+        setShoulderPositon();
     }
 
     public static void resetShoulderEncoder() {
@@ -167,16 +157,13 @@ public class Arm {
     }
 
     public static void tick() {
-        // zeroTick();
-        SmartDashboard.putBoolean("Arm reset being called", false);
         SmartDashboard.putNumber("Arm Extension Set Point", extendRequestedPos);
 		SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Shoulder Thru Bore", shoulderAbsEncoder.get());
         SmartDashboard.putNumber("Shoulder Requested", shoulderRequestedPos);
-
         SmartDashboard.putNumber("Arm Color Sensor - Red", armColorSensor.getRed());
-
+        SmartDashboard.putNumber("Arm Color Sensor - Blue", armColorSensor.getBlue());
     }
 
     public static void presetExtend(extenderPresets position) {
@@ -209,23 +196,10 @@ public class Arm {
         extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
     }
 
-    public static void extend(double pwr) {
-        if (Math.abs(pwr)>.07) {
-            extendRequestedPos = extendRequestedPos + (1.4 * pwr); // was 2.2 
+    public static void extenderMove(double requestedVelocity) {
+        if (Math.abs(requestedVelocity)>.07) {
+            extendRequestedPos = extendRequestedPos + (1.4 * requestedVelocity); // was 2.2 
         
-            // if (extendRequestedPos < minExtension) 
-            //     extendRequestedPos = minExtension;
-            // if ((shoulderRequestedPos+minShoulderPosition) > 290 && (extendRequestedPos+minExtension) > (minExtension + MAX_INSIDE_ROBOT_EXTENSION))  
-            //     extendRequestedPos = (minExtension + MAX_INSIDE_ROBOT_EXTENSION);
-            // else if ((shoulderRequestedPos + minShoulderPosition) > 162 && (extendRequestedPos+minExtension) > (minExtension + MAX_GROUND_LEVEL_EXTENSION))  
-            //     extendRequestedPos = (minExtension + MAX_GROUND_LEVEL_EXTENSION);
-            // else if ((extendRequestedPos+minExtension) > (minExtension + MAX_IN_AIR_EXTENSION))  
-            //     extendRequestedPos = (minExtension + MAX_IN_AIR_EXTENSION);
-            
-            // if((extendRequestedPos+minExtension) <= (minExtension +MIN_RETRACTION_INSIDE_ROBOT) && (shoulderRequestedPos+minShoulderPosition) >= 290) {
-            //     extendRequestedPos = minExtension + MIN_RETRACTION_INSIDE_ROBOT;
-            // }
-
             if (extendRequestedPos < 0) 
                 extendRequestedPos = 0;
             if (shoulderRequestedPos > 290 && extendRequestedPos > MAX_INSIDE_ROBOT_EXTENSION)  
@@ -245,18 +219,18 @@ public class Arm {
                 extendMotor.getEncoder().setPosition(0);
             }
 
-            // if(ColorSensor.getRed() > 100) {
-            //     extendRequestedPos = 0;
-            // } else if(ColorSensor.getBlue() > 100) {
-            //     extendRequestedPos = MAX_IN_AIR_EXTENSION;
-            // }
+            if(armColorSensor.getRed() > RED_THRESHOLD) {
+                extendRequestedPos = 0;
+            } else if(armColorSensor.getBlue() > BLUE_THRESHOLD) {
+                extendRequestedPos = extendMotor.getEncoder().getPosition();
+            }
             extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);        
         }        
      }
 
-    public static void overrideExtend(double pwr) {
-        if (Math.abs(pwr)>.07) {
-            extendRequestedPos = extendRequestedPos + (2.9 * pwr);
+    public static void overrideExtenderMove(double requestedVelocity) {
+        if (Math.abs(requestedVelocity)>.07) {
+            extendRequestedPos = extendRequestedPos + (2.9 * requestedVelocity);
 
             // if (extendRequestedPos < 0 && ColorSensor.getBlue() < 100) {
             //     extendRequestedPos = extendRequestedPos + (5 * pwr);
@@ -294,7 +268,7 @@ public class Arm {
         return extendRequestedPos > (MAX_IN_AIR_EXTENSION / 3); // extened 1/3 out or more
     }
 
-    public static void presetLift(shoulderPresets position) {
+    public static void presetShoulder(shoulderPresets position) {
 
         switch(position) {
             case PICKUP_FEEDER_STATION:
@@ -332,10 +306,10 @@ public class Arm {
                 
         }
 
-        updateShoulderPos();
+        setShoulderPositon();
     }
 
-    public static void lift(double pwr) {
+    public static void shoulderMove(double pwr) {
         
         if (Math.abs(pwr)>.07) {
             // zeroCancel();
@@ -352,11 +326,11 @@ public class Arm {
             if (shoulderRequestedPos > MAX_SHOULDER_TRAVEL)  
                 shoulderRequestedPos =  MAX_SHOULDER_TRAVEL;
 
-            updateShoulderPos();
+            setShoulderPositon();
         }
      }
 
-    public static void overrideLift(double pwr) {
+    public static void overrideShoulderMove(double pwr) {
         if (Math.abs(pwr)>.07) {
             // zeroCancel();
             pwr = pwr * .25;
@@ -370,24 +344,19 @@ public class Arm {
 
             shoulderRequestedPos = shoulderRequestedPos + (-pwr);
           
-            updateShoulderPos();
+            setShoulderPositon();
         }
     }
 
-    private static boolean zeroActive = false;
-    private static boolean zeroFast = false;
-    private static long endTimeForZeroCalib = 0;
-    private static LimitSwitch shoulderLimitSwitch = new LimitSwitch(Wiring.SHOULDER_LIMIT_SWITCH_CHANNEL,true);
-
-    public static boolean liftCompleted() {
-        if(shoulderMotor.getEncoder().getPosition() > shoulderRequestedPos)
+    public static boolean shoulderMoveCompleted() {
+        if(Math.abs(shoulderMotor.getEncoder().getPosition() - shoulderRequestedPos) < .2)
             return true;
         else
             return false;
     }
 
     public static boolean extensionCompleted() {
-        if(extendMotor.getEncoder().getPosition() > extendRequestedPos)
+        if(Math.abs(extendMotor.getEncoder().getPosition() - extendRequestedPos) < 2)
             return true;
         else
             return false;
@@ -396,8 +365,23 @@ public class Arm {
     /**
      * updates the shoulder pos using {@code shoulderRequestedPos} var and the {@code shoulder.setReference} method
      */
-    public static void updateShoulderPos() {
+    public static void setShoulderPositon() {
         shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
     }
     
+    /*
+     * getNewEncoderPos
+     * 
+     * uses the absolute encoder to determine what the relative encoder 
+     * value should be.  Used to reset the relative encoder.
+     */
+    public static double getNewEncoderPos() {
+        double IN_MIN = SHOULDER_ABS_MAX_UP;
+        double IN_MAX = SHOULDER_ABS_MAX_DOWN;
+        double OUT_MIN = 0;  // relative encoder - full back
+        double OUT_MAX = 20.11; // relative encoder - full forward/down
+        double curPos = shoulderAbsEncoder.get();
+
+        return ((curPos-IN_MIN)*(OUT_MAX-OUT_MIN)/(IN_MAX-IN_MIN)+OUT_MIN);
+    }
 }

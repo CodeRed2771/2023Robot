@@ -18,7 +18,7 @@ public class AutoAprilTag2Elements extends AutoBaseClass {
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0: 
-                    Arm.presetLift(shoulderPresets.PLACING_HIGH);
+                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     setTimerAndAdvanceStep(1000);
                     break;
                 case 2:

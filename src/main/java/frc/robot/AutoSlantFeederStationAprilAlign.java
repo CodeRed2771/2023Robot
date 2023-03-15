@@ -41,7 +41,7 @@ public class AutoSlantFeederStationAprilAlign extends AutoBaseClass {
                     VisionPlacer.setLED(LimelightOn.On);
 
                     // Moving Arm
-                    Arm.presetLift(shoulderPresets.PICKUP_FEEDER_STATION);
+                    Arm.presetShoulder(shoulderPresets.PICKUP_FEEDER_STATION);
                     Arm.presetExtend(extenderPresets.FEEDER_STATION);
                     
                     // Calculate Depth 

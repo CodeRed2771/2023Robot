@@ -34,7 +34,7 @@ public class AutoWings extends AutoBaseClass{
                     break;
                 case 4:
                     Claw.closeClawA();
-                    Arm.presetLift(shoulderPresets.PLACING_HIGH);
+                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     setTimerAndAdvanceStep(750);
                     break;
                 case 5:
@@ -55,7 +55,7 @@ public class AutoWings extends AutoBaseClass{
                     Claw.closeClawA();
                     Intake.deploy();
                     Arm.presetExtend(extenderPresets.RETRACTED);
-                    Arm.presetLift(shoulderPresets.PICKUP_CUBE);
+                    Arm.presetShoulder(shoulderPresets.PICKUP_CUBE);
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 11:

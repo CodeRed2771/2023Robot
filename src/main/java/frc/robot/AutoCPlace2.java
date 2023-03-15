@@ -20,7 +20,7 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    Arm.presetLift(shoulderPresets.PLACING_LOW);
+                    Arm.presetShoulder(shoulderPresets.PLACING_LOW);
                     setTimerAndAdvanceStep(300);
                     break;
                 case 1:
