@@ -153,7 +153,7 @@ public class Robot extends TimedRobot {
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
 
         Arm.reset();
-        // LiveBottom2.autoZero();
+        LiveBottom2.autoZero();
 
         VisionPlacer.setLED(LimelightOn.Off);
     }
@@ -219,23 +219,15 @@ public class Robot extends TimedRobot {
 
         if (gamepad2.getLeftBumper()) {
             Arm.overrideExtend(gamepad2.getRightY());
-            Arm.overrideLift(-gamepad2.getLeftY());
+            Arm.overrideLift(gamepad2.getLeftY());
         } else {
             Arm.extend(gamepad2.getRightY());
-            Arm.lift(-gamepad2.getLeftY());
+            Arm.lift(gamepad2.getLeftY());
         }
-        if(gamepad2.getBackButton()){
-            Arm.zeroAbsoluteEncoder();
-        }
+        // if(gamepad2.getBackButton()){
+        //     Arm.zeroAbsoluteEncoder();
+        // }
         
-        if(gamepad1.getDPadRight()){
-            Arm.zeroCancel();
-        }
-
-        if(Math.abs(gamepad2.getRightY()) > .2 || Math.abs(gamepad2.getLeftY()) > .2) {
-            Arm.zeroCancel();
-        }
-
         if (gamepad2.getXButton()) {
             Arm.presetLift(shoulderPresets.PICKUP_FEEDER_STATION);
             Arm.presetExtend(extenderPresets.FEEDER_STATION);
@@ -334,9 +326,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.updateValues();
 
         SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
-        SmartDashboard.putNumber("Raw Absolute Encoder Data", Arm.absoluteShoulderEncoderPositionRaw());
-        SmartDashboard.putNumber("Calculated Absolute Encoder Data", Arm.absoluteShoulderEncoderPosition());
-        
+         
         autoSelected = (String) autoChooser.getSelected();
         SmartDashboard.putString("Auto Selected: ", autoSelected);
 
@@ -387,7 +377,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        Arm.zeroCancel();
         RobotGyro.reset();
 
         DriveTrain.stopDriveAndTurnMotors();

@@ -13,9 +13,9 @@ public class LiveBottom2 {
     private static CANSparkMax liveBottomMotor;
     private static SparkMaxPIDController liveBottomPID;
     
-    private static final int MAX_LIVE_BOTTOM_CURRENT = 25;
+    private static final int MAX_LIVE_BOTTOM_CURRENT = 30;
     private static final double MIN_TO_INTAKE =  0;
-    private static final double MAX_AWAY_INTAKE = -20;
+    private static final double MAX_AWAY_INTAKE = -20.5;
     private static boolean autoZeroModeEnabled = false;
     private static double autoZeroEndTime = 0;
     private static double desiredPosition; 
@@ -94,7 +94,7 @@ public class LiveBottom2 {
     public static void autoZero() {
         autoZeroModeEnabled = true;
         autoZeroEndTime = System.currentTimeMillis() + 2000;
-        liveBottomMotor.set(.1);
+        liveBottomMotor.set(.15);
         
     }
 }
