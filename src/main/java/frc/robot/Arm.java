@@ -1,25 +1,27 @@
 package frc.robot;//should be fixed now 3/11
 
-import javax.naming.ldap.ExtendedRequest;
-
-import com.revrobotics.AlternateEncoderType;
-import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.MotorFeedbackSensor;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
+/*
+ * TO DO
+ * Programming to auto-set the extender limit by slowing retracting till
+ * we see red - but only do it if we see SOME color, otherwise sensor may not
+ * be working
+ * 
+ * More live checks for extension and shoulder positions that are incompatible
+ * 
+ * Calibrate Extender positions
+ * Calibrate Shoulder positions
+ * 
+ */
 public class Arm {
     
     public static enum extenderPresets {
@@ -69,10 +71,16 @@ public class Arm {
 
     private static double MAX_SHOULDER_SPEED = 0;
     private static double SHOULDER_START_POSITION = 0;
+    private static double SHOULDER_IN_ROBOT_POSITION = 14; // TODO needs testing
+    private static double SHOULDER_GROUND_POSITION = 10; // TODO needs testing
     private final static double MAX_SHOULDER_TRAVEL = 18;
 
     private static double extendRequestedPos = 0;
     private static double shoulderRequestedPos = 0;
+    private static double lastExtendRequestedPos = 999;
+    private static double lastShoulderRequestedPos = 999;
+    private static boolean extendOverrideMode = false;
+    private static boolean shoulderOverrideMode = false;
 
     private static ColorSensorV3 armColorSensor;
 
@@ -129,34 +137,24 @@ public class Arm {
 
         extendRequestedPos = 0;
         shoulderRequestedPos = SHOULDER_START_POSITION;
- 
-        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
-        setShoulderPositon();
 
         MAX_SHOULDER_SPEED = 0;
     }
 
-    public static void reset() {
-        extendMotor.getEncoder().setPosition(0);
-
-        extendRequestedPos = 0;
-        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);   
-        
-        resetShoulderEncoder();
-        shoulderMotor.getEncoder().setPosition(getNewEncoderPos()); // reset using absolute encoder
-        shoulderRequestedPos = SHOULDER_START_POSITION;
-        setShoulderPositon();
-    }
-
-    public static void resetShoulderEncoder() {
-        shoulderMotor.getEncoder().setPosition(getNewEncoderPos()); // reset using absolute encoder
-    }
-
-    public static void resetExtendEncoder(double position ) {
-        extendMotor.getEncoder().setPosition(position);
-    }
-
     public static void tick() {
+
+        extendRequestedPos = validateExtenderRequest(extendRequestedPos);
+        shoulderRequestedPos = validateShoulderRequest(shoulderRequestedPos);
+
+        if (extendRequestedPos != lastExtendRequestedPos) {
+            extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
+            lastExtendRequestedPos = extendRequestedPos;
+        }
+        if (shoulderRequestedPos != lastShoulderRequestedPos) {
+            shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+            lastShoulderRequestedPos = shoulderRequestedPos;
+        }
+ 
         SmartDashboard.putNumber("Arm Extension Set Point", extendRequestedPos);
 		SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
@@ -166,7 +164,20 @@ public class Arm {
         SmartDashboard.putNumber("Arm Color Sensor - Blue", armColorSensor.getBlue());
     }
 
+    public static void reset() {
+
+        //NOT RIGHT - SHOULD RUN CODE TO RESET BY LOOKING FOR COLOR
+        extendMotor.getEncoder().setPosition(0);
+        extendRequestedPos = 0;
+        
+        resetShoulderEncoder();
+        shoulderRequestedPos = SHOULDER_START_POSITION;
+    }
+
     public static void presetExtend(extenderPresets position) {
+        
+        extendOverrideMode = false;
+
         switch(position) {
             case FEEDER_STATION:
                 extendRequestedPos = 8;
@@ -193,159 +204,134 @@ public class Arm {
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
                 break;
         }
-        extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
+    }
+
+   private static double validateShoulderRequest(double shReq) {
+        
+        if (!shoulderOverrideMode) {
+            if (shReq < 0)
+                shReq = 0;
+
+            if (shReq > MAX_SHOULDER_TRAVEL)  
+                shReq =  MAX_SHOULDER_TRAVEL;
+        }
+        
+        return shReq;
+     }
+     private static double validateExtenderRequest(double extReq) {
+        
+        if (!extendOverrideMode) {
+            if (extReq < 0) 
+                extReq = 0;
+        
+                // Check for limits based on shoulder position
+            if (shoulderRequestedPos > SHOULDER_IN_ROBOT_POSITION && extReq > MAX_INSIDE_ROBOT_EXTENSION)  
+                extReq = MAX_INSIDE_ROBOT_EXTENSION;
+            else if (shoulderRequestedPos > SHOULDER_GROUND_POSITION && extReq > + MAX_GROUND_LEVEL_EXTENSION)  
+                extReq = MAX_GROUND_LEVEL_EXTENSION;
+            else if (extReq > MAX_IN_AIR_EXTENSION)  
+                extReq = MAX_IN_AIR_EXTENSION;
+            
+            // check for RETRACTION limits based on being inside the robot
+            if (extReq <= MIN_RETRACTION_INSIDE_ROBOT && shoulderRequestedPos >= SHOULDER_IN_ROBOT_POSITION) {
+                extReq = MIN_RETRACTION_INSIDE_ROBOT;
+            }
+    
+        }
+
+        // CHECK FOR HARD LIMITS ON EXTENSION AND RETRACTION
+
+        if (extReq < extendMotor.getEncoder().getPosition() && armColorSensor.getRed() > RED_THRESHOLD) {
+            // hit hard retract limit while trying to retract
+            // stop it and reset the zero to automatically  recalibrate
+            extReq = 0;
+            resetExtendEncoder(0);
+        }
+
+        if (extReq > extendMotor.getEncoder().getPosition() && armColorSensor.getBlue() > BLUE_THRESHOLD) {
+            // hit hard extend limit while trying to extend further
+            // don't allow going beyond where we're at
+            extReq = extendMotor.getEncoder().getPosition();
+        }
+
+        return extReq;
     }
 
     public static void extenderMove(double requestedVelocity) {
         if (Math.abs(requestedVelocity)>.07) {
             extendRequestedPos = extendRequestedPos + (1.4 * requestedVelocity); // was 2.2 
-        
-            if (extendRequestedPos < 0) 
-                extendRequestedPos = 0;
-            if (shoulderRequestedPos > 290 && extendRequestedPos > MAX_INSIDE_ROBOT_EXTENSION)  
-                extendRequestedPos = MAX_INSIDE_ROBOT_EXTENSION;
-            else if (shoulderRequestedPos > 162 && extendRequestedPos > + MAX_GROUND_LEVEL_EXTENSION)  
-                extendRequestedPos = MAX_GROUND_LEVEL_EXTENSION;
-            else if (extendRequestedPos > MAX_IN_AIR_EXTENSION)  
-                extendRequestedPos = MAX_IN_AIR_EXTENSION;
-            
-            if(extendRequestedPos <= MIN_RETRACTION_INSIDE_ROBOT && shoulderRequestedPos >= 290) {
-                extendRequestedPos = MIN_RETRACTION_INSIDE_ROBOT;
-            }
-
-            if (extendRequestedPos < extendMotor.getEncoder().getPosition() && armColorSensor.getRed() > RED_THRESHOLD) {
-                // hit hard retract limit while trying to retract
-                extendRequestedPos = 0;
-                extendMotor.getEncoder().setPosition(0);
-            }
-
-            if(armColorSensor.getRed() > RED_THRESHOLD) {
-                extendRequestedPos = 0;
-            } else if(armColorSensor.getBlue() > BLUE_THRESHOLD) {
-                extendRequestedPos = extendMotor.getEncoder().getPosition();
-            }
-            extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);        
-        }        
+        }       
+        extendOverrideMode = false; 
      }
 
     public static void overrideExtenderMove(double requestedVelocity) {
-        if (Math.abs(requestedVelocity)>.07) {
+        if (Math.abs(requestedVelocity) >.07) {
             extendRequestedPos = extendRequestedPos + (2.9 * requestedVelocity);
-
-            // if (extendRequestedPos < 0 && ColorSensor.getBlue() < 100) {
-            //     extendRequestedPos = extendRequestedPos + (5 * pwr);
-            //     resetExtendEncoder(Math.abs(extendRequestedPos));
-            //     extendRequestedPos = 0;
-            // }
-            if (extendRequestedPos < 0) {
-                resetExtendEncoder(Math.abs(extendRequestedPos));
-                extendRequestedPos = 0;
-            }
-          
-            // limit extension
-            // if (extendRequestedPos > (MAX_IN_AIR_EXTENSION) || ColorSensor.getRed() > 0) {
-            //     extendRequestedPos = MAX_IN_AIR_EXTENSION;
-            // }
-            if (extendRequestedPos > (MAX_IN_AIR_EXTENSION)) {
-                extendRequestedPos = MAX_IN_AIR_EXTENSION;
-            }
-
-            if (extendRequestedPos < extendMotor.getEncoder().getPosition() && armColorSensor.getRed() > RED_THRESHOLD) {
-                // hit hard retract limit while trying to retract
-                extendRequestedPos = 0;
-                extendMotor.getEncoder().setPosition(0);
-            }
-
-            extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
+            extendOverrideMode = true;
+        } else {
+            extendOverrideMode = false;
         }
     }
 
-    public static double getExtendRequestedPosition() {
-        return extendRequestedPos;
-    }
-
-    public static boolean getIsExtenderExtended() {
-        return extendRequestedPos > (MAX_IN_AIR_EXTENSION / 3); // extened 1/3 out or more
-    }
-
     public static void presetShoulder(shoulderPresets position) {
+        shoulderOverrideMode = false;
 
         switch(position) {
             case PICKUP_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 110;  // 3-1-23 seems very finicky//116
+                shoulderRequestedPos = 3;  
                 break;
             case PICKUP_BACK_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 0;
+                shoulderRequestedPos = 1;
                 break;
             case GATE_MODE:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 390;
+                shoulderRequestedPos = 14;
                 break;
             case PICKUP_CONE:
                 MAX_SHOULDER_SPEED=1;
-                shoulderRequestedPos = 50;//??
+                shoulderRequestedPos = 14;//??
                 break;
             case PICKUP_CUBE:
-                shoulderRequestedPos = 100;//??
+                shoulderRequestedPos = 14;//??
                 MAX_SHOULDER_SPEED = 1;
                 break;
             case PLACING_GROUND:
-                shoulderRequestedPos = 150;//??
+                shoulderRequestedPos = 12;//??
                 MAX_SHOULDER_SPEED=0.7;
                 break;
             case PLACING_LOW:
-                shoulderRequestedPos = 150;//??
+                shoulderRequestedPos = 9;//??
                 MAX_SHOULDER_SPEED=0.55;
                 break;
             case PLACING_HIGH:
-                shoulderRequestedPos = 0;//??
+                shoulderRequestedPos = 1;//??
                 MAX_SHOULDER_SPEED = 0.4;
                 break;
-                
         }
-
-        setShoulderPositon();
     }
 
     public static void shoulderMove(double pwr) {
         
         if (Math.abs(pwr)>.07) {
-            // zeroCancel();
             if(extendRequestedPos > MAX_GROUND_LEVEL_EXTENSION) {
                 // reduced speed when arm is extended
                 pwr = pwr * .1;
-                // if(pwr > (1/1500)*extendRequestedPos+0.75)
-                //     pwr = (1/1500)*extendRequestedPos+0.75;
             }
             shoulderRequestedPos = shoulderRequestedPos + (.2 * -pwr);
-            
-            // if (shoulderRequestedPos < 0) 
-            //     shoulderRequestedPos = 0;
-            if (shoulderRequestedPos > MAX_SHOULDER_TRAVEL)  
-                shoulderRequestedPos =  MAX_SHOULDER_TRAVEL;
-
-            setShoulderPositon();
         }
+        shoulderOverrideMode = false;
      }
 
     public static void overrideShoulderMove(double pwr) {
         if (Math.abs(pwr)>.07) {
-            // zeroCancel();
             pwr = pwr * .25;
 
-            // shoulderRequestedPos = shoulderRequestedPos + (-pwr);
-
-            // if (shoulderRequestedPos < 0) {
-            //     resetShoulderEncoder(Math.abs(shoulderRequestedPos));
-            //     shoulderRequestedPos = 0;
-            // }
-
             shoulderRequestedPos = shoulderRequestedPos + (-pwr);
-          
-            setShoulderPositon();
-        }
+            shoulderOverrideMode = true;
+        } else
+            shoulderOverrideMode = false;
     }
 
     public static boolean shoulderMoveCompleted() {
@@ -355,20 +341,29 @@ public class Arm {
             return false;
     }
 
+    public static double getExtendRequestedPosition() {
+        return extendRequestedPos;
+    }
+
+    public static boolean getIsExtenderPartiallyExtended() {
+        return extendRequestedPos > (MAX_IN_AIR_EXTENSION / 3); // extened 1/3 out or more
+    }
+
     public static boolean extensionCompleted() {
         if(Math.abs(extendMotor.getEncoder().getPosition() - extendRequestedPos) < 2)
             return true;
         else
             return false;
     }
-
-    /**
-     * updates the shoulder pos using {@code shoulderRequestedPos} var and the {@code shoulder.setReference} method
-     */
-    public static void setShoulderPositon() {
-        shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
-    }
     
+    public static void resetShoulderEncoder() {
+        shoulderMotor.getEncoder().setPosition(getNewEncoderPos()); // reset using absolute encoder
+    }
+
+    public static void resetExtendEncoder(double position ) {
+        extendMotor.getEncoder().setPosition(position);
+    }
+
     /*
      * getNewEncoderPos
      * 

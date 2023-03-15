@@ -284,7 +284,7 @@ public class Robot extends TimedRobot {
                 mAutoProgram.stop();
         }
         
-        if (gamepad1.getRightBumper() || Arm.getIsExtenderExtended()) {  // slow mode if Arm is extended
+        if (gamepad1.getRightBumper() || Arm.getIsExtenderPartiallyExtended()) {  // slow mode if Arm is extended
             driveRotAmount = rotationalAdjust(driveRotAmount, false);
             driveFWDAmount = forwardAdjustV2(driveFWDAmount, false);
             driveStrafeAmount = strafeAdjustV2(driveStrafeAmount, false);   
