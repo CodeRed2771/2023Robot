@@ -22,8 +22,34 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * Calibrate Shoulder positions
  * 
  */
+/**
+Made by ChatGPT with a few edits<p>
+
+The Arm class controls the robot's arm, which consists of an extender and a shoulder.
+The extender extends and retracts to change the reach of the arm, while the shoulder
+rotates to change the orientation of the arm. This class uses PID controllers to move
+the arm to specific positions and has preset positions for common arm configurations.
+This class uses a color sensor to detect when the arm is in danger of going too far out or too far in.
+ If the sensor detects a color above a certain threshold, it
+prevents the arm from extending or retracting further to avoid collisions.
+The Arm class also has a calibration mode to determine the maximum extension of the arm
+in different configurations.
+*/
 public class Arm {
     
+    /**
+
+The extenderPresets enumeration lists the available preset values for the extender.
+The available preset values are:<p>
+        RETRACTED,<p>
+        GROUND,<p>
+        LOW,<p>
+        HIGH,<p>
+        GATE_MODE,<p>
+        PICKUP,<p>
+        FEEDER_STATION,<p>
+        BACK_FEEDER_STATION
+*/
     public static enum extenderPresets {
         RETRACTED,
         GROUND,
@@ -35,6 +61,17 @@ public class Arm {
         BACK_FEEDER_STATION
     }
 
+/**   The shoulderPresets enumeration lists the available preset values for the shoulder.
+The available preset values are:<p>
+        PICKUP_CONE,<p>
+        PICKUP_CUBE,<p>
+        PICKUP_FEEDER_STATION,<p>
+        PICKUP_BACK_FEEDER_STATION,<p>
+        GATE_MODE,<p>
+        PLACING_GROUND,<p>
+        PLACING_LOW,<p>
+        PLACING_HIGH
+*/
     public static enum shoulderPresets {
         PICKUP_CONE,
         PICKUP_CUBE,
