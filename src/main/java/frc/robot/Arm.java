@@ -59,15 +59,15 @@ public class Arm {
     private static final int MAX_EXTEND_CURRENT = 50;
     private static final int MAX_SHOULDER_CURRENT = 50;
 
-    private static final double SHOULDER_ABS_MAX_UP = .56;
-    private static final double SHOULDER_ABS_MAX_DOWN = .12;
-
     //                                            ticks per inch = 2.132 (with new motor 3/13)
     private static final double MAX_INSIDE_ROBOT_EXTENSION = 14.5; 
     private static final double MAX_GROUND_LEVEL_EXTENSION = 21;
     private static final double MAX_IN_AIR_EXTENSION = 110; 
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
+
+    private static final double SHOULDER_ABS_MAX_UP = .58;
+    private static final double SHOULDER_ABS_MAX_DOWN = .12;
 
     private static double MAX_SHOULDER_SPEED = 0;
     private static double SHOULDER_START_POSITION = 0;
