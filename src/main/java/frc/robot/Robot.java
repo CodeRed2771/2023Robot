@@ -154,6 +154,9 @@ public class Robot extends TimedRobot {
 
         LiveBottom2.autoZero();
 
+        Arm.resetExtendEncoder(0);
+        Arm.presetExtend(extenderPresets.RETRACTED);
+        
         VisionPlacer.setLED(LimelightOn.Off);
     }
 
@@ -190,10 +193,10 @@ public class Robot extends TimedRobot {
         }
 
         if (gamepad2.getLeftBumper()) {
-            Arm.overrideExtenderMove(gamepad2.getRightY());
+            Arm.overrideExtenderMove(-gamepad2.getRightY());
             Arm.overrideShoulderMove(gamepad2.getLeftY());
         } else {
-            Arm.extenderMove(gamepad2.getRightY());
+            Arm.extenderMove(-gamepad2.getRightY());
             Arm.shoulderMove(gamepad2.getLeftY());
         }
 

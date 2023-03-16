@@ -46,8 +46,8 @@ public class Arm {
         PLACING_HIGH
     }
 
-    private static int RED_THRESHOLD = 300;
-    private static int BLUE_THRESHOLD = 300;
+    private static int RED_THRESHOLD = 250;
+    private static int BLUE_THRESHOLD = 350;
 
     private static CANSparkMax shoulderMotor;
     private static CANSparkMax extendMotor;
@@ -63,17 +63,17 @@ public class Arm {
     private static final double SHOULDER_ABS_MAX_DOWN = .12;
 
     //                                            ticks per inch = 2.132 (with new motor 3/13)
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 18; 
-    private static final double MAX_GROUND_LEVEL_EXTENSION = 60;
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 14.5; 
+    private static final double MAX_GROUND_LEVEL_EXTENSION = 21;
     private static final double MAX_IN_AIR_EXTENSION = 110; 
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
 
     private static double MAX_SHOULDER_SPEED = 0;
     private static double SHOULDER_START_POSITION = 0;
-    private static double SHOULDER_IN_ROBOT_POSITION = 14; // TODO needs testing
-    private static double SHOULDER_GROUND_POSITION = 10; // TODO needs testing
-    private final static double MAX_SHOULDER_TRAVEL = 18;
+    private static double SHOULDER_GROUND_POSITION = 6.2; 
+    private static double SHOULDER_IN_ROBOT_POSITION = 8.5; 
+    private final static double MAX_SHOULDER_TRAVEL = 16;
 
     private static double extendRequestedPos = 0;
     private static double shoulderRequestedPos = 0;
@@ -81,6 +81,7 @@ public class Arm {
     private static double lastShoulderRequestedPos = 999;
     private static boolean extendOverrideMode = false;
     private static boolean shoulderOverrideMode = false;
+    private static boolean extendAutoCalibrateMode = false;
 
     private static ColorSensorV3 armColorSensor;
 
@@ -113,7 +114,9 @@ public class Arm {
         extendPID.setP(Calibration.BISTABLE_MOTOR_P);
         extendPID.setI(Calibration.BISTABLE_MOTOR_I);
         extendPID.setD(Calibration.BISTABLE_MOTOR_D);
+        extendPID.setFF(Calibration.BISTABLE_MOTOR_F);
         extendPID.setIZone(Calibration.BISTABLE_MOTOR_IZONE);
+
         shoulderPID.setP(Calibration.SHOULDER_MOTOR_P);
         shoulderPID.setI(Calibration.SHOULDER_MOTOR_I);
         shoulderPID.setD(Calibration.SHOULDER_MOTOR_D);
@@ -123,17 +126,17 @@ public class Arm {
         extendPID.setOutputRange(-1, 1);
         shoulderPID.setOutputRange(-1,1);
 
-        extendPID.setSmartMotionMaxVelocity(25, 0);
+        extendPID.setSmartMotionMaxVelocity(Calibration.BISTABLE_MAX_VELOCITY, 0);
         shoulderPID.setSmartMotionMaxVelocity(25, 0);
+
+        extendPID.setSmartMotionMaxAccel(Calibration.BISTABLE_MAX_ACCEL, 0);
+        shoulderPID.setSmartMotionMaxAccel(10,0);
 
         extendPID.setSmartMotionMinOutputVelocity(0, 0);
         shoulderPID.setSmartMotionMinOutputVelocity(0, 0);
 
-        extendPID.setSmartMotionMaxAccel(10, 0);
-        shoulderPID.setSmartMotionMaxAccel(10,0);
-
-        extendPID.setSmartMotionAllowedClosedLoopError(0.5,0);
-        shoulderPID.setSmartMotionAllowedClosedLoopError(0.5,0);
+        extendPID.setSmartMotionAllowedClosedLoopError(1.5,0);
+        shoulderPID.setSmartMotionAllowedClosedLoopError(1.5,0);
 
         extendRequestedPos = 0;
         shoulderRequestedPos = SHOULDER_START_POSITION;
@@ -143,18 +146,27 @@ public class Arm {
 
     public static void tick() {
 
+        if (extendAutoCalibrateMode) {
+            extendOverrideMode = true;
+            extendRequestedPos = extendRequestedPos - 3;
+        }
         extendRequestedPos = validateExtenderRequest(extendRequestedPos);
-        shoulderRequestedPos = validateShoulderRequest(shoulderRequestedPos);
 
         if (extendRequestedPos != lastExtendRequestedPos) {
-            extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kPosition);
+            extendPID.setReference(extendRequestedPos, CANSparkMax.ControlType.kSmartMotion);
             lastExtendRequestedPos = extendRequestedPos;
         }
+
+        shoulderRequestedPos = validateShoulderRequest(shoulderRequestedPos);
+
         if (shoulderRequestedPos != lastShoulderRequestedPos) {
             shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
             lastShoulderRequestedPos = shoulderRequestedPos;
         }
  
+        if(armColorSensor.getBlue() == 0 || armColorSensor.getRed() == 0){
+            extendAutoCalibrateMode = false;
+        }
         SmartDashboard.putNumber("Arm Extension Set Point", extendRequestedPos);
 		SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
@@ -166,9 +178,8 @@ public class Arm {
 
     public static void reset() {
 
-        //NOT RIGHT - SHOULD RUN CODE TO RESET BY LOOKING FOR COLOR
-        extendMotor.getEncoder().setPosition(0);
-        extendRequestedPos = 0;
+        extendAutoCalibrateMode = true;
+        extendRequestedPos = 5;  // don't start quite at zero in case we're already at zero
         
         resetShoulderEncoder();
         shoulderRequestedPos = SHOULDER_START_POSITION;
@@ -180,10 +191,10 @@ public class Arm {
 
         switch(position) {
             case FEEDER_STATION:
-                extendRequestedPos = 8;
+                extendRequestedPos = 7;
                 break;
             case BACK_FEEDER_STATION:
-                extendRequestedPos = 75;
+                extendRequestedPos = 18;
                 break;
             case RETRACTED:
                 extendRequestedPos = 0;
@@ -237,17 +248,29 @@ public class Arm {
                 extReq = MIN_RETRACTION_INSIDE_ROBOT;
             }
     
+        } else {
+            // we're overriding
+            if (extReq < 0) {
+                extReq = 0;
+                resetExtendEncoder(2);
+            }
         }
 
         // CHECK FOR HARD LIMITS ON EXTENSION AND RETRACTION
-
+        SmartDashboard.putBoolean("Red Check 1", extReq < extendMotor.getEncoder().getPosition());
+        SmartDashboard.putBoolean("Red Check 2", armColorSensor.getRed() > RED_THRESHOLD);
+        SmartDashboard.putBoolean("Red Check both", extReq < extendMotor.getEncoder().getPosition() && armColorSensor.getRed() > RED_THRESHOLD);
         if (extReq < extendMotor.getEncoder().getPosition() && armColorSensor.getRed() > RED_THRESHOLD) {
             // hit hard retract limit while trying to retract
             // stop it and reset the zero to automatically  recalibrate
             extReq = 0;
             resetExtendEncoder(0);
+            extendAutoCalibrateMode = false;
         }
 
+        SmartDashboard.putBoolean("Blue Check 1", extReq > extendMotor.getEncoder().getPosition());
+        SmartDashboard.putBoolean("Blue Check 2", armColorSensor.getBlue() > BLUE_THRESHOLD);
+        SmartDashboard.putBoolean("Blue Check both", extReq > extendMotor.getEncoder().getPosition() && armColorSensor.getBlue() > BLUE_THRESHOLD);
         if (extReq > extendMotor.getEncoder().getPosition() && armColorSensor.getBlue() > BLUE_THRESHOLD) {
             // hit hard extend limit while trying to extend further
             // don't allow going beyond where we're at
@@ -279,15 +302,15 @@ public class Arm {
         switch(position) {
             case PICKUP_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 3;  
+                shoulderRequestedPos = 2.5;  
                 break;
             case PICKUP_BACK_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 1;
+                shoulderRequestedPos = .58;
                 break;
             case GATE_MODE:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 14;
+                shoulderRequestedPos = 12.3;
                 break;
             case PICKUP_CONE:
                 MAX_SHOULDER_SPEED=1;
@@ -306,7 +329,7 @@ public class Arm {
                 MAX_SHOULDER_SPEED=0.55;
                 break;
             case PLACING_HIGH:
-                shoulderRequestedPos = 1;//??
+                shoulderRequestedPos = 0;//??
                 MAX_SHOULDER_SPEED = 0.4;
                 break;
         }
@@ -315,10 +338,10 @@ public class Arm {
     public static void shoulderMove(double pwr) {
         
         if (Math.abs(pwr)>.07) {
-            if(extendRequestedPos > MAX_GROUND_LEVEL_EXTENSION) {
-                // reduced speed when arm is extended
-                pwr = pwr * .1;
-            }
+            // if(extendRequestedPos > MAX_GROUND_LEVEL_EXTENSION) {
+            //     // reduced speed when arm is extended
+            //     pwr = pwr * .1;
+            // }
             shoulderRequestedPos = shoulderRequestedPos + (.2 * -pwr);
         }
         shoulderOverrideMode = false;

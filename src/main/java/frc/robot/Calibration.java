@@ -87,10 +87,14 @@ public class Calibration {
     public final static double VISION_DISTANCE_B = -90.5271;
     public final static double VISION_DISTANCE_C = 0.563257;
 
-    public static final double BISTABLE_MOTOR_P = .045;  //.07
+    public static final double BISTABLE_MAX_VELOCITY = 80000;
+    public static final double BISTABLE_MAX_ACCEL = 5000;
+    public static final double BISTABLE_MOTOR_P = .00045;  //.045 for kPosition
 	public static final double BISTABLE_MOTOR_I = 0;
 	public static final double BISTABLE_MOTOR_D = 0;
+    public static final double BISTABLE_MOTOR_F = .000156;
 	public static final double BISTABLE_MOTOR_IZONE = 40;
+
     public static final double SHOULDER_MOTOR_P = .05;
 	public static final double SHOULDER_MOTOR_I = 0;
 	public static final double SHOULDER_MOTOR_D = 0;

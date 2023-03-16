@@ -26,7 +26,7 @@ public class Claw {
     private static final double MAX_WRIST_POSITION = .56;
 
     private static final double CLAW_FULLY_OPEN = 87;
-    private static final double CLAW_FULLY_CLOSED = 110;
+    private static final double CLAW_FULLY_CLOSED = 105;
 
     // private static final double CONE_PICKUP = .035;
     // private static final double CUBE_PICKUP = .02;
@@ -77,6 +77,7 @@ public class Claw {
         SmartDashboard.putNumber("Claw Direction", direction);
         SmartDashboard.putNumber("Claw Position", getCurrentClawPos());
         SmartDashboard.putNumber("Claw Desired Position", clawDesiredPosition);
+        SmartDashboard.putNumber("Potentiometer", getCurrentClawPos());
     }
 
     private static void checkClawLimits() {
@@ -102,6 +103,10 @@ public class Claw {
         }
         if(Math.abs(getCurrentClawPos()-clawDesiredPosition)<1){
             direction = 0;
+        }
+
+        if(getCurrentClawPos() < 40){
+            direction = 0;// this if statement must be the last one to prevent claw from going when potentiometer is disconnected
         }
     }
 
