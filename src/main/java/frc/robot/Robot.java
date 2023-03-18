@@ -129,6 +129,7 @@ public class Robot extends TimedRobot {
         VisionPlacer.init();
         VisionPlacer.setLED(LimelightOn.Off);
         TickTimer.init();
+        Arm.resetShoulder();
 
         SmartDashboard.putNumber("Current Position", 0);
         SmartDashboard.putNumber("New Position", 0);
@@ -319,7 +320,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
- 
         VisionPlacer.periodic();
         DriveAuto.tick();
         Arm.tick();
