@@ -246,7 +246,7 @@ public class VisionPlacer {
         if(getPole() == Pole.HighPole) {
             return Math.tan(Math.toRadians(getYAngleOffset())) *16;
         } else {
-            return Math.tan(Math.toRadians(getYAngleOffset())) *-4;
+            return Math.tan(Math.toRadians(getYAngleOffset())) *-8;
         }
     }
 
