@@ -28,14 +28,11 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0://eject preload and set position multiplier
-                    if(DriverStation.getAlliance() == Alliance.Blue && robotPosition() == Position.LEFT)
-                        positionMultiplier = -1;
-                    if(DriverStation.getAlliance() == Alliance.Blue && robotPosition() == Position.RIGHT)
-                        positionMultiplier = 1;
-                    if(DriverStation.getAlliance() == Alliance.Red && robotPosition() == Position.LEFT)
-                        positionMultiplier = 1;
-                    if(DriverStation.getAlliance() == Alliance.Red && robotPosition() == Position.RIGHT)
-                        positionMultiplier = -1;
+                    positionMultiplier = 1;
+                    if(DriverStation.getAlliance() == Alliance.Blue)
+                        positionMultiplier = positionMultiplier * -1;
+                    if(robotPosition() == Position.RIGHT)
+                        positionMultiplier = positionMultiplier * -1;
                     LiveBottom.backward();
                     setTimerAndAdvanceStep(1250);
                     break;
@@ -81,7 +78,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                     if(driveCompleted())
                         advanceStep();
                     break;
-                case 12://turn live bottom off and align for placing
+                case 12://align for placing
                     driveInches(-8*positionMultiplier, 90, 0.8);//TUNE LINE
                     setTimerAndAdvanceStep(1000);
                     break;
@@ -102,7 +99,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                     break;
                 case 17:
                     break;
-                case 18:
+                case 18://drive back to drive to new element
                     driveInches(8*positionMultiplier, 90, 0.8);//TUNE LINE
                     setTimerAndAdvanceStep(1000);
                     break;
