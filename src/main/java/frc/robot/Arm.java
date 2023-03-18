@@ -119,7 +119,7 @@ The available preset values are:<p>
     private static double MAX_SHOULDER_SPEED = 0;
     private static double SHOULDER_START_POSITION = 0;
     private static double SHOULDER_GROUND_POSITION = 6.2; 
-    private static double SHOULDER_IN_ROBOT_POSITION = 8.5; 
+    private static double SHOULDER_IN_ROBOT_POSITION = 12; 
     private final static double MAX_SHOULDER_TRAVEL = 16;
 
     private static double extendRequestedPos = 0;
@@ -249,7 +249,12 @@ The available preset values are:<p>
         extendRequestedPos = 5;  // don't start quite at zero in case we're already at zero
         
         resetShoulderEncoder();
-        //shoulderRequestedPos = SHOULDER_START_POSITION;
+        shoulderRequestedPos = SHOULDER_START_POSITION;
+    }
+    
+    public static void resetShoulder() {
+        shoulderRequestedPos = getNewEncoderPos();
+        resetShoulderEncoder();
     }
 
 
@@ -259,7 +264,7 @@ The available preset values are:<p>
 
         switch(position) {
             case FEEDER_STATION:
-                extendRequestedPos = 7;
+                extendRequestedPos = 9.57;
                 break;
             case BACK_FEEDER_STATION:
                 extendRequestedPos = 18;
@@ -370,7 +375,7 @@ The available preset values are:<p>
         switch(position) {
             case PICKUP_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 2.5;  
+                shoulderRequestedPos = 5;  
                 break;
             case PICKUP_BACK_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
