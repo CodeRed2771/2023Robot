@@ -54,6 +54,8 @@ public class Claw {
         
         clawMotor = new CANSparkMax(Wiring.CLAW_MOTOR_ID, MotorType.kBrushed);
 
+        clawMotor.setInverted(true);
+
         wrist = new Servo(Wiring.CLAW_CHANNEL_ID);
         wrist.set(MIN_WRIST_POSITION);
         position = MIN_WRIST_POSITION;
