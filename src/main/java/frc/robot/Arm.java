@@ -6,9 +6,10 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -88,6 +89,8 @@ The available preset values are:<p>
     private static int RED_THRESHOLD = 250;
     private static int BLUE_THRESHOLD = 350;
 
+    static SendableChooser<Boolean> manShoulder;
+
     private static CANSparkMax shoulderMotor;
     private static CANSparkMax extendMotor;
     private static SparkMaxPIDController shoulderPID;
@@ -105,13 +108,18 @@ The available preset values are:<p>
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
 
-    private static final double SHOULDER_ABS_MAX_UP = .58;
-    private static final double SHOULDER_ABS_MAX_DOWN = .12;
+    private static final double SHOULDER_ABS_MAX_UP = .57;
+    //.35
+    //16
+    //-.021875
+    
+    
+    private static final double SHOULDER_ABS_MAX_DOWN = .22;
 
     private static double MAX_SHOULDER_SPEED = 0;
     private static double SHOULDER_START_POSITION = 0;
     private static double SHOULDER_GROUND_POSITION = 6.2; 
-    private static double SHOULDER_IN_ROBOT_POSITION = 12; 
+    private static double SHOULDER_IN_ROBOT_POSITION = 8.5; 
     private final static double MAX_SHOULDER_TRAVEL = 16;
 
     private static double extendRequestedPos = 0;
@@ -122,12 +130,15 @@ The available preset values are:<p>
     private static boolean shoulderOverrideMode = false;
     private static boolean extendAutoCalibrateMode = false;
 
-    private static boolean presetShoulerActive = false;
-    private static double presetShoulderRequested = 0; 
-
     private static ColorSensorV3 armColorSensor;
 
     public static void init() {
+        SmartDashboard.putNumber("shoulder test", .395);
+        manShoulder = new SendableChooser<Boolean>();
+        manShoulder.setDefaultOption("False", false);
+        manShoulder.addOption("True", true);
+        SmartDashboard.putData("Manual Shoulder", manShoulder);
+
         armColorSensor = new ColorSensorV3(Port.kMXP);
         shoulderAbsEncoder = new DutyCycleEncoder(Wiring.SHOULDER_ABS_ENC);
 
@@ -187,7 +198,6 @@ The available preset values are:<p>
     }
 
     public static void tick() {
-
         if (extendAutoCalibrateMode) {
             extendOverrideMode = true;
             extendRequestedPos = extendRequestedPos - 3;
@@ -199,13 +209,26 @@ The available preset values are:<p>
             lastExtendRequestedPos = extendRequestedPos;
         }
 
+        if(manShoulder.getSelected()){
+            shoulderRequestedPos = convertAbsEncoderToTicks(SmartDashboard.getNumber("shoulder test",.395));
+        }
+        
+
         shoulderRequestedPos = validateShoulderRequest(shoulderRequestedPos);
+        if(manShoulder.getSelected()){
+            manShoulder = new SendableChooser<Boolean>();
+            manShoulder.setDefaultOption("False", false);
+            SmartDashboard.putData("Manual Shoulder", manShoulder);
+            manShoulder.addOption("True", true);
+            SmartDashboard.putData("Manual Shoulder", manShoulder);
+            
+        }
 
         if (shoulderRequestedPos != lastShoulderRequestedPos) {
             shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
+            
             lastShoulderRequestedPos = shoulderRequestedPos;
         }
-        // goToABSEncoerPosition();
  
         if(armColorSensor.getBlue() == 0 || armColorSensor.getRed() == 0){
             extendAutoCalibrateMode = false;
@@ -213,10 +236,11 @@ The available preset values are:<p>
         SmartDashboard.putNumber("Arm Extension Set Point", extendRequestedPos);
 		SmartDashboard.putNumber("Arm Extension Actual", extendMotor.getEncoder().getPosition());
 		SmartDashboard.putNumber("shoulder Position Actual", shoulderMotor.getEncoder().getPosition());
-        SmartDashboard.putNumber("Shoulder Thru Bore", shoulderAbsEncoder.get());
+        SmartDashboard.putNumber("Shoulder Absoulte Encoder", shoulderAbsEncoder.get());
         SmartDashboard.putNumber("Shoulder Requested", shoulderRequestedPos);
         SmartDashboard.putNumber("Arm Color Sensor - Red", armColorSensor.getRed());
         SmartDashboard.putNumber("Arm Color Sensor - Blue", armColorSensor.getBlue());
+
     }
 
     public static void reset() {
@@ -225,12 +249,7 @@ The available preset values are:<p>
         extendRequestedPos = 5;  // don't start quite at zero in case we're already at zero
         
         resetShoulderEncoder();
-        shoulderRequestedPos = SHOULDER_START_POSITION;
-    }
-
-    public static void resetShoulder() {
-        shoulderRequestedPos = getNewEncoderPos();
-        resetShoulderEncoder();
+        //shoulderRequestedPos = SHOULDER_START_POSITION;
     }
 
 
@@ -240,7 +259,7 @@ The available preset values are:<p>
 
         switch(position) {
             case FEEDER_STATION:
-                extendRequestedPos = 9.57;
+                extendRequestedPos = 7;
                 break;
             case BACK_FEEDER_STATION:
                 extendRequestedPos = 18;
@@ -351,8 +370,7 @@ The available preset values are:<p>
         switch(position) {
             case PICKUP_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 5; // .47
-                // beginPresetABS(.47);
+                shoulderRequestedPos = 2.5;  
                 break;
             case PICKUP_BACK_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
@@ -447,10 +465,22 @@ The available preset values are:<p>
         double IN_MIN = SHOULDER_ABS_MAX_UP;
         double IN_MAX = SHOULDER_ABS_MAX_DOWN;
         double OUT_MIN = 0;  // relative encoder - full back
-        double OUT_MAX = 20.11; // relative encoder - full forward/down
+        double OUT_MAX = MAX_SHOULDER_TRAVEL; // relative encoder - full forward/down
         double curPos = shoulderAbsEncoder.get();
 
         return ((curPos-IN_MIN)*(OUT_MAX-OUT_MIN)/(IN_MAX-IN_MIN)+OUT_MIN);
     }
 
+
+    public static double convertTicksToAbsEncoder(double ticks){
+        return SHOULDER_ABS_MAX_UP+(ticks)*getTicksToAbsEncoderRatio();
+    }
+
+    public static double convertAbsEncoderToTicks(double absEncoder){
+        return (absEncoder-SHOULDER_ABS_MAX_UP)/getTicksToAbsEncoderRatio();
+    }
+
+    public static double getTicksToAbsEncoderRatio(){
+        return ((SHOULDER_ABS_MAX_UP-SHOULDER_ABS_MAX_DOWN)/(SHOULDER_START_POSITION-MAX_SHOULDER_TRAVEL));
+    }
 }
