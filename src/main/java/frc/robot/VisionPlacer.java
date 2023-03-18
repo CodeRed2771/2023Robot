@@ -242,4 +242,12 @@ public class VisionPlacer {
         }
     }
 
+    public static double YDistanceBasedTY() {
+        if(getPole() == Pole.HighPole) {
+            return Math.tan(Math.toRadians(getYAngleOffset())) *16;
+        } else {
+            return Math.tan(Math.toRadians(getYAngleOffset())) *-4;
+        }
+    }
+
 }
