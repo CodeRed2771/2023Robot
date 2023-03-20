@@ -163,7 +163,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-               
+        
+        if (gamepad2.getDPadLeft()){
+            Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
+            Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
+        }
+        
         if (gamepad2.getAButton()){
             Claw.setClawPosition(ClawPresets.OPEN);
         } else if (gamepad2.getBButton()) 

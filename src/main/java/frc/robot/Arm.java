@@ -243,7 +243,7 @@ The available preset values are:<p>
                 extendRequestedPos = 9.57;
                 break;
             case BACK_FEEDER_STATION:
-                extendRequestedPos = 18;
+                extendRequestedPos = 40.1;
                 break;
             case RETRACTED:
                 extendRequestedPos = 0;
@@ -356,7 +356,7 @@ The available preset values are:<p>
                 break;
             case PICKUP_BACK_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = .58;
+                shoulderRequestedPos = 1.2;
                 break;
             case GATE_MODE:
                 MAX_SHOULDER_SPEED = 1;
