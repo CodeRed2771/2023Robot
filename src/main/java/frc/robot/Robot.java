@@ -256,6 +256,12 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
         }
 
+        if(gamepad1.getBackButton()){
+            mAutoProgram.stop();
+            mAutoProgram = new AutoGyroStraighten();
+            mAutoProgram.start();
+        }
+
         if (gamepad1.getXButton()) {
             VisionPlacer.setAprilTagPipeline();
             mAutoProgram.stop();
