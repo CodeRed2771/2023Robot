@@ -72,6 +72,7 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
                 }
                 break;
             case 5:
+                VisionPlacer.setLED(LimelightOn.Off);
                 stop();
                 break;
             }

@@ -250,4 +250,8 @@ public class VisionPlacer {
         }
     }
 
+    public static double XDistanceBasedTX() {
+        return Math.tan(Math.toRadians(getYAngleOffset()))*YDistanceBasedTY();
+    }
+
 }

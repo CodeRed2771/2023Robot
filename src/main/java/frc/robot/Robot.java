@@ -369,6 +369,9 @@ public class Robot extends TimedRobot {
                     (int) SmartDashboard.getNumber("DRIVE MM VELOCITY", Calibration.getDT_MM_VELOCITY()));
         }
 
+        SmartDashboard.putNumber("TY calcualtion", VisionPlacer.YDistanceBasedTY());
+        SmartDashboard.putNumber("TX calculation", VisionPlacer.XDistanceBasedTX());
+
         // SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
         // SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
         // SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
