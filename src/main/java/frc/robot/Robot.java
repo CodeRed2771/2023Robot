@@ -183,7 +183,7 @@ public class Robot extends TimedRobot {
             clawFlippedPress = false;
         }
 
-        if (gamepad1.getYButton()) {
+        if (!gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.Off);
             mAutoProgram.stop();
             if(gamepad1.getLeftBumper())
