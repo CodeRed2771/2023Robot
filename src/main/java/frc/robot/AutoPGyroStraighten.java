@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.VisionPlacer.LimelightOn;
 
-public class AutoGyroStraighten extends AutoBaseClass{
+public class AutoPGyroStraighten extends AutoBaseClass{
 	
     int IDSwitch; 
     double[] data = new double[6];
@@ -48,9 +48,6 @@ public class AutoGyroStraighten extends AutoBaseClass{
             SmartDashboard.putNumber("Auto April Tag Step", getCurrentStep());
             switch(getCurrentStep()) {
                 case 0:
-                    VisionPlacer.setAprilTagPipeline();
-                    VisionPlacer.setLED(LimelightOn.On);
-                    data =  VisionPlacer.botpose_wpiblue.averagedData();
                     advanceStep();
                     break;
                 case 1:

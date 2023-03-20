@@ -185,6 +185,13 @@ public class Robot extends TimedRobot {
 
         if (gamepad1.getYButton()) {
             VisionPlacer.setLED(LimelightOn.Off);
+            mAutoProgram.stop();
+            if(gamepad1.getLeftBumper())
+                mAutoProgram = new AutoPGyroStraighten();
+            else
+                mAutoProgram = new AutoSSGyroStraighten();
+            
+            mAutoProgram.start();
         }
 
         if(gamepad1.getDPadUp() || gamepad2.getDPadUp()) {
@@ -253,12 +260,6 @@ public class Robot extends TimedRobot {
             VisionPlacer.setRetroreflectivePipeline();
             mAutoProgram.stop();
             mAutoProgram = new AutoRetroReflectiveAlign();
-            mAutoProgram.start();
-        }
-
-        if(gamepad1.getBackButton()){
-            mAutoProgram.stop();
-            mAutoProgram = new AutoGyroStraighten();
             mAutoProgram.start();
         }
 
