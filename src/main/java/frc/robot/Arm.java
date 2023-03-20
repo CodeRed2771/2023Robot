@@ -104,7 +104,7 @@ The available preset values are:<p>
     //                                            ticks per inch = 2.132 (with new motor 3/13)
     private static final double MAX_INSIDE_ROBOT_EXTENSION = 14.5; 
     private static final double MAX_GROUND_LEVEL_EXTENSION = 21;
-    private static final double MAX_IN_AIR_EXTENSION = 110; 
+    private static final double MAX_IN_AIR_EXTENSION = 122; 
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
 
