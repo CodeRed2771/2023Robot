@@ -108,18 +108,18 @@ The available preset values are:<p>
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
 
-    private static final double SHOULDER_ABS_MAX_UP = .57;
+    private static final double SHOULDER_ABS_MAX_UP = .58;
     //.35
     //16
     //-.021875
     
     
-    private static final double SHOULDER_ABS_MAX_DOWN = .22;
+    private static final double SHOULDER_ABS_MAX_DOWN = .12;
 
     private static double MAX_SHOULDER_SPEED = 0;
     private static double SHOULDER_START_POSITION = 0;
     private static double SHOULDER_GROUND_POSITION = 6.2; 
-    private static double SHOULDER_IN_ROBOT_POSITION = 12; 
+    private static double SHOULDER_IN_ROBOT_POSITION = 8.5; 
     private final static double MAX_SHOULDER_TRAVEL = 16;
 
     private static double extendRequestedPos = 0;
