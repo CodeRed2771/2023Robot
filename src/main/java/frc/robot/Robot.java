@@ -129,7 +129,7 @@ public class Robot extends TimedRobot {
         VisionPlacer.init();
         VisionPlacer.setLED(LimelightOn.Off);
         TickTimer.init();
-        Arm.resetShoulder();
+        
 
         SmartDashboard.putNumber("Current Position", 0);
         SmartDashboard.putNumber("New Position", 0);
@@ -141,6 +141,7 @@ public class Robot extends TimedRobot {
         mNonDriveAutoProgram = new AutoDoNothing();
 
         RobotGyro.init();
+        Arm.resetShoulder();
     }
 
     @Override
@@ -154,10 +155,11 @@ public class Robot extends TimedRobot {
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
 
         LiveBottom2.autoZero();
-
+        
         Arm.resetExtendEncoder(0);
         Arm.presetExtend(extenderPresets.RETRACTED);
         
+
         VisionPlacer.setLED(LimelightOn.Off);
     }
 
