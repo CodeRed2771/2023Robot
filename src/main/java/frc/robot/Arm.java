@@ -112,20 +112,10 @@ The available preset values are:<p>
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
 
-<<<<<<< Updated upstream
-    private static final double SHOULDER_ABS_MAX_UP = .58;
-    private static final double SHOULDER_ABS_MAX_DOWN = .12;
-=======
     private static final double SHOULDER_ABS_MAX_UP = .42;
     // prev before colson wheels RLB     .57;
-    //.35
-    //16
-    //-.021875
-    
-    
     private static final double SHOULDER_ABS_MAX_DOWN = .77;
     // prev before colson wheels RLB   .22;
->>>>>>> Stashed changes
 
     private static double SHOULDER_START_POSITION = 0;
     private static double SHOULDER_GROUND_POSITION = 6.2; 
@@ -486,20 +476,15 @@ The available preset values are:<p>
         double IN_MIN = SHOULDER_ABS_MAX_UP;
         double IN_MAX = SHOULDER_ABS_MAX_DOWN;
         double OUT_MIN = 0;  // relative encoder - full back
-<<<<<<< Updated upstream
         double OUT_MAX = SHOULDER_MAX_POSITION; // relative encoder - full forward/down
-        double curPos = shoulderAbsEncoder.get();
-=======
-        double OUT_MAX = MAX_SHOULDER_TRAVEL; // relative encoder - full forward/down
         double curPos = 0;
         double lastPos = -1;
         while(Math.abs(curPos-lastPos) > .0001 || curPos < IN_MIN) {
             lastPos = curPos;
             curPos = shoulderAbsEncoder.get();
         };
-        //double curPos = shoulderAbsEncoder.get();
+
         SmartDashboard.putNumber("Calculation3:", curPos);
->>>>>>> Stashed changes
 
         //if(curPos < IN_MIN) curPos = IN_MIN;
         double result = ((curPos-IN_MIN)*(OUT_MAX-OUT_MIN)/(IN_MAX-IN_MIN)+OUT_MIN);
