@@ -467,8 +467,8 @@ public class Robot extends TimedRobot {
         autoChooser.addOption(AutoCPlace1, AutoCPlace1);
         autoChooser.addOption(AutoCPlace2, AutoCPlace2);
         autoChooser.setDefaultOption(AutoCP1CB, AutoCP1CB);
-     //   autoChooser.addOption(AutoC_CB, AutoC_CB);
-     //   autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
+        autoChooser.addOption(AutoC_CB, AutoC_CB);
+        autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
         
      
         SmartDashboard.putData("Auto Chose:", autoChooser);
