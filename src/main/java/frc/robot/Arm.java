@@ -101,26 +101,28 @@ The available preset values are:<p>
     private static final int MAX_EXTEND_CURRENT = 50;
     private static final int MAX_SHOULDER_CURRENT = 50;
 
-    //                                            ticks per inch = 2.132 (with new motor 3/13)
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 14.5; 
-    private static final double MAX_GROUND_LEVEL_EXTENSION = 21;
+    //                                 ticks per inch = 2.132 (with new motor 3/13)
+    //                                 now 2.045 ticks per inch (3/21 colson wheels)  
+    //                                 Colson wheels - .489" of extension per revolution
+    //                                 (that number is just to give these next numbers some context)
+    //                                 (these numbers are still in ticks (motor revolutions)
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 13; 
+    private static final double MAX_GROUND_LEVEL_EXTENSION = 18;
     private static final double MAX_IN_AIR_EXTENSION = 110; 
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
 
-    private static final double SHOULDER_ABS_MAX_UP = .58;
-    //.35
-    //16
-    //-.021875
-    
-    
-    private static final double SHOULDER_ABS_MAX_DOWN = .12;
+    private static final double SHOULDER_ABS_MAX_UP = .42;
+    // prev before colson wheels RLB     .57;
+    private static final double SHOULDER_ABS_MAX_DOWN = .77;
+    // prev before colson wheels RLB   .22;
 
-    private static double MAX_SHOULDER_SPEED = 0;
     private static double SHOULDER_START_POSITION = 0;
     private static double SHOULDER_GROUND_POSITION = 6.2; 
     private static double SHOULDER_IN_ROBOT_POSITION = 8.5; 
-    private final static double MAX_SHOULDER_TRAVEL = 16;
+    private final static double SHOULDER_MAX_POSITION = 16;
+
+    private static double MAX_SHOULDER_SPEED = 0;
 
     private static double extendRequestedPos = 0;
     private static double shoulderRequestedPos = 0;
@@ -192,7 +194,8 @@ The available preset values are:<p>
         shoulderPID.setSmartMotionAllowedClosedLoopError(1.5,0);
 
         extendRequestedPos = 0;
-        shoulderRequestedPos = SHOULDER_START_POSITION;
+        //shoulderRequestedPos = SHOULDER_START_POSITION;
+        shoulderRequestedPos = shoulderMotor.getEncoder().getPosition();
 
         MAX_SHOULDER_SPEED = 0;
     }
@@ -209,9 +212,9 @@ The available preset values are:<p>
             lastExtendRequestedPos = extendRequestedPos;
         }
 
-        if(manShoulder.getSelected()){
-            shoulderRequestedPos = convertAbsEncoderToTicks(SmartDashboard.getNumber("shoulder test",.395));
-        }
+        // if(manShoulder.getSelected()){
+        //     shoulderRequestedPos = convertAbsEncoderToTicks(SmartDashboard.getNumber("shoulder test",.395));
+        // }
         
 
         shoulderRequestedPos = validateShoulderRequest(shoulderRequestedPos);
@@ -224,11 +227,11 @@ The available preset values are:<p>
             
         }
 
-        if (shoulderRequestedPos != lastShoulderRequestedPos) {
+       // if (shoulderRequestedPos != lastShoulderRequestedPos) {
             shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
             
             lastShoulderRequestedPos = shoulderRequestedPos;
-        }
+        //}
  
         if(armColorSensor.getBlue() == 0 || armColorSensor.getRed() == 0){
             extendAutoCalibrateMode = false;
@@ -250,11 +253,14 @@ The available preset values are:<p>
         
         resetShoulderEncoder();
         shoulderRequestedPos = SHOULDER_START_POSITION;
+        //  shoulderRequestedPos = shoulderMotor.getEncoder().getPosition();
     }
     
     public static void resetShoulder() {
-        shoulderRequestedPos = getNewEncoderPos();
+        //shoulderRequestedPos = getNewEncoderPos();
         resetShoulderEncoder();
+        shoulderRequestedPos = shoulderMotor.getEncoder().getPosition();
+        //shoulderRequestedPos = SHOULDER_START_POSITION;
     }
 
 
@@ -264,10 +270,10 @@ The available preset values are:<p>
 
         switch(position) {
             case FEEDER_STATION:
-                extendRequestedPos = 9.57;
+                extendRequestedPos = 8.6;
                 break;
             case BACK_FEEDER_STATION:
-                extendRequestedPos = 40.1;
+                extendRequestedPos = 36.1;
                 break;
             case RETRACTED:
                 extendRequestedPos = 0;
@@ -279,10 +285,10 @@ The available preset values are:<p>
                 extendRequestedPos = MAX_INSIDE_ROBOT_EXTENSION;
                 break;
             case LOW:
-                extendRequestedPos = 27;//??
+                extendRequestedPos = 24.3;//??
                 break;
             case PICKUP:
-                extendRequestedPos = 5;//??
+                extendRequestedPos = 4.5;//??
                 break;
             case HIGH:
                 extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
@@ -296,8 +302,8 @@ The available preset values are:<p>
             if (shReq < 0)
                 shReq = 0;
 
-            if (shReq > MAX_SHOULDER_TRAVEL)  
-                shReq =  MAX_SHOULDER_TRAVEL;
+            if (shReq > SHOULDER_MAX_POSITION)  
+                shReq =  SHOULDER_MAX_POSITION;
         }
         
         return shReq;
@@ -452,7 +458,7 @@ The available preset values are:<p>
             return false;
     }
     
-    public static void resetShoulderEncoder() {
+    private static void resetShoulderEncoder() {
         shoulderMotor.getEncoder().setPosition(getNewEncoderPos()); // reset using absolute encoder
     }
 
@@ -470,10 +476,23 @@ The available preset values are:<p>
         double IN_MIN = SHOULDER_ABS_MAX_UP;
         double IN_MAX = SHOULDER_ABS_MAX_DOWN;
         double OUT_MIN = 0;  // relative encoder - full back
-        double OUT_MAX = MAX_SHOULDER_TRAVEL; // relative encoder - full forward/down
-        double curPos = shoulderAbsEncoder.get();
+        double OUT_MAX = SHOULDER_MAX_POSITION; // relative encoder - full forward/down
+        double curPos = 0;
+        double lastPos = -1;
+        while(Math.abs(curPos-lastPos) > .0001 || curPos < IN_MIN) {
+            lastPos = curPos;
+            curPos = shoulderAbsEncoder.get();
+        };
 
-        return ((curPos-IN_MIN)*(OUT_MAX-OUT_MIN)/(IN_MAX-IN_MIN)+OUT_MIN);
+        SmartDashboard.putNumber("Calculation3:", curPos);
+
+        //if(curPos < IN_MIN) curPos = IN_MIN;
+        double result = ((curPos-IN_MIN)*(OUT_MAX-OUT_MIN)/(IN_MAX-IN_MIN)+OUT_MIN);
+
+        //if(result < 0) result = 0;
+        SmartDashboard.putNumber("Calculation:", result);
+        SmartDashboard.putNumber("Calculation2:", curPos);
+        return result;
     }
 
 
@@ -486,6 +505,6 @@ The available preset values are:<p>
     }
 
     public static double getTicksToAbsEncoderRatio(){
-        return ((SHOULDER_ABS_MAX_UP-SHOULDER_ABS_MAX_DOWN)/(SHOULDER_START_POSITION-MAX_SHOULDER_TRAVEL));
+        return ((SHOULDER_ABS_MAX_UP-SHOULDER_ABS_MAX_DOWN)/(SHOULDER_START_POSITION-SHOULDER_MAX_POSITION));
     }
 }

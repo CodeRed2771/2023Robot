@@ -95,7 +95,7 @@ public class Calibration {
     public static final double BISTABLE_MOTOR_F = .000156;
 	public static final double BISTABLE_MOTOR_IZONE = 40;
 
-    public static final double SHOULDER_MOTOR_P = .065; // .05
+    public static final double SHOULDER_MOTOR_P = .065; // .065
 	public static final double SHOULDER_MOTOR_I = 0;
 	public static final double SHOULDER_MOTOR_D = 0;
 	public static final double SHOULDER_MOTOR_IZONE = 40;
