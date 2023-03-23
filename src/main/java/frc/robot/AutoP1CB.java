@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 
-public class AutoCP1CB extends AutoBaseClass{
+public class AutoP1CB extends AutoBaseClass{
     private int counter = 0;
     private int dacount = 0;
     private int stopCount = 0;
@@ -34,7 +34,7 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 1:
                     break;
                 case 2:
-                    Claw.closeClawTO();
+                    Claw.stopClawTO();
                     Claw.flip();
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
@@ -43,7 +43,6 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 3:
                     break;
                 case 4:
-                    Claw.stopClawTO();
                     setStep(8);
                     // Arm.presetLift(shoulderPresets.PLACING_HIGH);
                     // setTimerAndAdvanceStep(100);
@@ -58,7 +57,7 @@ public class AutoCP1CB extends AutoBaseClass{
                     break;
                 case 8:
                     Claw.openClawTO();
-                    setTimerAndAdvanceStep(1200);
+                    setTimerAndAdvanceStep(1800);
                     break;
                 case 9:
                     break;
@@ -70,8 +69,8 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 11:
                     break;
                 case 12:
-                    driveInches(190, 0, 0.8);
-                    setTimerAndAdvanceStep(4500);
+                    driveInches(90, 0, 0.75);
+                    setTimerAndAdvanceStep(2500);
                     break;
                 case 13:
                     if(driveCompleted())
@@ -79,7 +78,7 @@ public class AutoCP1CB extends AutoBaseClass{
                         setStep(18);
                     break;
                 case 14:
-                    setStep(16);
+                    setStep(18);
                     //driveInches(20, 0, 0.6);
                     //setTimerAndAdvanceStep(3000);
                     break;
@@ -88,8 +87,9 @@ public class AutoCP1CB extends AutoBaseClass{
                         advanceStep(); 
                     break;
                 case 16:
-                    driveInches(-45, 0, 0.6);
-                    setTimerAndAdvanceStep(3000);
+                    //driveInches(-20, 0, 0.6);
+                    setStep(18);
+                    // setTimerAndAdvanceStep(50);
                     break;
                 case 17:
                     if(driveCompleted())
