@@ -33,7 +33,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         positionMultiplier = positionMultiplier * -1;
                     if(robotPosition() == Position.RIGHT)
                         positionMultiplier = positionMultiplier * -1;
-                    LiveBottom.backward();
+                    LiveBottom2.backward();
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 1:
@@ -47,7 +47,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 4://go to pickup
-                    LiveBottom.off();
+                    LiveBottom2.forward();
                     driveInches(216, 0, 1);
                     setTimerAndAdvanceStep(2000);
                     break;
@@ -56,6 +56,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 6://run intake
+                    Intake.deploy();
                     Intake.run(1);
                     break;
                 case 7://pickup
@@ -71,8 +72,9 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                     break;
                 case 10://stop intake and go to place
                     Intake.stop();
+                    Intake.retract();
                     driveInches(-224, 0, 1);
-                    setTimerAndAdvanceStep(2000);
+                    setTimerAndAdvanceStep(3000);
                     break;
                 case 11:
                     if(driveCompleted())
@@ -87,14 +89,14 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 14://get ready for ejecting the elemnt
-                    driveInches(-4, 0, 0.5);
+                    driveInches(-6, 0, 0.5);
                     setTimerAndAdvanceStep(1000);
                 case 15:
                     if(driveCompleted())
                         advanceStep();
                     break;
                 case 16://eject the element
-                    LiveBottom.on();
+                    LiveBottom2.backward();
                     setTimerAndAdvanceStep(750);
                     break;
                 case 17:
@@ -108,7 +110,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 20://drive to 3rd elemnet
-                    LiveBottom.off();
+                    LiveBottom2.forward();
                     driveInches(216, 0, 1);
                     setTimerAndAdvanceStep(1500);
                     break;
@@ -117,6 +119,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 22://start intake and align to pick up element
+                    Intake.deploy();
                     Intake.run(1);
                     driveInches(-48*positionMultiplier, 90, 1);//TUNE LINE??
                     setTimerAndAdvanceStep(1500);
@@ -151,7 +154,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 30://turn live bottom off, align horizontally
-                    driveInches(25.5*positionMultiplier, 90, 0.5);//TUNE LINE
+                    driveInches(5*positionMultiplier, 90, 0.5);//TUNE LINE
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 31:
@@ -167,13 +170,13 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 34://eject elemnt
-                    LiveBottom.on();
+                    LiveBottom2.backward();
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 35:
                     break;
                 case 36:
-                    LiveBottom.off();
+                    LiveBottom2.forward();
                     stop();
                     break;
             }
