@@ -86,8 +86,8 @@ The available preset values are:<p>
         PLACING_HIGH
     }
 
-    private static int RED_THRESHOLD = 250;
-    private static int BLUE_THRESHOLD = 350;
+    private static int RED_THRESHOLD = 150;
+    private static int BLUE_THRESHOLD = 120;
 
     static SendableChooser<Boolean> manShoulder;
 
@@ -112,15 +112,15 @@ The available preset values are:<p>
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
 
-    private static final double SHOULDER_ABS_MAX_UP = .42;
+    private static final double SHOULDER_ABS_MAX_UP = .43;
     // prev before colson wheels RLB     .57;
-    private static final double SHOULDER_ABS_MAX_DOWN = .77;
+    private static final double SHOULDER_ABS_MAX_DOWN = .80;
     // prev before colson wheels RLB   .22;
 
     private static double SHOULDER_START_POSITION = 0;
     private static double SHOULDER_GROUND_POSITION = 6.2; 
     private static double SHOULDER_IN_ROBOT_POSITION = 8.5; 
-    private final static double SHOULDER_MAX_POSITION = 16;
+    private final static double SHOULDER_MAX_POSITION = 19;
 
     private static double MAX_SHOULDER_SPEED = 0;
 
@@ -143,6 +143,7 @@ The available preset values are:<p>
 
         armColorSensor = new ColorSensorV3(Port.kMXP);
         shoulderAbsEncoder = new DutyCycleEncoder(Wiring.SHOULDER_ABS_ENC);
+        shoulderAbsEncoder.setConnectedFrequencyThreshold(900);
 
         //motor responsible of extension of bistable material
         extendMotor = new CANSparkMax(Wiring.BISTABLE_MOTOR, MotorType.kBrushless);
@@ -227,11 +228,11 @@ The available preset values are:<p>
             
         }
 
-       // if (shoulderRequestedPos != lastShoulderRequestedPos) {
+       if (shoulderRequestedPos != lastShoulderRequestedPos) {
             shoulderPID.setReference(shoulderRequestedPos, CANSparkMax.ControlType.kPosition);
             
             lastShoulderRequestedPos = shoulderRequestedPos;
-        //}
+        }
  
         if(armColorSensor.getBlue() == 0 || armColorSensor.getRed() == 0){
             extendAutoCalibrateMode = false;
@@ -478,11 +479,17 @@ The available preset values are:<p>
         double OUT_MIN = 0;  // relative encoder - full back
         double OUT_MAX = SHOULDER_MAX_POSITION; // relative encoder - full forward/down
         double curPos = 0;
-        double lastPos = -1;
-        while(Math.abs(curPos-lastPos) > .0001 || curPos < IN_MIN) {
-            lastPos = curPos;
-            curPos = shoulderAbsEncoder.get();
+        
+        boolean isConn = false;
+        int connTrys = 100000;
+        
+        while(isConn == false && connTrys != 0) {
+            isConn = shoulderAbsEncoder.isConnected();
+            connTrys = connTrys - 1;
+            SmartDashboard.putNumber("connTrys:", connTrys);
         };
+
+        curPos = shoulderAbsEncoder.getAbsolutePosition();
 
         SmartDashboard.putNumber("Calculation3:", curPos);
 
