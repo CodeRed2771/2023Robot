@@ -108,6 +108,8 @@ public class Robot extends TimedRobot {
     private double lastROTvalue = 0;
     private boolean stuffDelete = false;
 
+    private final boolean useLiveBottom2 = true;// livebottom seems to break/crash robot , some changes were made to LiveBottom to hopefully fix it but it is untested, test it with EXTREME CAUTION, we do not want to break anything
+
     @Override
     public void robotInit() {
         gamepad1 = new Gamepad(0);
@@ -122,7 +124,12 @@ public class Robot extends TimedRobot {
             DriveTrain.init("NEO");
         
         Claw.init();
-        LiveBottom2.init();
+        if(useLiveBottom2){
+            LiveBottom2.init();
+        }else{
+            LiveBottom.init();
+        }
+        
         DriveAuto.init();
         Arm.init();
         Intake.init();
@@ -154,7 +161,10 @@ public class Robot extends TimedRobot {
         DriveTrain.resetTurnEncoders();
         DriveTrain.setAllTurnOrientation(0, false); // sets them back to calibrated zero position
 
-        LiveBottom2.autoZero();
+        if(useLiveBottom2){
+            LiveBottom2.autoZero();
+        }
+        
         
         Arm.resetExtendEncoder(0);
         Arm.presetExtend(extenderPresets.RETRACTED);
@@ -197,10 +207,19 @@ public class Robot extends TimedRobot {
         }
 
         if(gamepad1.getDPadUp() || gamepad2.getDPadUp()) {
-            LiveBottom2.forward();
+            if(useLiveBottom2){
+                LiveBottom2.forward();
+            }else{
+                LiveBottom.forward();
+            }
+            
         }
         else if (gamepad1.getDPadDown() || gamepad2.getDPadDown())  {
-            LiveBottom2.backward();
+            if(useLiveBottom2){
+                LiveBottom2.backward();
+            }else{
+                LiveBottom.backward();
+            }
             Intake.liveBottomIntake();
         } 
         else {
@@ -337,7 +356,11 @@ public class Robot extends TimedRobot {
         VisionPlacer.periodic();
         DriveAuto.tick();
         Arm.tick();
-        LiveBottom2.tick();
+        if(useLiveBottom2){
+            LiveBottom2.tick();
+        }else{
+            LiveBottom.tick();
+        }
         TickTimer.tick();
         Claw.tick();
  

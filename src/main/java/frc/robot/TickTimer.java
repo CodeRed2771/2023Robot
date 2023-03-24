@@ -1,15 +1,18 @@
 package frc.robot;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TickTimer {
     
     
-    static long[] ticks;
-    final static int length_avg_long_data = 4;
-    static double[] lastDelays;
-    static double[] lastTicksPerSecond;
-    static int longdelay = 0;
+    static ArrayList<Long> tickLengthTime; //holds the System.currentTimeMillis() of the last 2 seconds of ticks
+    static final int MAX_TICKS_HELD = 100; // 2 seconds worth of ticks
+    static ArrayList<Double> avgTickLength; //holds the avg ms per tick for the last minute,it is updated every 2 seconds
+    static ArrayList<Double> avgAmtTicks; // holds the avg amount of ticks for the last "minute"(this is unsure if the ticks are higher or lower than the norm of 50 ticks per second), should be updated every 2 seconds 
+    static Long updateAvg;
 
     //this is a debug class, it tests how many ticks per second the robot is doing and the ms between ticks
 
@@ -18,54 +21,66 @@ public class TickTimer {
 
 
     public static void init() {
-        ticks = new long[100];
-        lastDelays = new double[length_avg_long_data];
-        lastTicksPerSecond = new double[length_avg_long_data];
-        for (int i = 0; i < ticks.length; i++) {
-            ticks[i] = System.currentTimeMillis();
+        tickLengthTime = new ArrayList<Long>();
+        avgTickLength = new ArrayList<Double>();
+        avgAmtTicks = new ArrayList<Double>();
+        for (int i = 0; i < 100; i++) {
+            tickLengthTime.add(0,System.currentTimeMillis());
         }
-        for (int i = 0; i < lastDelays.length; i++) {
-            lastDelays[i] = 0;
-            lastTicksPerSecond[i] = 0;
+        for (int i = 0; i < 29; i++) {
+            avgTickLength.add(1.0);
+            avgAmtTicks.add(1.0);
         }
-        longdelay = 0;
+        updateAvg = tickLengthTime.get(0);
+        
     }
 
     public static void tick(){
-        longdelay++;
-        long currenttime = System.currentTimeMillis();
-        for (int i = 0; i < ticks.length-1; i++) {
-            ticks[i] = ticks[i+1];
+        tickLengthTime.add(0,System.currentTimeMillis());
+        tickLengthTime.remove(tickLengthTime.size()-1);
+
+        double avgTicksPerSecond = getAvgTicksPerSecond();
+        double avgMsPerTick = getAvgMsPerTick();
+        
+        double avgTPS = avgTicksPerSecond;
+        double avgMPT = avgMsPerTick;
+        for (int i = 0; i < avgTickLength.size(); i++) {
+            avgTPS+=avgTickLength.get(i);
+            avgMPT+=avgAmtTicks.get(i);
         }
-        ticks[99] = currenttime;
-        double timediff = Math.abs((int)(ticks[99]-ticks[0]));
-        double delay = 0;
-        for (int i = 0; i < ticks.length-1; i++) {
-            delay += Math.abs((int)(ticks[i]-ticks[i+1]));
-        }
-        delay /= ticks.length-1;
-        double avgTickPerSecond = (int) (ticks.length/(timediff)/1000.0);
-        double avgMsBetweenTicks = delay;
-        if(longdelay>ticks.length){
-            for (int i = 0; i < lastDelays.length-1; i++) {
-                lastDelays[i] = lastDelays[i+1];
-                lastTicksPerSecond[i] = lastTicksPerSecond[i+1];
-            }
-            lastDelays[lastDelays.length-1] = avgMsBetweenTicks;
-            lastTicksPerSecond[lastTicksPerSecond.length-1] = avgTickPerSecond;
-            longdelay = 0;
+        avgTPS/=avgTickLength.size()+1;
+        avgMPT/=avgTickLength.size()+1;
+        if(! tickLengthTime.contains(updateAvg)){
+            updateAvg = tickLengthTime.get(0);
+            avgTickLength.add(0,avgMsPerTick);
+            avgTickLength.remove(avgTickLength.size()-1);
+            avgAmtTicks.add(0,avgTicksPerSecond);
+            avgAmtTicks.remove(avgAmtTicks.size()-1);
         }
 
-        for (int i = 0; i < lastDelays.length; i++) {
-            avgTickPerSecond += lastTicksPerSecond[i];
-            avgMsBetweenTicks += lastDelays[i];
+        SmartDashboard.putNumber("Average Ticks Per Second", avgTPS);
+        SmartDashboard.putNumber("Average Ms Per Tick", avgMPT);
+    }
+
+    private static double getAvgMsPerTick() {
+        double count = 0.0;
+        long diff = 0;
+        Long last = tickLengthTime.get(0);
+        for (int i = 0; i < tickLengthTime.size()-1; i++) {
+            diff+=Math.abs(last-tickLengthTime.get(i));
+            last = tickLengthTime.get(i);
+            count+=1;
         }
-        avgTickPerSecond /= length_avg_long_data+1;
-        avgMsBetweenTicks /= length_avg_long_data+1;
-        
-        avgTickPerSecond = ((int)(avgTickPerSecond*100))/100.0;
-        avgMsBetweenTicks = ((int)(avgMsBetweenTicks*100))/100.0;
-        SmartDashboard.putNumber("Average Ticks Per Second", avgTickPerSecond);
-        SmartDashboard.putNumber("Average Ms Between Ticks", avgMsBetweenTicks);
+    
+        return (diff/count)/1000.0;
+    }
+
+    private static double getAvgTicksPerSecond() {
+        Long start = tickLengthTime.get(0);
+        Long stop = tickLengthTime.get(tickLengthTime.size()-1);
+        double diff = (Math.abs(start-stop)/1000);
+        diff/=100;
+        diff = 1/diff;
+        return diff;
     }
 }
