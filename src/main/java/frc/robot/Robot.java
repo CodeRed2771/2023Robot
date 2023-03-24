@@ -141,7 +141,7 @@ public class Robot extends TimedRobot {
         mNonDriveAutoProgram = new AutoDoNothing();
 
         RobotGyro.init();
-        Arm.resetShoulder();
+        // Arm.resetShoulder();
     }
 
     @Override

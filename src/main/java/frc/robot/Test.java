@@ -19,13 +19,13 @@ public class Test extends AutoBaseClass {
         if(isRunning()) {
             switch(getCurrentStep()) {
                 case 0:
-                    LiveBottom.forward();
+                    // LiveBottom.forward();
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 1:
                     break;
                 case 2:
-                    LiveBottom.reverse();
+                    // LiveBottom.reverse();
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 3:

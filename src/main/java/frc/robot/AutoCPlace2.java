@@ -70,13 +70,13 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                         advanceStep();
                     break;
                 case 12:
-                    LiveBottom.backward();
+                    //LiveBottom.backward();
                     setTimerAndAdvanceStep(3000);
                     break;
                 case 13:
                     break;
                 case 14:
-                    LiveBottom.off();
+                    // LiveBottom.off();
                     stop();
                     break;
             }
