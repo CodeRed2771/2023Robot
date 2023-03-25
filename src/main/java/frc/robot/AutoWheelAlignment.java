@@ -11,8 +11,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoWheelAlignment extends AutoBaseClass {
 
-    public void start(char robotPosition) {
-        super.start(robotPosition);
+    public void start() {
+        // super.start(robotPosition);
+        super.start();
     }
 
     public void stop() {
@@ -51,7 +52,8 @@ public class AutoWheelAlignment extends AutoBaseClass {
                     break;
 
                 case 8:
-                    setStep(0);
+                    // setStep(0);
+                    stop();
                     break;
             }
         }

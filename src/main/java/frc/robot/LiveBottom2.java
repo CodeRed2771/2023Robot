@@ -65,6 +65,14 @@ public class LiveBottom2 {
         liveBottomPID.setReference(MAX_AWAY_INTAKE, ControlType.kPosition);
         // liveBottomMotor.set(-0.15);
     }
+
+    public static void forwardBasic() {
+        liveBottomMotor.set(.5);
+    }
+    
+    public static void backwardBasic() {
+        liveBottomMotor.set(-.5);
+    }
     public static void smartPosition(double power){
         if(Math.abs(power) > .07) {
             desiredPosition = desiredPosition + (2 * power);

@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
@@ -83,6 +84,7 @@ public class Robot extends TimedRobot {
     String autoSelected;
     Gamepad gamepad1;
     Gamepad gamepad2;
+    Gamepad gamepad3;
     SwerveTurnTest swtest;
     Compressor compressor = new Compressor(1, PneumaticsModuleType.REVPH);
     boolean reverseShooter = false;
@@ -114,6 +116,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         gamepad1 = new Gamepad(0);
         gamepad2 = new Gamepad(1);
+        gamepad3 = new Gamepad(2);
         SmartDashboard.putString("Alliance Decided", DriverStation.getAlliance().toString());
         compressor.enableAnalog(100, 120);
         
@@ -135,7 +138,7 @@ public class Robot extends TimedRobot {
         Intake.init();
         VisionPlacer.init();
         VisionPlacer.setLED(LimelightOn.Off);
-        TickTimer.init();
+        // TickTimer.init();
         
 
         SmartDashboard.putNumber("Current Position", 0);
@@ -175,7 +178,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        
         if (gamepad2.getDPadLeft()){
             Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
             Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
@@ -195,31 +197,32 @@ public class Robot extends TimedRobot {
             clawFlippedPress = false;
         }
 
-        if (!gamepad1.getYButton()) {
-            VisionPlacer.setLED(LimelightOn.Off);
-            mAutoProgram.stop();
-            if(gamepad1.getLeftBumper())
-                mAutoProgram = new AutoPGyroStraighten();
-            else
-                mAutoProgram = new AutoSSGyroStraighten();
+        // if (!gamepad1.getYButton()) {
+        //     VisionPlacer.setLED(LimelightOn.Off);
+        //     mAutoProgram.stop();
+        //     if(gamepad1.getLeftBumper())
+        //         mAutoProgram = new AutoPGyroStraighten();
+        //     else
+        //         mAutoProgram = new AutoSSGyroStraighten();
             
-            mAutoProgram.start();
-        }
+        //     mAutoProgram.start();
+        // }
 
         if(gamepad1.getDPadUp() || gamepad2.getDPadUp()) {
-            if(useLiveBottom2){
-                LiveBottom2.forward();
-            }else{
-                LiveBottom.forward();
-            }
-            
+            // if(useLiveBottom2){
+            //     LiveBottom2.forward();
+            // }else{
+            //     LiveBottom.forward();
+            // }
+            LiveBottom2.forwardBasic();
         }
         else if (gamepad1.getDPadDown() || gamepad2.getDPadDown())  {
-            if(useLiveBottom2){
-                LiveBottom2.backward();
-            }else{
-                LiveBottom.backward();
-            }
+            // if(useLiveBottom2){
+            //     LiveBottom2.backward();
+            // }else{
+            //     LiveBottom.backward();
+            // }
+            LiveBottom2.backwardBasic();
             Intake.liveBottomIntake();
         } 
         else {
@@ -361,7 +364,7 @@ public class Robot extends TimedRobot {
         }else{
             LiveBottom.tick();
         }
-        TickTimer.tick();
+        // TickTimer.tick();
         Claw.tick();
  
         RobotGyro.position(); // i don't think this does anything - dvv
@@ -395,14 +398,11 @@ public class Robot extends TimedRobot {
                     (int) SmartDashboard.getNumber("DRIVE MM VELOCITY", Calibration.getDT_MM_VELOCITY()));
         }
 
-        SmartDashboard.putNumber("TY calcualtion", VisionPlacer.YDistanceBasedTY());
-        SmartDashboard.putNumber("TX calculation", VisionPlacer.XDistanceBasedTX());
-
-        // SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
-        // SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
-        // SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
-        // SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
-        // SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
+        SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
+        SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
+        SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
+        SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
+        SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
         // SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
         SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
         SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());

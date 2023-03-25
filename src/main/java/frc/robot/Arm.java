@@ -481,7 +481,7 @@ The available preset values are:<p>
         double curPos = 0;
         
         boolean isConn = false;
-        int connTrys = 100000;
+        int connTrys = 10000000;
         
         while(isConn == false && connTrys != 0) {
             isConn = shoulderAbsEncoder.isConnected();
