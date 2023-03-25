@@ -19,6 +19,7 @@ public class AutoClimbAndBalance extends AutoBaseClass {
     private int timeToNextDrive = 0;
     boolean test = true;
     int timesLevel = 0;
+    AutoBaseClass brake;
 
     public void start() {
         super.start();
@@ -46,7 +47,7 @@ public class AutoClimbAndBalance extends AutoBaseClass {
                 timeToNextDrive--;
             if (Math.abs(currentPitch) < 1.3) {
                 SmartDashboard.putNumber("Stop Count", stopCount++);
-                turnDegrees(1, 0);
+                DriveAuto.parkingBrake();
                 timesLevel ++;
                 if (timesLevel >  50) {
                     stop();
@@ -56,8 +57,8 @@ public class AutoClimbAndBalance extends AutoBaseClass {
                 // move relative to pitch angle   signum returns -1 or 1 based on sign of currentPitch
                 if (timeToNextDrive==0) {
                     driveDistance = driveRatio  * currentPitch;
-                    DriveAuto.driveInches(driveDistance, 0, .5); 
-                    timeToNextDrive = (int)(Math.abs(driveDistance) * 10);       
+                    DriveAuto.driveInches(driveDistance, 0, .6); 
+                    timeToNextDrive = (int)(Math.abs(driveDistance) * 12);       
                     SmartDashboard.putNumber("Auto Drive Call", dacount++);
                }
                timesLevel = 0;

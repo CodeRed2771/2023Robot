@@ -102,8 +102,8 @@ public class Robot extends TimedRobot {
     final String AutoC_CB = "Auto Community Climb+Balance";
     final String AutoCP1CB = "Auto Community Place 1 Climb+Balance";
     final String AutoCPlace1 = "Auto Community Place 1";
-    final String AutoCPlace2 = "Auto Community Place 2";
-    final String AutoCPlace3VROOOM = "Auto Community Place 3 (TEST ONLY)";
+    final String AutoCPlace2Wings = "Auto Community Place 2 (WINGS)";
+    // final String AutoCPlace3VROOOM = "Auto Community Place 3 (TEST ONLY)";
 
     private double lastFWDvalue = 0; 
     private double lastSTRvalue = 0;
@@ -183,10 +183,17 @@ public class Robot extends TimedRobot {
             Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
         }
         
-        if (gamepad2.getAButton()){
-            Claw.setClawPosition(ClawPresets.OPEN);
-        } else if (gamepad2.getBButton()) 
-            Claw.setClawPosition(ClawPresets.CLOSE);
+        if(gamepad2.getLeftBumper()) {
+            if (gamepad2.getAButton()){
+                Claw.openClawTO();
+            } else if (gamepad2.getBButton()) 
+                Claw.closeClawTO();
+        } else {
+            if (gamepad2.getAButton()){
+                Claw.setClawPosition(ClawPresets.OPEN);
+            } else if (gamepad2.getBButton()) 
+                Claw.setClawPosition(ClawPresets.CLOSE);
+        }
 
         if(gamepad2.getLeftTriggerAxis() > .5){
             if (!clawFlippedPress){
@@ -463,14 +470,14 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoCP1CB();
             mAutoProgram.start();
             break;
-        case AutoCPlace2:
-            mAutoProgram = new AutoCPlace2();
+        case AutoCPlace2Wings:
+            mAutoProgram = new AutoPlace2Wings();
             mAutoProgram.start();
             break;
-        case AutoCPlace3VROOOM:
-            mAutoProgram = new AutoPlace3VROOOM();
-            mAutoProgram.start();
-            break;
+        // case AutoCPlace3VROOOM:
+        //     mAutoProgram = new AutoPlace3VROOOM();
+        //     mAutoProgram.start();
+        //     break;
         }
         }
 
@@ -490,10 +497,10 @@ public class Robot extends TimedRobot {
         //autoChooser.addOption(ballPickUp, ballPickUp);
         autoChooser.addOption(AutoCommunity, AutoCommunity);
         autoChooser.addOption(AutoCPlace1, AutoCPlace1);
-        autoChooser.addOption(AutoCPlace2, AutoCPlace2);
+        autoChooser.addOption(AutoCPlace2Wings, AutoCPlace2Wings);
         autoChooser.setDefaultOption(AutoCP1CB, AutoCP1CB);
         autoChooser.addOption(AutoC_CB, AutoC_CB);
-        autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
+        // autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
         
      
         SmartDashboard.putData("Auto Chose:", autoChooser);
@@ -556,7 +563,7 @@ public class Robot extends TimedRobot {
         if (!normalDrive) {
             adjustedAmt = rotateAmt * .20;
         } else {
-            if (Math.abs(rotateAmt) < .08) {
+            if (Math.abs(rotateAmt) < .1) {
                 adjustedAmt = 0;
             } else {
                 if (Math.abs(rotateAmt) < .5) {
