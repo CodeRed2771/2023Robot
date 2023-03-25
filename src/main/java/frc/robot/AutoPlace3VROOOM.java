@@ -37,7 +37,7 @@ public class AutoPlace3VROOOM extends AutoBaseClass{
                 
                 if(robotPosition() == Position.RIGHT && DriverStation.getAlliance() == Alliance.Blue)
                     setStep(37);
-                if(robotPosition() == Position.RIGHT && DriverStation.getAlliance() == Alliance.Blue)
+                if(robotPosition() == Position.LEFT && DriverStation.getAlliance() == Alliance.Red)
                     setStep(37);
                 else if(robotPosition() == Position.CENTER)
                     setStep(72);
