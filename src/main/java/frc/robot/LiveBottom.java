@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.Servo;
 
 public class LiveBottom {
     private static CANSparkMax LBmotor;
-    private static final int MAX_LIVE_BOTTOM_CURRENT = 25;
+    private static final int MAX_LIVE_BOTTOM_CURRENT = 30;
 
     private static Servo LBGate;
 
@@ -33,7 +33,7 @@ public class LiveBottom {
 
 
         //motor responsible of extension of bistable material
-        LBmotor = new CANSparkMax(Wiring.LIVE_BOTTOM_MOTOR_ID, MotorType.kBrushed);
+        LBmotor = new CANSparkMax(Wiring.LIVE_BOTTOM_MOTOR_ID, MotorType.kBrushless);
         LBmotor.restoreFactoryDefaults();
 
         LBmotor.setSmartCurrentLimit(MAX_LIVE_BOTTOM_CURRENT);

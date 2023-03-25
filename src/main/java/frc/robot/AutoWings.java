@@ -90,7 +90,7 @@ public class AutoWings extends AutoBaseClass{
                     if(placeNumInAuto >= elementsPlaced)
                         setStep(25);
                     else {
-                        LiveBottom.backward();
+                        // LiveBottom.backward();
                         driveInches(-250, 0, 1);
                         setTimerAndAdvanceStep(4000);
                         Claw.closeClawA();
