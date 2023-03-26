@@ -86,8 +86,8 @@ The available preset values are:<p>
         PLACING_HIGH
     }
 
-    private static int RED_THRESHOLD = 150;
-    private static int BLUE_THRESHOLD = 120;
+    private static int RED_THRESHOLD = 800;
+    private static int BLUE_THRESHOLD = 500;
 
     static SendableChooser<Boolean> manShoulder;
 

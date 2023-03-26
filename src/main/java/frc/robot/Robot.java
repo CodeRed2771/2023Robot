@@ -234,6 +234,7 @@ public class Robot extends TimedRobot {
         } 
         else {
             Intake.liveBottomIntakeStop();
+            LiveBottom2.stopBasic();
         }
 
         if (gamepad2.getLeftBumper()) {
@@ -387,39 +388,40 @@ public class Robot extends TimedRobot {
 
         // Sets the PID values based on input from the SmartDashboard
         // This is only needed during tuning
-        if (SmartDashboard.getBoolean("Tune Drive-Turn PIDs", false)) {
+        // Commenting out RLB 3/26
+        // if (SmartDashboard.getBoolean("Tune Drive-Turn PIDs", false)) {
        
-            DriveTrain.setDrivePIDValues(SmartDashboard.getNumber("AUTO DRIVE P", Calibration.getDriveP()),
-                    SmartDashboard.getNumber("AUTO DRIVE I", Calibration.getDriveI()),
-                    SmartDashboard.getNumber("AUTO DRIVE D", Calibration.getDriveD()),
-                    SmartDashboard.getNumber("AUTO DRIVE F", Calibration.getDriveF()));
+        //     DriveTrain.setDrivePIDValues(SmartDashboard.getNumber("AUTO DRIVE P", Calibration.getDriveP()),
+        //             SmartDashboard.getNumber("AUTO DRIVE I", Calibration.getDriveI()),
+        //             SmartDashboard.getNumber("AUTO DRIVE D", Calibration.getDriveD()),
+        //             SmartDashboard.getNumber("AUTO DRIVE F", Calibration.getDriveF()));
 
-            DriveTrain.setTurnPIDValues(SmartDashboard.getNumber("TURN P", Calibration.getTurnP()),
-                    SmartDashboard.getNumber("TURN I", Calibration.getTurnI()),
-                    SmartDashboard.getNumber("TURN D", Calibration.getTurnD()),
-                    SmartDashboard.getNumber("TURN I ZONE", Calibration.getTurnIZone()),
-                    SmartDashboard.getNumber("TURN F", Calibration.getTurnF()));
+        //     DriveTrain.setTurnPIDValues(SmartDashboard.getNumber("TURN P", Calibration.getTurnP()),
+        //             SmartDashboard.getNumber("TURN I", Calibration.getTurnI()),
+        //             SmartDashboard.getNumber("TURN D", Calibration.getTurnD()),
+        //             SmartDashboard.getNumber("TURN I ZONE", Calibration.getTurnIZone()),
+        //             SmartDashboard.getNumber("TURN F", Calibration.getTurnF()));
 
-            DriveTrain.setDriveMMAccel((int) SmartDashboard.getNumber("DRIVE MM ACCEL", Calibration.getDT_MM_ACCEL()));
-            DriveTrain.setDriveMMVelocity(
-                    (int) SmartDashboard.getNumber("DRIVE MM VELOCITY", Calibration.getDT_MM_VELOCITY()));
-        }
+        //     DriveTrain.setDriveMMAccel((int) SmartDashboard.getNumber("DRIVE MM ACCEL", Calibration.getDT_MM_ACCEL()));
+        //     DriveTrain.setDriveMMVelocity(
+        //             (int) SmartDashboard.getNumber("DRIVE MM VELOCITY", Calibration.getDT_MM_VELOCITY()));
+        // }
 
-        SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
-        SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
-        SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
-        SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
-        SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
-        // SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
-        SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
-        SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
-        SmartDashboard.putNumber("Roll", RobotGyro.roll());
-        SmartDashboard.putNumber("Yaw", RobotGyro.yaw());
+        // SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
+        // SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
+        // SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
+        // SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
+        // SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
+        // // SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
+        // SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
+        // SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
+        // SmartDashboard.putNumber("Roll", RobotGyro.roll());
+        // SmartDashboard.putNumber("Yaw", RobotGyro.yaw());
 
 
-        SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
-        SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
-        SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
+        // SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
+        // SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
+        // SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
  
         SmartDashboard.updateValues();
     }
@@ -470,10 +472,10 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoCP1CB();
             mAutoProgram.start();
             break;
-        case AutoCPlace2Wings:
-            mAutoProgram = new AutoPlace2Wings();
-            mAutoProgram.start();
-            break;
+        // case AutoCPlace2Wings:
+        //     mAutoProgram = new AutoPlace2Wings();
+        //     mAutoProgram.start();
+        //     break;
         // case AutoCPlace3VROOOM:
         //     mAutoProgram = new AutoPlace3VROOOM();
         //     mAutoProgram.start();
