@@ -86,8 +86,8 @@ The available preset values are:<p>
         PLACING_HIGH
     }
 
-    private static int RED_THRESHOLD = 150;
-    private static int BLUE_THRESHOLD = 120;
+    private static int RED_THRESHOLD = 800;
+    private static int BLUE_THRESHOLD = 500;
 
     static SendableChooser<Boolean> manShoulder;
 
@@ -108,7 +108,7 @@ The available preset values are:<p>
     //                                 (these numbers are still in ticks (motor revolutions)
     private static final double MAX_INSIDE_ROBOT_EXTENSION = 13; 
     private static final double MAX_GROUND_LEVEL_EXTENSION = 18;
-    private static final double MAX_IN_AIR_EXTENSION = 110; 
+    private static final double MAX_IN_AIR_EXTENSION = 101; 
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
 
@@ -292,7 +292,7 @@ The available preset values are:<p>
                 extendRequestedPos = 4.5;//??
                 break;
             case HIGH:
-                extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
+                extendRequestedPos = MAX_IN_AIR_EXTENSION-12;//??
                 break;
         }
     }

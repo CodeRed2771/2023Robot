@@ -25,8 +25,9 @@ public class Claw {
     private static final double MIN_WRIST_POSITION = 0;
     private static final double MAX_WRIST_POSITION = .56;
 
-    private static final double CLAW_FULLY_OPEN = 87;
-    private static final double CLAW_FULLY_CLOSED = 102;
+    private static final double CLAW_FULLY_OPEN = 85;
+    private static final double CLAW_FULLY_CLOSED = 100;
+    private static final double CONE_POSITION = 100;
 
     // private static final double CONE_PICKUP = .035;
     // private static final double CUBE_PICKUP = .02;
@@ -60,7 +61,7 @@ public class Claw {
         wrist.set(MIN_WRIST_POSITION);
         position = MIN_WRIST_POSITION;
         direction = 0;
-        clawDesiredPosition = CLAW_FULLY_OPEN;
+        // clawDesiredPosition = CLAW_FULLY_CLOSED;
     }
 
     public static void tick() {
@@ -146,6 +147,10 @@ public class Claw {
 
     public static void stopClawTO() {
         clawMotor.set(0);
+    }
+
+    public static void  resetToCloseClaw() {
+        clawDesiredPosition = CLAW_FULLY_CLOSED;
     }
     
 

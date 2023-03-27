@@ -102,8 +102,8 @@ public class Robot extends TimedRobot {
     final String AutoC_CB = "Auto Community Climb+Balance";
     final String AutoCP1CB = "Auto Community Place 1 Climb+Balance";
     final String AutoCPlace1 = "Auto Community Place 1";
-    final String AutoCPlace2 = "Auto Community Place 2";
-    final String AutoCPlace3VROOOM = "Auto Community Place 3 (TEST ONLY)";
+    final String AutoCPlace2Wings = "Auto Community Place 2 (WINGS)";
+    // final String AutoCPlace3VROOOM = "Auto Community Place 3 (TEST ONLY)";
 
     private double lastFWDvalue = 0; 
     private double lastSTRvalue = 0;
@@ -183,10 +183,17 @@ public class Robot extends TimedRobot {
             Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
         }
         
-        if (gamepad2.getAButton()){
-            Claw.setClawPosition(ClawPresets.OPEN);
-        } else if (gamepad2.getBButton()) 
-            Claw.setClawPosition(ClawPresets.CLOSE);
+        if(gamepad2.getLeftBumper()) {
+            if (gamepad2.getAButton()){
+                Claw.openClawTO();
+            } else if (gamepad2.getBButton()) 
+                Claw.closeClawTO();
+        } else {
+            if (gamepad2.getAButton()){
+                Claw.setClawPosition(ClawPresets.OPEN);
+            } else if (gamepad2.getBButton()) 
+                Claw.setClawPosition(ClawPresets.CLOSE);
+        }
 
         if(gamepad2.getLeftTriggerAxis() > .5){
             if (!clawFlippedPress){
@@ -227,6 +234,7 @@ public class Robot extends TimedRobot {
         } 
         else {
             Intake.liveBottomIntakeStop();
+            LiveBottom2.stopBasic();
         }
 
         if (gamepad2.getLeftBumper()) {
@@ -380,39 +388,40 @@ public class Robot extends TimedRobot {
 
         // Sets the PID values based on input from the SmartDashboard
         // This is only needed during tuning
-        if (SmartDashboard.getBoolean("Tune Drive-Turn PIDs", false)) {
+        // Commenting out RLB 3/26
+        // if (SmartDashboard.getBoolean("Tune Drive-Turn PIDs", false)) {
        
-            DriveTrain.setDrivePIDValues(SmartDashboard.getNumber("AUTO DRIVE P", Calibration.getDriveP()),
-                    SmartDashboard.getNumber("AUTO DRIVE I", Calibration.getDriveI()),
-                    SmartDashboard.getNumber("AUTO DRIVE D", Calibration.getDriveD()),
-                    SmartDashboard.getNumber("AUTO DRIVE F", Calibration.getDriveF()));
+        //     DriveTrain.setDrivePIDValues(SmartDashboard.getNumber("AUTO DRIVE P", Calibration.getDriveP()),
+        //             SmartDashboard.getNumber("AUTO DRIVE I", Calibration.getDriveI()),
+        //             SmartDashboard.getNumber("AUTO DRIVE D", Calibration.getDriveD()),
+        //             SmartDashboard.getNumber("AUTO DRIVE F", Calibration.getDriveF()));
 
-            DriveTrain.setTurnPIDValues(SmartDashboard.getNumber("TURN P", Calibration.getTurnP()),
-                    SmartDashboard.getNumber("TURN I", Calibration.getTurnI()),
-                    SmartDashboard.getNumber("TURN D", Calibration.getTurnD()),
-                    SmartDashboard.getNumber("TURN I ZONE", Calibration.getTurnIZone()),
-                    SmartDashboard.getNumber("TURN F", Calibration.getTurnF()));
+        //     DriveTrain.setTurnPIDValues(SmartDashboard.getNumber("TURN P", Calibration.getTurnP()),
+        //             SmartDashboard.getNumber("TURN I", Calibration.getTurnI()),
+        //             SmartDashboard.getNumber("TURN D", Calibration.getTurnD()),
+        //             SmartDashboard.getNumber("TURN I ZONE", Calibration.getTurnIZone()),
+        //             SmartDashboard.getNumber("TURN F", Calibration.getTurnF()));
 
-            DriveTrain.setDriveMMAccel((int) SmartDashboard.getNumber("DRIVE MM ACCEL", Calibration.getDT_MM_ACCEL()));
-            DriveTrain.setDriveMMVelocity(
-                    (int) SmartDashboard.getNumber("DRIVE MM VELOCITY", Calibration.getDT_MM_VELOCITY()));
-        }
+        //     DriveTrain.setDriveMMAccel((int) SmartDashboard.getNumber("DRIVE MM ACCEL", Calibration.getDT_MM_ACCEL()));
+        //     DriveTrain.setDriveMMVelocity(
+        //             (int) SmartDashboard.getNumber("DRIVE MM VELOCITY", Calibration.getDT_MM_VELOCITY()));
+        // }
 
-        SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
-        SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
-        SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
-        SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
-        SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
-        // SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
-        SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
-        SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
-        SmartDashboard.putNumber("Roll", RobotGyro.roll());
-        SmartDashboard.putNumber("Yaw", RobotGyro.yaw());
+        // SmartDashboard.putNumber("Position X", RobotGyro.getPosition().x);
+        // SmartDashboard.putNumber("Position Y", RobotGyro.getPosition().y);
+        // SmartDashboard.putNumber("Position Z", RobotGyro.getPosition().z);
+        // SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
+        // SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
+        // // SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
+        // SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
+        // SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
+        // SmartDashboard.putNumber("Roll", RobotGyro.roll());
+        // SmartDashboard.putNumber("Yaw", RobotGyro.yaw());
 
 
-        SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
-        SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
-        SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
+        // SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
+        // SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
+        // SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
  
         SmartDashboard.updateValues();
     }
@@ -463,14 +472,14 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoCP1CB();
             mAutoProgram.start();
             break;
-        case AutoCPlace2:
-            mAutoProgram = new AutoCPlace2();
-            mAutoProgram.start();
-            break;
-        case AutoCPlace3VROOOM:
-            mAutoProgram = new AutoPlace3VROOOM();
-            mAutoProgram.start();
-            break;
+        // case AutoCPlace2Wings:
+        //     mAutoProgram = new AutoPlace2Wings();
+        //     mAutoProgram.start();
+        //     break;
+        // case AutoCPlace3VROOOM:
+        //     mAutoProgram = new AutoPlace3VROOOM();
+        //     mAutoProgram.start();
+        //     break;
         }
         }
 
@@ -490,10 +499,10 @@ public class Robot extends TimedRobot {
         //autoChooser.addOption(ballPickUp, ballPickUp);
         autoChooser.addOption(AutoCommunity, AutoCommunity);
         autoChooser.addOption(AutoCPlace1, AutoCPlace1);
-        autoChooser.addOption(AutoCPlace2, AutoCPlace2);
+        autoChooser.addOption(AutoCPlace2Wings, AutoCPlace2Wings);
         autoChooser.setDefaultOption(AutoCP1CB, AutoCP1CB);
         autoChooser.addOption(AutoC_CB, AutoC_CB);
-        autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
+        // autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);
         
      
         SmartDashboard.putData("Auto Chose:", autoChooser);
@@ -556,7 +565,7 @@ public class Robot extends TimedRobot {
         if (!normalDrive) {
             adjustedAmt = rotateAmt * .20;
         } else {
-            if (Math.abs(rotateAmt) < .08) {
+            if (Math.abs(rotateAmt) < .1) {
                 adjustedAmt = 0;
             } else {
                 if (Math.abs(rotateAmt) < .5) {

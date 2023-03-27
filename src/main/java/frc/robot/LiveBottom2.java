@@ -73,6 +73,9 @@ public class LiveBottom2 {
     public static void backwardBasic() {
         liveBottomMotor.set(-.5);
     }
+    public static void stopBasic() {
+        liveBottomMotor.set(0);
+    }
     public static void smartPosition(double power){
         if(Math.abs(power) > .07) {
             desiredPosition = desiredPosition + (2 * power);
