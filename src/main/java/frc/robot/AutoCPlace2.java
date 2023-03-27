@@ -77,13 +77,13 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                 case 10:
                     Intake.stop();
                     Intake.retract();
-                    if(getAlliance() == Alliance.Red && getAutoPosition() == Position.LEFT)
+                    if(getAlliance() == Alliance.Red && robotPosition() == Position.LEFT)
                         driveInches(driveDistRedL, wheelAngleRedL, 0.9);
-                    if(getAlliance() == Alliance.Red && getAutoPosition() == Position.RIGHT)
+                    if(getAlliance() == Alliance.Red && robotPosition() == Position.RIGHT)
                         driveInches(driveDistRedR, wheelAngleRedR, 0.9);
-                    if(getAlliance() == Alliance.Blue && getAutoPosition() == Position.LEFT)
+                    if(getAlliance() == Alliance.Blue && robotPosition() == Position.LEFT)
                         driveInches(driveDistBlueL, wheelAngleBlueL, 0.9);
-                    if(getAlliance() == Alliance.Blue && getAutoPosition() == Position.RIGHT)
+                    if(getAlliance() == Alliance.Blue && robotPosition() == Position.RIGHT)
                         driveInches(driveDistBlueR, wheelAngleBlueR, 0.9);
                     setTimerAndAdvanceStep(4000);
                     break;
