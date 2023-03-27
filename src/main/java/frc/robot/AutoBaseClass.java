@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.libs.Timer;
 
 public abstract class AutoBaseClass {
@@ -185,6 +187,10 @@ public abstract class AutoBaseClass {
 
     public boolean timeExpired() {
         return mAutoTimer.timeExpired();
+    }
+
+    public Alliance getAlliance() {
+        return DriverStation.getAlliance();
     }
 
 }
