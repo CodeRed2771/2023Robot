@@ -1,10 +1,22 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 
 public class AutoCPlace2 extends AutoBaseClass{//didn't change much
+
+    double driveDistRedL = 0;
+    double driveDistRedR = 0;
+    double driveDistBlueL = 0;
+    double driveDistBlueR = 0;
+    int wheelAngleRedL = 0;
+    int wheelAngleRedR = 0;
+    int wheelAngleBlueL = 0;
+    int wheelAngleBlueR = 0;
+    int liftWait = 0;
+    double forwardDrive = 0;
 
 	public void start() {
 		super.start();
@@ -20,28 +32,31 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    Arm.presetShoulder(shoulderPresets.PLACING_LOW);
-                    setTimerAndAdvanceStep(300);
+                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
+                    Arm.presetExtend(extenderPresets.HIGH);
+                    setTimerAndAdvanceStep(liftWait);
                     break;
                 case 1:
-                    Arm.presetExtend(extenderPresets.LOW);
-                    setTimerAndAdvanceStep(1250);
+                    Claw.openClawTO();
+                    setTimerAndAdvanceStep(1200);
                     break;
                 case 2:
-                    Claw.flip();
-                    setTimerAndAdvanceStep(1250);
                     break;
                 case 3:
-                    break;
-                case 4:
                     Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(1250);
+                    setTimerAndAdvanceStep(2000);
                     break;
                 case 5:
                     break;
                 case 6:
-                    //driveInches(Math.sqrt(64+46656), Math.atan((8/216)), 1);
-                    driveInches((18*12)+8,0,1);
+                    if(getAlliance() == Alliance.Red && getAutoPosition() == Position.LEFT)
+                        driveInches(driveDistRedL, wheelAngleRedL, 0.9);
+                    if(getAlliance() == Alliance.Red && getAutoPosition() == Position.RIGHT)
+                        driveInches(driveDistRedR, wheelAngleRedR, 0.9);
+                    if(getAlliance() == Alliance.Blue && getAutoPosition() == Position.LEFT)
+                        driveInches(driveDistBlueL, wheelAngleBlueL, 0.9);
+                    if(getAlliance() == Alliance.Blue && getAutoPosition() == Position.RIGHT)
+                        driveInches(driveDistBlueR, wheelAngleBlueR, 0.9);
                     setTimerAndAdvanceStep(4000);
                     break;
                 case 7:
@@ -52,7 +67,7 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                     setStep(14);
                     Intake.deploy();
                     Intake.run(1);
-                    driveInches(12, 0, 0.5);
+                    driveInches(forwardDrive, 0, 0.5);
                     setTimerAndAdvanceStep(1500);
                     break;
                 case 9:
@@ -60,9 +75,16 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                         advanceStep();
                     break;
                 case 10:
-                    driveInches(Math.sqrt((230*230)+(24*24)), Math.atan(230/24), 1);
                     Intake.stop();
                     Intake.retract();
+                    if(getAlliance() == Alliance.Red && robotPosition() == Position.LEFT)
+                        driveInches(driveDistRedL, wheelAngleRedL, 0.9);
+                    if(getAlliance() == Alliance.Red && robotPosition() == Position.RIGHT)
+                        driveInches(driveDistRedR, wheelAngleRedR, 0.9);
+                    if(getAlliance() == Alliance.Blue && robotPosition() == Position.LEFT)
+                        driveInches(driveDistBlueL, wheelAngleBlueL, 0.9);
+                    if(getAlliance() == Alliance.Blue && robotPosition() == Position.RIGHT)
+                        driveInches(driveDistBlueR, wheelAngleBlueR, 0.9);
                     setTimerAndAdvanceStep(4000);
                     break;
                 case 11:
@@ -76,7 +98,7 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                 case 13:
                     break;
                 case 14:
-                    // LiveBottom.off();
+                    LiveBottom2.
                     stop();
                     break;
             }
