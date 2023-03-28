@@ -27,7 +27,7 @@ public class AutoRailRider extends AutoBaseClass{
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
                     //Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(1200);
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 1:
                     Claw.stopClawTO();
@@ -41,17 +41,17 @@ public class AutoRailRider extends AutoBaseClass{
                 case 4:
                     Claw.stopClawTO();
                     Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(500);
+                    setTimerAndAdvanceStep(100);
                     break;
                 case 5: 
                     break;
                 case 6:
                     if(DriverStation.getAlliance() == Alliance.Red) {
-                        driveInches(210, 12, 1);
+                        driveInches(200, 12, 1);
                     } else {
-                        driveInches(210, -12, 1);
+                        driveInches(200, -12, 1);
                     }
-                    setTimerAndAdvanceStep(5000);
+                    setTimerAndAdvanceStep(3000);
                     break;
                 case 7:
                     if(driveCompleted())
@@ -59,9 +59,9 @@ public class AutoRailRider extends AutoBaseClass{
                     break;
                 case 8:
                     if(DriverStation.getAlliance() == Alliance.Red) {
-                        driveInches(-25, 90, 0.8);
+                        driveInches(-25, 90, 1);
                     } else {
-                        driveInches(25, 90, 0.8);
+                        driveInches(25, 90, 1);
                     }
                     Intake.deploy();
                     Intake.run(1);
@@ -73,7 +73,7 @@ public class AutoRailRider extends AutoBaseClass{
                     }
                     break;
                 case 10:
-                    driveInches(12, 0, 0.6);
+                    driveInches(32, 0, 0.9);
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 11:
