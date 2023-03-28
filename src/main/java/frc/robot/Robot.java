@@ -102,7 +102,8 @@ public class Robot extends TimedRobot {
     final String AutoC_CB = "Auto Community Climb+Balance";
     final String AutoCP1CB = "Auto Community Place 1 Climb+Balance";
     final String AutoCPlace1 = "Auto Community Place 1";
-    final String AutoCPlace2Wings = "Auto Community Place 2 (WINGS)";
+    final String AutoCPlace2Wings = "Auto Community Place 2 (No Rail Ride)";
+    final String AutoCP2RailRider = "Auto Community Place 2 (Useing Rail Rider)";
     // final String AutoCPlace3VROOOM = "Auto Community Place 3 (TEST ONLY)";
 
     private double lastFWDvalue = 0; 
@@ -472,10 +473,14 @@ public class Robot extends TimedRobot {
             mAutoProgram = new AutoCP1CB();
             mAutoProgram.start();
             break;
-        // case AutoCPlace2Wings:
-        //     mAutoProgram = new AutoPlace2Wings();
-        //     mAutoProgram.start();
-        //     break;
+        case AutoCPlace2Wings:
+            mAutoProgram = new AutoPlace2Wings();
+            mAutoProgram.start();
+            break;
+        case AutoCP2RailRider:
+            mAutoProgram = new AutoRailRider();
+            mAutoProgram.start();
+            break;
         // case AutoCPlace3VROOOM:
         //     mAutoProgram = new AutoPlace3VROOOM();
         //     mAutoProgram.start();
@@ -499,7 +504,8 @@ public class Robot extends TimedRobot {
         //autoChooser.addOption(ballPickUp, ballPickUp);
         autoChooser.addOption(AutoCommunity, AutoCommunity);
         autoChooser.addOption(AutoCPlace1, AutoCPlace1);
-        autoChooser.addOption(AutoCPlace2Wings, AutoCPlace2Wings);
+        // autoChooser.addOption(AutoCPlace2Wings, AutoCPlace2Wings);
+        autoChooser.addOption(AutoCP2RailRider, AutoCP2RailRider);
         autoChooser.setDefaultOption(AutoCP1CB, AutoCP1CB);
         autoChooser.addOption(AutoC_CB, AutoC_CB);
         // autoChooser.addOption(AutoCPlace3VROOOM, AutoCPlace3VROOOM);

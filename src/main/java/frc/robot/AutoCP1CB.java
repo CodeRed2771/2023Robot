@@ -28,17 +28,19 @@ public class AutoCP1CB extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    Claw.resetToCloseClaw();
+                    // Claw.resetToCloseClaw();
+                    Claw.stopClawTO();
                     setStep(2);
-                    break;
+                break;
                 case 1:
                     break;
                 case 2:
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(1000);
+                    setTimerAndAdvanceStep(1200);
                     break;
                 case 3:
+                    Claw.stopClawTO();
                     break;
                 case 4:
                     // Claw.stopClawTO();
@@ -55,7 +57,7 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 7:
                     break;
                 case 8:
-                    Claw.setClawPosition(ClawPresets.OPEN);
+                    Claw.setClawPosition(ClawPresets.CLOSE);
                     setTimerAndAdvanceStep(1000);
                     break;
                 case 9:
@@ -69,11 +71,10 @@ public class AutoCP1CB extends AutoBaseClass{
                     break;
                 case 12:
                     driveInches(170, 0, 0.65);
-                    setTimerAndAdvanceStep(4500);
+                    setTimerAndAdvanceStep(4000);
                     break;
                 case 13:
                     if(driveCompleted())
-                        // advanceStep();
                         setStep(16);
                     break;
                 case 14:
