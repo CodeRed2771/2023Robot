@@ -49,15 +49,16 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                 case 5:
                     break;
                 case 6:
-                    if(getAlliance() == Alliance.Red && getAutoPosition() == Position.LEFT)
-                        driveInches(driveDistRedL, wheelAngleRedL, 0.9);
-                    if(getAlliance() == Alliance.Red && getAutoPosition() == Position.RIGHT)
-                        driveInches(driveDistRedR, wheelAngleRedR, 0.9);
-                    if(getAlliance() == Alliance.Blue && getAutoPosition() == Position.LEFT)
-                        driveInches(driveDistBlueL, wheelAngleBlueL, 0.9);
-                    if(getAlliance() == Alliance.Blue && getAutoPosition() == Position.RIGHT)
-                        driveInches(driveDistBlueR, wheelAngleBlueR, 0.9);
-                    setTimerAndAdvanceStep(4000);
+                    // commented out due to errors 3/28 RLB
+                    // if(getAlliance() == Alliance.Red && getAutoPosition() == Position.LEFT)
+                    //     driveInches(driveDistRedL, wheelAngleRedL, 0.9);
+                    // if(getAlliance() == Alliance.Red && getAutoPosition() == Position.RIGHT)
+                    //     driveInches(driveDistRedR, wheelAngleRedR, 0.9);
+                    // if(getAlliance() == Alliance.Blue && getAutoPosition() == Position.LEFT)
+                    //     driveInches(driveDistBlueL, wheelAngleBlueL, 0.9);
+                    // if(getAlliance() == Alliance.Blue && getAutoPosition() == Position.RIGHT)
+                    //     driveInches(driveDistBlueR, wheelAngleBlueR, 0.9);
+                    // setTimerAndAdvanceStep(4000);
                     break;
                 case 7:
                     if(driveCompleted())
@@ -98,8 +99,8 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                 case 13:
                     break;
                 case 14:
-                    LiveBottom2.
-                    stop();
+                    //updated to stopbasic() 2/28 RLB
+                    LiveBottom2.stopBasic();
                     break;
             }
         }

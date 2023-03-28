@@ -377,12 +377,13 @@ public class AdvancedArm {
     /**
      * @deprecated use {@code zero()} instead
      */
-    public static void zeroFast(){
-        if(!shoulderLimitSwitch.isPressed()){
-            zeroFast = true;
-            zeroActive = true;
-            }
-    }
+    // commented out 3/28 RLB
+    // public static void zeroFast(){
+    //     if(!shoulderLimitSwitch.isPressed()){
+    //         zeroFast = true;
+    //         zeroActive = true;
+    //         }
+    // }
     public static void zeroCancel(){
         zeroFast = false;
         zeroActive = false;

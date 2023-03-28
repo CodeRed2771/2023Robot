@@ -86,8 +86,9 @@ The available preset values are:<p>
         PLACING_HIGH
     }
 
-    private static int RED_THRESHOLD = 800;
-    private static int BLUE_THRESHOLD = 500;
+    // Updated thresholds 3/28 RLB
+    private static int RED_THRESHOLD = 3000; 
+    private static int BLUE_THRESHOLD = 1500;
 
     static SendableChooser<Boolean> manShoulder;
 
