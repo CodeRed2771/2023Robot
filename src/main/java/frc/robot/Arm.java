@@ -205,7 +205,7 @@ The available preset values are:<p>
     public static void tick() {
         if (extendAutoCalibrateMode) {
             extendOverrideMode = true;
-            extendRequestedPos = extendRequestedPos - 3;
+            extendRequestedPos = extendRequestedPos - 1;
         }
         extendRequestedPos = validateExtenderRequest(extendRequestedPos);
 
