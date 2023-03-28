@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
+import frc.robot.Claw.ClawPresets;
 
 public class AutoP1CB extends AutoBaseClass{
     private int counter = 0;
@@ -35,12 +36,12 @@ public class AutoP1CB extends AutoBaseClass{
                     break;
                 case 2:
                     Claw.stopClawTO();
-                    Claw.flip();
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(4800);
+                    setTimerAndAdvanceStep(1200);
                     break;
                 case 3:
+                    Claw.stopClawTO();
                     break;
                 case 4:
                     setStep(8);
@@ -56,8 +57,8 @@ public class AutoP1CB extends AutoBaseClass{
                 case 7:
                     break;
                 case 8:
-                    Claw.openClawTO();
-                    setTimerAndAdvanceStep(1800);
+                    Claw.setClawPosition(ClawPresets.CLOSE);
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 9:
                     break;
@@ -74,7 +75,6 @@ public class AutoP1CB extends AutoBaseClass{
                     break;
                 case 13:
                     if(driveCompleted())
-                        // advanceStep();
                         setStep(18);
                     break;
                 case 14:

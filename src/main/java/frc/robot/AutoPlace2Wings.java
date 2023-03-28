@@ -12,8 +12,8 @@ import frc.robot.Claw.ClawPresets;
 public class AutoPlace2Wings extends AutoBaseClass{
 
     byte positionMultiplier = 1;
-    boolean isNegAngle = false;
-    boolean isAngled = false;
+    static boolean isNegAngle = false;
+    static boolean isAngled = false;
 
 	public void start() {
 		super.start();
@@ -31,16 +31,19 @@ public class AutoPlace2Wings extends AutoBaseClass{
             SmartDashboard.putBoolean("Robot is needs a negative angle in Auto", isNegAngle);
             switch (getCurrentStep()) {
                 case 0:
-                    Claw.resetToCloseClaw();
+                    isAngled = false;
+                    isNegAngle = false;
+                    Claw.stopClawTO();
                     Claw.setClawPosition(ClawPresets.CLOSE);
                     advanceStep();
                     break;
                 case 1:
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(1000);
+                    setTimerAndAdvanceStep(1200);
                     break;
                 case 2:
+                    Claw.stopClawTO();
                     break;
                 case 3:
                     Claw.setClawPosition(ClawPresets.OPEN);
@@ -49,7 +52,6 @@ public class AutoPlace2Wings extends AutoBaseClass{
                 case 4:
                     break;
                 case 5:
-                    // Claw.stopClawTO();
                     Arm.presetExtend(extenderPresets.RETRACTED);
                     setTimerAndAdvanceStep(500);
                     break;
@@ -69,6 +71,8 @@ public class AutoPlace2Wings extends AutoBaseClass{
                         driveInches(124, 0, .8);
                         isAngled =false;
                     }
+                    SmartDashboard.putBoolean("The Robot Believes an Angled Drive is required", isAngled);
+                    SmartDashboard.putBoolean("The Robot Beleives an Negative Angle is Required", isNegAngle);
                     setTimerAndAdvanceStep(4000);
                     break;
                 case 7:

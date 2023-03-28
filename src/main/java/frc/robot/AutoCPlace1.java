@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
+import frc.robot.Claw.ClawPresets;
 
 public class AutoCPlace1 extends AutoBaseClass{
 
@@ -27,13 +28,13 @@ public class AutoCPlace1 extends AutoBaseClass{
                     break;
                 case 2:
                     Claw.stopClawTO();
-                    Claw.flip();
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
                     //Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(3500);
+                    setTimerAndAdvanceStep(1200);
                     break;
                 case 3:
+                    Claw.stopClawTO();
                     break;
                 case 4:
                     setStep(8);
@@ -49,7 +50,7 @@ public class AutoCPlace1 extends AutoBaseClass{
                 case 7:
                     break;
                 case 8:
-                    Claw.openClawTO();
+                    Claw.setClawPosition(ClawPresets.CLOSE);
                     setTimerAndAdvanceStep(1800);
                     break;
                 case 9:
@@ -57,7 +58,7 @@ public class AutoCPlace1 extends AutoBaseClass{
                 case 10:
                     Claw.stopClawTO();
                     Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(2000);
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 11:
                     break;
