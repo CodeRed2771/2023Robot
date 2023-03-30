@@ -268,6 +268,7 @@ public class Robot extends TimedRobot {
             else{
                 Intake.deploy();
                 Intake.run(1);
+                LiveBottom2.backwardBasic();
             }
         } else
             Intake.stop();

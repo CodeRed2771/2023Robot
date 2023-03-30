@@ -67,11 +67,11 @@ public class LiveBottom2 {
     }
 
     public static void forwardBasic() {
-        liveBottomMotor.set(.5);
+        liveBottomMotor.set(.15);
     }
     
     public static void backwardBasic() {
-        liveBottomMotor.set(-.5);
+        liveBottomMotor.set(-.15);
     }
     public static void stopBasic() {
         liveBottomMotor.set(0);
