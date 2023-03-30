@@ -25,7 +25,7 @@ public class Claw {
     private static final double MIN_WRIST_POSITION = 0;
     private static final double MAX_WRIST_POSITION = .56;
 
-    private static final double CLAW_FULLY_OPEN = 85;
+    private static final double CLAW_FULLY_OPEN = 94.5;
     private static final double CLAW_FULLY_CLOSED = 100;
     private static final double CONE_POSITION = 100;
 
