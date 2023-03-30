@@ -180,9 +180,14 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         if (gamepad2.getDPadLeft()){
-            Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
-            Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
+            Arm.presetShoulder(shoulderPresets.PLACING_LOW);
+            Arm.presetExtend(extenderPresets.LOW);
         }
+        if (gamepad2.getDPadRight()){
+            Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
+            Arm.presetExtend(extenderPresets.HIGH);
+        }
+
         
         if(gamepad2.getLeftBumper()) {
             if (gamepad2.getAButton()){
@@ -276,10 +281,12 @@ public class Robot extends TimedRobot {
             Intake.retract();
         }
 
-        if (gamepad2.getStartButton()) {//test only
-            mAutoProgram.stop();
-            mAutoProgram = new AutoInRobotPickup(); 
-            mAutoProgram.start();
+        if (gamepad2.getStartButton()) {
+            // mAutoProgram.stop();
+            // mAutoProgram = new AutoInRobotPickup(); 
+            // mAutoProgram.start();
+            Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
+            Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
         }
 
         if (gamepad1.getBButton()){

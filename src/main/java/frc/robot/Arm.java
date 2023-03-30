@@ -287,7 +287,7 @@ The available preset values are:<p>
                 extendRequestedPos = MAX_INSIDE_ROBOT_EXTENSION;
                 break;
             case LOW:
-                extendRequestedPos = 24.3;//??
+                extendRequestedPos = 45.86;
                 break;
             case PICKUP:
                 extendRequestedPos = 4.5;//??
@@ -406,8 +406,8 @@ The available preset values are:<p>
                 MAX_SHOULDER_SPEED=0.7;
                 break;
             case PLACING_LOW:
-                shoulderRequestedPos = 9;//??
-                MAX_SHOULDER_SPEED=0.55;
+                shoulderRequestedPos = 2.3;//??
+                MAX_SHOULDER_SPEED=0.65;
                 break;
             case PLACING_HIGH:
                 shoulderRequestedPos = 0;//??

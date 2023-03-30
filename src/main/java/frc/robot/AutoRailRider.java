@@ -27,7 +27,7 @@ public class AutoRailRider extends AutoBaseClass{
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
                     //Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(1000);
+                    setTimerAndAdvanceStep(1200);
                     break;
                 case 1:
                     Claw.stopClawTO();
@@ -43,15 +43,15 @@ public class AutoRailRider extends AutoBaseClass{
                     Arm.presetExtend(extenderPresets.RETRACTED);
                     setTimerAndAdvanceStep(100);
                     break;
-                case 5: 
+                case 5:
                     break;
                 case 6:
                     if(DriverStation.getAlliance() == Alliance.Red) {
-                        driveInches(200, 12, 1);
+                        driveInches(217, 12, 1);
                     } else {
-                        driveInches(200, -12, 1);
+                        driveInches(217, -12, 1);
                     }
-                    setTimerAndAdvanceStep(3000);
+                    setTimerAndAdvanceStep(3500);
                     break;
                 case 7:
                     if(driveCompleted())
@@ -82,8 +82,6 @@ public class AutoRailRider extends AutoBaseClass{
                     }
                     break;
                 case 12:
-                    Intake.retract();
-                    Intake.stop();
                     if(DriverStation.getAlliance() == Alliance.Red) {
                         driveInches(-240, -12, 1);
                     } else {
@@ -97,6 +95,8 @@ public class AutoRailRider extends AutoBaseClass{
                     }
                     break;
                 case 14:
+                    Intake.retract();
+                    Intake.stop();
                     Intake.liveBottomIntake();
                     LiveBottom2.forwardBasic();
                     setTimerAndAdvanceStep(2500);
@@ -104,7 +104,7 @@ public class AutoRailRider extends AutoBaseClass{
                 case 15:
                     break;
                 case 16:
-                    Intake.liveBottomIntake();
+                    Intake.liveBottomIntakeStop();
                     LiveBottom2.stopBasic();
                     stop();
                     break;
