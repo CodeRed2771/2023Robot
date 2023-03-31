@@ -179,21 +179,27 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        if (gamepad2.getDPadLeft()){
+        if (gamepad2.getDPadLeftRestricted()){
             Arm.presetShoulder(shoulderPresets.PLACING_LOW);
             Arm.presetExtend(extenderPresets.LOW);
         }
-        if (gamepad2.getDPadRight()){
+        if (gamepad2.getDPadRightRestricted()){
             Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
             Arm.presetExtend(extenderPresets.HIGH);
         }
 
         
         if(gamepad2.getLeftBumper()) {
-            if (gamepad2.getAButton()){
-                Claw.openClawTO();
-            } else if (gamepad2.getBButton()) 
-                Claw.closeClawTO();
+            // if (gamepad2.getAButton()){
+            //     Claw.closeClawTO();
+            // } else if (gamepad2.getBButton()) {
+            //     Claw.openClawTO();
+            // } else {
+            //     Claw.stopClawTO();
+            // }
+            if(gamepad2.getAButton()) {
+                Claw.setClawPosition(ClawPresets.CONE);
+            }
         } else {
             if (gamepad2.getAButton()){
                 Claw.setClawPosition(ClawPresets.OPEN);
@@ -221,7 +227,7 @@ public class Robot extends TimedRobot {
         //     mAutoProgram.start();
         // }
 
-        if(gamepad1.getDPadUp() || gamepad2.getDPadUp()) {
+        if(gamepad1.getDPadUpRestricted() || gamepad2.getDPadUpRestricted()) {
             // if(useLiveBottom2){
             //     LiveBottom2.forward();
             // }else{
@@ -229,7 +235,7 @@ public class Robot extends TimedRobot {
             // }
             LiveBottom2.forwardBasic();
         }
-        else if (gamepad1.getDPadDown() || gamepad2.getDPadDown())  {
+        else if (gamepad1.getDPadDownRestricted() || gamepad2.getDPadDownRestricted())  {
             // if(useLiveBottom2){
             //     LiveBottom2.backward();
             // }else{
@@ -431,7 +437,7 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
         // SmartDashboard.putNumber("Target Space Stability Test", VisionPlacer.botPoseLength());
         // SmartDashboard.putNumber("Vision X", VisionPlacer.getXAngleOffset());
- 
+            // SmartDashboard.putBoolean("Gamepad 2 Left Restricted", gamepad3.getDPadUpRestricted());
         SmartDashboard.updateValues();
     }
 
@@ -486,7 +492,7 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
             break;
         case AutoCP2RailRider:
-            mAutoProgram = new AutoRailRider();
+            mAutoProgram = new AutoRailRider2();
             mAutoProgram.start();
             break;
         // case AutoCPlace3VROOOM:

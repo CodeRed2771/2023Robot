@@ -100,6 +100,23 @@ public class Gamepad extends XboxController {
         return(dPadValue == 180) || (dPadValue == 225) || (dPadValue == 135);
     }
 
+    public boolean getDPadLeftRestricted() {
+        int dPadValue = getPOV();
+        return(dPadValue == 270);
+    }
+    public boolean getDPadRightRestricted() {
+        int dPadValue = getPOV();
+        return(dPadValue == 90);
+    }
+    public boolean getDPadUpRestricted() {
+        int dPadValue = getPOV();
+        return(dPadValue == 0);
+    }
+    public boolean getDPadDownRestricted() {
+        int dPadValue = getPOV();
+        return(dPadValue == 180);
+    }
+
     /**
      * Gets the state of the Start button
      * 

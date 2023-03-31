@@ -25,9 +25,9 @@ public class Claw {
     private static final double MIN_WRIST_POSITION = 0;
     private static final double MAX_WRIST_POSITION = .56;
 
-    private static final double CLAW_FULLY_OPEN = 94.5;
-    private static final double CLAW_FULLY_CLOSED = 100;
-    private static final double CONE_POSITION = 100;
+    private static final double CLAW_FULLY_OPEN = 91;
+    private static final double CLAW_FULLY_CLOSED = 99;
+    private static final double CONE_POSITION = 94;
 
     // private static final double CONE_PICKUP = .035;
     // private static final double CUBE_PICKUP = .02;
@@ -43,7 +43,8 @@ public class Claw {
     public static enum ClawPresets{
         OPEN,
         CLOSE,
-        STOP
+        STOP,
+        CONE
     }
 
     private static clawCalls clawCurrentCall = clawCalls.UNPOWERED;
@@ -134,13 +135,13 @@ public class Claw {
     // }
     
     public static void openClawTO() {
-        if(getCurrentClawPos() < CLAW_FULLY_OPEN) {
+        if(getCurrentClawPos() < CLAW_FULLY_CLOSED) {
             clawMotor.set(1);
         }
     }
     
     public static void closeClawTO() {
-        if(getCurrentClawPos() > CLAW_FULLY_CLOSED) {
+        if(getCurrentClawPos() > CLAW_FULLY_OPEN) {
             clawMotor.set(-1);
         }
     }
@@ -202,6 +203,9 @@ public class Claw {
                 break;
             case STOP:
                 clawDesiredPosition = getCurrentClawPos();
+                break;
+            case CONE:
+                clawDesiredPosition =  CONE_POSITION;
                 break;
             
         }

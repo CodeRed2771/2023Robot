@@ -136,6 +136,7 @@ The available preset values are:<p>
     private static ColorSensorV3 armColorSensor;
 
     public static void init() {
+        // extendAutoCalibrateMode = false;
         SmartDashboard.putNumber("shoulder test", .395);
         manShoulder = new SendableChooser<Boolean>();
         manShoulder.setDefaultOption("False", false);
@@ -203,6 +204,7 @@ The available preset values are:<p>
     }
 
     public static void tick() {
+        // SmartDashboard.putBoolean("Extend Calibrating", extendAutoCalibrateMode);
         if (extendAutoCalibrateMode) {
             extendOverrideMode = true;
             extendRequestedPos = extendRequestedPos - 1;
@@ -267,7 +269,7 @@ The available preset values are:<p>
 
 
     public static void presetExtend(extenderPresets position) {
-        
+        extendAutoCalibrateMode = false;
         extendOverrideMode = false;
 
         switch(position) {
@@ -419,10 +421,10 @@ The available preset values are:<p>
     public static void shoulderMove(double pwr) {
         
         if (Math.abs(pwr)>.07) {
-            // if(extendRequestedPos > MAX_GROUND_LEVEL_EXTENSION) {
-            //     // reduced speed when arm is extended
-            //     pwr = pwr * .1;
-            // }
+            if(extendRequestedPos > MAX_GROUND_LEVEL_EXTENSION) {
+                // reduced speed when arm is extended
+                pwr = pwr * .3;
+            }
             shoulderRequestedPos = shoulderRequestedPos + (.2 * -pwr);
         }
         shoulderOverrideMode = false;

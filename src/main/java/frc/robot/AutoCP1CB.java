@@ -29,18 +29,19 @@ public class AutoCP1CB extends AutoBaseClass{
             switch (getCurrentStep()) {
                 case 0:
                     // Claw.resetToCloseClaw();
-                    Claw.stopClawTO();
+                    // Claw.stopClawTO();
                     setStep(2);
-                break;
+                    break;
                 case 1:
                     break;
                 case 2:
+                    Claw.setClawPosition(ClawPresets.OPEN);
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(1500);
+                    setTimerAndAdvanceStep(1700);
                     break;
                 case 3:
-                    Claw.stopClawTO();
+                    // Claw.stopClawTO();
                     break;
                 case 4:
                     // Claw.stopClawTO();
