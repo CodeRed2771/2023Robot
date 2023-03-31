@@ -46,18 +46,27 @@ public class AutoRailRider extends AutoBaseClass{
                 case 5:
                     break;
                 case 6:
-                    if(DriverStation.getAlliance() == Alliance.Red) {
-                        driveInches(217, 12, 1);
-                    } else {
-                        driveInches(217, -12, 1);
-                    }
+                    driveInches(205, 0, 1);
                     setTimerAndAdvanceStep(3500);
                     break;
                 case 7:
+                    if(driveCompleted()) {
+                        advanceStep();
+                    }
+                    break;
+                case 8:
+                    if(DriverStation.getAlliance() == Alliance.Red) {
+                        driveInches(-13, 90, 1);
+                    } else {
+                        driveInches(13, 90, 1);
+                    }
+                    setTimerAndAdvanceStep(3500);
+                    break;
+                case 9:
                     if(driveCompleted())
                         advanceStep();
                     break;
-                case 8:
+                case 10:
                     if(DriverStation.getAlliance() == Alliance.Red) {
                         driveInches(-25, 90, 1);
                     } else {
@@ -67,21 +76,21 @@ public class AutoRailRider extends AutoBaseClass{
                     Intake.run(1);
                     setTimerAndAdvanceStep(2000);
                     break;
-                case 9:
-                    if(driveCompleted()) {
-                        advanceStep();
-                    }
-                    break;
-                case 10:
-                    driveInches(32, 0, 0.9);
-                    setTimerAndAdvanceStep(1250);
-                    break;
                 case 11:
                     if(driveCompleted()) {
                         advanceStep();
                     }
                     break;
                 case 12:
+                    driveInches(32, 0, 0.9);
+                    setTimerAndAdvanceStep(1250);
+                    break;
+                case 13:
+                    if(driveCompleted()) {
+                        advanceStep();
+                    }
+                    break;
+                case 14:
                     if(DriverStation.getAlliance() == Alliance.Red) {
                         driveInches(-240, -12, 1);
                     } else {
@@ -89,21 +98,21 @@ public class AutoRailRider extends AutoBaseClass{
                     }
                     setTimerAndAdvanceStep(3500);
                 break;
-                case 13:
+                case 15:
                     if(driveCompleted()) {
                         advanceStep();
                     }
                     break;
-                case 14:
+                case 16:
                     Intake.retract();
                     Intake.stop();
                     Intake.liveBottomIntake();
                     LiveBottom2.forwardBasic();
                     setTimerAndAdvanceStep(2500);
                     break;
-                case 15:
+                case 17:
                     break;
-                case 16:
+                case 18:
                     Intake.liveBottomIntakeStop();
                     LiveBottom2.stopBasic();
                     stop();
