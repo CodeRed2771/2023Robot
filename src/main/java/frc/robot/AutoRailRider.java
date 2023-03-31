@@ -27,7 +27,7 @@ public class AutoRailRider extends AutoBaseClass{
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
                     //Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(1200);
+                    setTimerAndAdvanceStep(1500);
                     break;
                 case 1:
                     Claw.stopClawTO();
