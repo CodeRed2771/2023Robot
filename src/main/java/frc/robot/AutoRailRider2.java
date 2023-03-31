@@ -55,9 +55,9 @@ public class AutoRailRider2 extends AutoBaseClass{
                     break;
                 case 8:
                     if(DriverStation.getAlliance() == Alliance.Red) {
-                        driveInches(145, 15, 1);
+                        driveInches(132, 15, 1);
                     } else {
-                        driveInches(145, -15, 1);
+                        driveInches(132, -15, 1);
                     }
                     setTimerAndAdvanceStep(3500);
                     break;
@@ -91,9 +91,9 @@ public class AutoRailRider2 extends AutoBaseClass{
                     break;
                 case 14:
                     if(DriverStation.getAlliance() == Alliance.Red) {
-                        driveInches(-240, -12, 1);
+                        driveInches(-252, -12, 1);
                     } else {
-                        driveInches(-240, 12, 1);
+                        driveInches(-252, 12, 1);
                     }
                     setTimerAndAdvanceStep(3500);
                 break;

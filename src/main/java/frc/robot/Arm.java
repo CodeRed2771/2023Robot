@@ -107,7 +107,7 @@ The available preset values are:<p>
     //                                 Colson wheels - .489" of extension per revolution
     //                                 (that number is just to give these next numbers some context)
     //                                 (these numbers are still in ticks (motor revolutions)
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 13; 
+    private static final double MAX_INSIDE_ROBOT_EXTENSION = 9; 
     private static final double MAX_GROUND_LEVEL_EXTENSION = 18;
     private static final double MAX_IN_AIR_EXTENSION = 101; 
     
@@ -295,7 +295,7 @@ The available preset values are:<p>
                 extendRequestedPos = 4.5;//??
                 break;
             case HIGH:
-                extendRequestedPos = MAX_IN_AIR_EXTENSION-12;//??
+                extendRequestedPos = MAX_IN_AIR_EXTENSION-8;//??
                 break;
         }
     }

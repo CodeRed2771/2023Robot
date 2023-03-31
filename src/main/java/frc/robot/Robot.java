@@ -428,10 +428,10 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putNumber("Velocity X", RobotGyro.velocityX());
         // SmartDashboard.putNumber("Velocity Y", RobotGyro.velocityY());
         // // SmartDashboard.putNumber("Velocity Z", RobotGyro.velocityZ());
-        // SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
-        // SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
-        // SmartDashboard.putNumber("Roll", RobotGyro.roll());
-        // SmartDashboard.putNumber("Yaw", RobotGyro.yaw());
+        SmartDashboard.putNumber("Pitch", RobotGyro.pitch());
+        SmartDashboard.putNumber("Pitch Raw", RobotGyro.pitch_raw());
+        SmartDashboard.putNumber("Roll", RobotGyro.roll());
+        SmartDashboard.putNumber("Yaw", RobotGyro.yaw());
 
 
         // SmartDashboard.putNumber("Potentionmeter Raw Reading", Claw.getCurrentClawPos());
