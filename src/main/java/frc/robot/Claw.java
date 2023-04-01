@@ -25,9 +25,11 @@ public class Claw {
     private static final double MIN_WRIST_POSITION = 0;
     private static final double MAX_WRIST_POSITION = .56;
 
-    private static final double CLAW_FULLY_OPEN = 91;
+    private static final double CLAW_FULLY_OPEN = 90;
     private static final double CLAW_FULLY_CLOSED = 99;
     private static final double CONE_POSITION = 94;
+
+    static boolean overrideMode = false;
 
     // private static final double CONE_PICKUP = .035;
     // private static final double CUBE_PICKUP = .02;
@@ -50,6 +52,7 @@ public class Claw {
     private static clawCalls clawCurrentCall = clawCalls.UNPOWERED;
 
     public static void init() {
+        overrideMode = false;
         analogInput = new AnalogInput(Wiring.POTENTIOMETER_CHANNEL);
         analogInput.setAverageBits(2);
         potentiometer = new AnalogPotentiometer(analogInput, 180, 0);
@@ -66,17 +69,19 @@ public class Claw {
     }
 
     public static void tick() {
-        checkClawLimits();
-        switch (direction) {
-            case 1:
-                clawClose();
-                break;
-            case 0:
-                clawStop();
-                break;
-            case -1:
-                clawOpen();
-                break;
+        if (!overrideMode){
+            checkClawLimits();
+            switch (direction) {
+                case 1:
+                    clawClose();
+                    break;
+                case 0:
+                    clawStop();
+                    break;
+                case -1:
+                    clawOpen();
+                    break;
+            }
         }
         SmartDashboard.putNumber("Claw Direction", direction);
         SmartDashboard.putNumber("Claw Position", getCurrentClawPos());
@@ -135,19 +140,24 @@ public class Claw {
     // }
     
     public static void openClawTO() {
+        overrideMode = true;
         if(getCurrentClawPos() < CLAW_FULLY_CLOSED) {
             clawMotor.set(1);
+            clawDesiredPosition = getCurrentClawPos();
         }
     }
     
     public static void closeClawTO() {
+        overrideMode = true;
         if(getCurrentClawPos() > CLAW_FULLY_OPEN) {
             clawMotor.set(-1);
+            clawDesiredPosition = getCurrentClawPos();
         }
     }
 
     public static void stopClawTO() {
         clawMotor.set(0);
+        overrideMode = false;
     }
 
     public static void  resetToCloseClaw() {
