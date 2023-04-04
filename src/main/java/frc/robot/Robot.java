@@ -267,8 +267,12 @@ public class Robot extends TimedRobot {
         }
 
         if (gamepad2.getYButton()) {
-            Arm.presetShoulder(shoulderPresets.GATE_MODE);
-            Arm.presetExtend(extenderPresets.GATE_MODE);
+            if(Arm.getExtenderPosition() > 34) {
+                Arm.presetExtend(extenderPresets.GATE_MODE);
+            } else {
+                Arm.presetShoulder(shoulderPresets.GATE_MODE);
+                Arm.presetExtend(extenderPresets.GATE_MODE);
+            }
         }
  
         if (gamepad2.getRightTriggerAxis()>.2 || gamepad1.getRightTriggerAxis()>.2){

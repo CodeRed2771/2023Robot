@@ -107,7 +107,7 @@ The available preset values are:<p>
     //                                 Colson wheels - .489" of extension per revolution
     //                                 (that number is just to give these next numbers some context)
     //                                 (these numbers are still in ticks (motor revolutions)
-    private static final double MAX_INSIDE_ROBOT_EXTENSION = 9; 
+    public static final double MAX_INSIDE_ROBOT_EXTENSION = 8; 
     private static final double MAX_GROUND_LEVEL_EXTENSION = 18;
     private static final double MAX_IN_AIR_EXTENSION = 101; 
     
@@ -393,7 +393,7 @@ The available preset values are:<p>
                 break;
             case GATE_MODE:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 12.3;
+                shoulderRequestedPos = 13.2;
                 break;
             case PICKUP_CONE:
                 MAX_SHOULDER_SPEED=1;
@@ -516,5 +516,9 @@ The available preset values are:<p>
 
     public static double getTicksToAbsEncoderRatio(){
         return ((SHOULDER_ABS_MAX_UP-SHOULDER_ABS_MAX_DOWN)/(SHOULDER_START_POSITION-SHOULDER_MAX_POSITION));
+    }
+
+    public static double getExtenderPosition() {
+        return extendMotor.getEncoder().getPosition();
     }
 }
