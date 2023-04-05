@@ -12,7 +12,7 @@ import java.lang.reflect.Array;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.AdvancedArm.extenderPresets;
+import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
 
 public class AutoAlignToDoubleSS extends AutoBaseClass {
@@ -82,6 +82,10 @@ public class AutoAlignToDoubleSS extends AutoBaseClass {
                     }
                     break;
                 case 5:
+                    
+                case 6:
+                    
+                case 7:
                     stop();
                     break;
             }
