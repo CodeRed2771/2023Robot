@@ -1,3 +1,0 @@
-[submodule "src/main/java/frc/robot/SubModules/Scheduler"]
-	path = src/main/java/frc/robot/SubModules/Scheduler
-	url = https://github.com/CodeRed2771/Scheduler.git
