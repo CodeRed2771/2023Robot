@@ -12,6 +12,7 @@ public abstract class AutoBaseClass {
     private boolean mAutoPlace = false;
     public int placeNumInAuto = 2;
     private AutoType autoMode;
+    // private double positionDesired;
 
     public static enum AutoType {
         NonDriveAuto,
@@ -75,6 +76,9 @@ public abstract class AutoBaseClass {
        mAutoPlace = autoPlace;
        start(); 
     }
+    public void start(double desiredPosition){
+        start(); 
+     }
 
     public void stop() {
         mIsRunning = false;

@@ -12,6 +12,7 @@ public class Wiring {
 	public static final int INTAKE_MOTOR_ID = 11;
 	public static final int SHOULDER_MOTOR = 12;
 	public static final int BISTABLE_MOTOR = 13;
+	public static final int SHOULDER_MOTOR_2 = 14; 
 
 	// PCM Ports
 	public static final int INTAKE_SOLENOID_STOW = 13;

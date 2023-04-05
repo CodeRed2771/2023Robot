@@ -180,15 +180,21 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         if (gamepad2.getDPadLeftRestricted()){
-            Arm.presetShoulder(shoulderPresets.PLACING_LOW);
-            Arm.presetExtend(extenderPresets.LOW);
+            // Arm.presetShoulder(shoulderPresets.PLACING_LOW);
+            // Arm.presetExtend(extenderPresets.LOW);
+            Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
+            Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
         }
         if (gamepad2.getDPadRightRestricted()){
             Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
             Arm.presetExtend(extenderPresets.HIGH);
         }
 
-        
+        // if (gamepad1.getXButton()) {
+        //     Arm.shoulderMotor2.set(.2);
+        // } else
+        // Arm.shoulderMotor2.set(0);
+
         if(gamepad2.getLeftBumper()) {
             // if (gamepad2.getAButton()){
             //     Claw.closeClawTO();
@@ -267,7 +273,7 @@ public class Robot extends TimedRobot {
         }
 
         if (gamepad2.getYButton()) {
-            if(Arm.getExtenderPosition() > 34) {
+            if(Arm.getExtenderPosition() > 12) {
                 Arm.presetExtend(extenderPresets.GATE_MODE);
             } else {
                 Arm.presetShoulder(shoulderPresets.GATE_MODE);
@@ -296,8 +302,10 @@ public class Robot extends TimedRobot {
             // mAutoProgram.stop();
             // mAutoProgram = new AutoInRobotPickup(); 
             // mAutoProgram.start();
-            Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
-            Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
+            // Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
+            // Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
+            Arm.presetShoulder(shoulderPresets.PLACING_LOW);
+            Arm.presetExtend(extenderPresets.LOW);
         }
 
         if (gamepad1.getBButton()){
