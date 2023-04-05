@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.AutoBaseClass.AutoType;
 
 
 /*
@@ -93,6 +94,7 @@ The available preset values are:<p>
     static SendableChooser<Boolean> manShoulder;
 
     private static CANSparkMax shoulderMotor;
+    public static CANSparkMax shoulderMotor2;
     private static CANSparkMax extendMotor;
     private static SparkMaxPIDController shoulderPID;
     private static SparkMaxPIDController extendPID;
@@ -121,7 +123,7 @@ The available preset values are:<p>
     private static double SHOULDER_START_POSITION = 0;
     private static double SHOULDER_GROUND_POSITION = 6.2; 
     private static double SHOULDER_IN_ROBOT_POSITION = 8.5; 
-    private final static double SHOULDER_MAX_POSITION = 19;
+    private final static double SHOULDER_MAX_POSITION = 14;
 
     private static double MAX_SHOULDER_SPEED = 0;
 
@@ -132,10 +134,13 @@ The available preset values are:<p>
     private static boolean extendOverrideMode = false;
     private static boolean shoulderOverrideMode = false;
     private static boolean extendAutoCalibrateMode = false;
+    public static AutoBaseClass autoProgram;
 
     private static ColorSensorV3 armColorSensor;
 
     public static void init() {
+        autoProgram = new AutoDoNothing();
+
         // extendAutoCalibrateMode = false;
         SmartDashboard.putNumber("shoulder test", .395);
         manShoulder = new SendableChooser<Boolean>();
@@ -160,6 +165,12 @@ The available preset values are:<p>
         shoulderMotor = new CANSparkMax(Wiring.SHOULDER_MOTOR, MotorType.kBrushless);
         shoulderMotor.restoreFactoryDefaults();
         shoulderMotor.setClosedLoopRampRate(0.5);
+
+        shoulderMotor2 = new CANSparkMax(Wiring.SHOULDER_MOTOR_2, MotorType.kBrushless);
+        shoulderMotor2.restoreFactoryDefaults();
+        shoulderMotor2.follow(shoulderMotor, true);
+
+        
 
         shoulderMotor.setSmartCurrentLimit(MAX_SHOULDER_CURRENT);
         shoulderMotor.setIdleMode(IdleMode.kBrake);
@@ -204,6 +215,7 @@ The available preset values are:<p>
     }
 
     public static void tick() {
+        autoProgram.tick();
         // SmartDashboard.putBoolean("Extend Calibrating", extendAutoCalibrateMode);
         if (extendAutoCalibrateMode) {
             extendOverrideMode = true;
@@ -365,7 +377,7 @@ The available preset values are:<p>
 
     public static void extenderMove(double requestedVelocity) {
         if (Math.abs(requestedVelocity)>.07) {
-            extendRequestedPos = extendRequestedPos + (1.4 * requestedVelocity); // was 2.2 
+            extendRequestedPos = extendRequestedPos + (.8 * requestedVelocity); // was 2.2 
         }       
         extendOverrideMode = false; 
      }
@@ -385,34 +397,66 @@ The available preset values are:<p>
         switch(position) {
             case PICKUP_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 5;  
+                // shoulderRequestedPos = 5;  
+                if(!autoProgram.isRunning()) {
+                    autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
+                    autoProgram.start(5);
+                }
                 break;
             case PICKUP_BACK_FEEDER_STATION:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 1.2;
+                // shoulderRequestedPos = 1.2;
+                if(!autoProgram.isRunning()) {
+                    autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
+                    autoProgram.start(1.2);
+                }
                 break;
             case GATE_MODE:
                 MAX_SHOULDER_SPEED = 1;
-                shoulderRequestedPos = 13.2;
+                // shoulderRequestedPos = 13.2;
+                if(!autoProgram.isRunning()) {
+                    autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
+                    autoProgram.start(13.2);
+                }
                 break;
             case PICKUP_CONE:
                 MAX_SHOULDER_SPEED=1;
-                shoulderRequestedPos = 14;//??
+                // shoulderRequestedPos = 14;//??
+                if(!autoProgram.isRunning()) {
+                    autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
+                    autoProgram.start(14);
+                }
                 break;
             case PICKUP_CUBE:
-                shoulderRequestedPos = 14;//??
+                // shoulderRequestedPos = 14;//??
+                if(!autoProgram.isRunning()) {
+                    autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
+                    autoProgram.start(14);
+                }
                 MAX_SHOULDER_SPEED = 1;
                 break;
             case PLACING_GROUND:
-                shoulderRequestedPos = 12;//??
+                // shoulderRequestedPos = 12;//??
+                if(!autoProgram.isRunning()) {
+                    autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
+                    autoProgram.start(12);
+                }
                 MAX_SHOULDER_SPEED=0.7;
                 break;
             case PLACING_LOW:
-                shoulderRequestedPos = 2.3;//??
+                // shoulderRequestedPos = 2.3;//??
+                if(!autoProgram.isRunning()) {
+                    autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
+                    autoProgram.start(2.3);
+                }
                 MAX_SHOULDER_SPEED=0.65;
                 break;
             case PLACING_HIGH:
-                shoulderRequestedPos = 0;//??
+                // shoulderRequestedPos = 0;//??
+                if(!autoProgram.isRunning()) {
+                    autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
+                    autoProgram.start(0);
+                }
                 MAX_SHOULDER_SPEED = 0.4;
                 break;
         }
@@ -520,5 +564,70 @@ The available preset values are:<p>
 
     public static double getExtenderPosition() {
         return extendMotor.getEncoder().getPosition();
+    }
+
+    public static class AutoShoulderMoveIncraments extends AutoBaseClass {
+        double desiredPosition = 13.2;
+        public AutoShoulderMoveIncraments(AutoType type) {
+            super(type);
+        }
+        public void start(double positionDesired) {
+            desiredPosition = positionDesired;
+            super.start(positionDesired);
+        }
+        public void stop() {
+            super.stop();
+        }
+        double postion;
+        double incraments;
+        final int timeDelay = 100;
+        @Override
+        public void tick() {
+            if(isRunning()) {
+                switch(getCurrentStep()) {
+                    case 0:
+                        postion = shoulderMotor.getEncoder().getPosition();
+                        incraments = (desiredPosition - postion)/5;
+                        setStep(2);
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        shoulderRequestedPos += incraments;
+                        setTimerAndAdvanceStep(timeDelay);
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        shoulderRequestedPos += incraments;
+                        setTimerAndAdvanceStep(timeDelay);
+                        break;
+                    case 5:
+                        break;
+                    case 6:
+                        shoulderRequestedPos += incraments;
+                        setTimerAndAdvanceStep(timeDelay);
+                        break;
+                    case 7:
+                        break;
+                    case 8:
+                        shoulderRequestedPos += incraments;
+                        setTimerAndAdvanceStep(timeDelay);
+                        break;
+                    case 9:
+                        break;
+                    case 10:
+                        shoulderRequestedPos += incraments;
+                        setTimerAndAdvanceStep(timeDelay);
+                        break;
+                    case 11:
+                        break;
+                    case 12: 
+                        stop();
+                        break;
+                }
+            }
+        }
+
     }
 }
