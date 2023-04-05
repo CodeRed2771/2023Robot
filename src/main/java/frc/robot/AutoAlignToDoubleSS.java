@@ -8,6 +8,7 @@
 package frc.robot;
 
 import java.lang.reflect.Array;
+import java.util.EnumMap;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -17,6 +18,9 @@ import frc.robot.Arm.shoulderPresets;
 
 public class AutoAlignToDoubleSS extends AutoBaseClass {
 
+    public enum AlignD {
+        LEFT, RIGHT
+    }
     private double angle;
     private double[] data;
     private double depthDistToWall;
@@ -27,9 +31,13 @@ public class AutoAlignToDoubleSS extends AutoBaseClass {
     final int WIDTH =  1;
     final int LENGTH = 0;
     final double metersToInches = 39.3701;
+    private double slideDistToWall;
+    private AlignD alignDirection;
+    private final double otherSideInchesToWall = 15;
 
-    public void start() {
+    public void start(AlignD direction) {
         super.start();
+        alignDirection = direction;
         // VisionShooter.setVisionTrackingMode();
         // VisionShooter.setTargetForShooting();
     }
@@ -67,8 +75,6 @@ public class AutoAlignToDoubleSS extends AutoBaseClass {
                     }
                     break;
                 case 3:
-                    Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
-                    Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
                     if(DriverStation.getAlliance() == Alliance.Blue)
                         depthDistToWall = 649-data[LENGTH]*metersToInches;
                     if(DriverStation.getAlliance() == Alliance.Red)
@@ -82,9 +88,23 @@ public class AutoAlignToDoubleSS extends AutoBaseClass {
                     }
                     break;
                 case 5:
-                    
+                    Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
+                    Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
+                    slideDistToWall = 319-data[WIDTH]*metersToInches;
+                    if(alignDirection == AlignD.LEFT && getAlliance() == Alliance.Blue)
+                        driveInches(slideDistToWall, 90, 0.7);
+                    if(alignDirection == AlignD.RIGHT && getAlliance() == Alliance.Blue)
+                        driveInches(slideDistToWall+otherSideInchesToWall, 90, 0.7);
+                    if(alignDirection == AlignD.LEFT && getAlliance() == Alliance.Red)
+                        driveInches(slideDistToWall+otherSideInchesToWall, 90, 0.7);
+                    if(alignDirection == AlignD.RIGHT && getAlliance() == Alliance.Red)
+                        driveInches(slideDistToWall, 90, 0.7);
+                    setTimerAndAdvanceStep(3500);
+                    break;
                 case 6:
-                    
+                    if(driveCompleted())
+                        advanceStep();
+                    break;
                 case 7:
                     stop();
                     break;
