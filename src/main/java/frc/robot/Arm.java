@@ -289,7 +289,7 @@ The available preset values are:<p>
                 extendRequestedPos = 8.6;
                 break;
             case BACK_FEEDER_STATION:
-                extendRequestedPos = 36.1;
+                extendRequestedPos = 48.56;
                 break;
             case RETRACTED:
                 extendRequestedPos = 0;
@@ -408,7 +408,7 @@ The available preset values are:<p>
                 // shoulderRequestedPos = 1.2;
                 if(!autoProgram.isRunning()) {
                     autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
-                    autoProgram.start(1.2);
+                    autoProgram.start(2);
                 }
                 break;
             case GATE_MODE:

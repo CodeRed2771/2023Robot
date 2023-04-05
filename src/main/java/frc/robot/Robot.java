@@ -180,8 +180,10 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         if (gamepad2.getDPadLeftRestricted()){
-            Arm.presetShoulder(shoulderPresets.PLACING_LOW);
-            Arm.presetExtend(extenderPresets.LOW);
+            // Arm.presetShoulder(shoulderPresets.PLACING_LOW);
+            // Arm.presetExtend(extenderPresets.LOW);
+            Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
+            Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
         }
         if (gamepad2.getDPadRightRestricted()){
             Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
@@ -300,8 +302,10 @@ public class Robot extends TimedRobot {
             // mAutoProgram.stop();
             // mAutoProgram = new AutoInRobotPickup(); 
             // mAutoProgram.start();
-            Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
-            Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
+            // Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
+            // Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
+            Arm.presetShoulder(shoulderPresets.PLACING_LOW);
+            Arm.presetExtend(extenderPresets.LOW);
         }
 
         if (gamepad1.getBButton()){
