@@ -7,8 +7,8 @@
 
 package frc.robot;
 
-import java.lang.reflect.Array;
-import java.util.EnumMap;
+// import java.lang.reflect.Array;
+// import java.util.EnumMap;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -19,7 +19,7 @@ import frc.robot.Arm.shoulderPresets;
 public class AutoAlignToDoubleSS extends AutoBaseClass {
 
     public enum AlignD {
-        LEFT, RIGHT
+        WALL, BARRIER
     }
     private double angle;
     private double[] data;
@@ -91,14 +91,15 @@ public class AutoAlignToDoubleSS extends AutoBaseClass {
                     Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
                     Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
                     slideDistToWall = 319-data[WIDTH]*metersToInches;
-                    if(alignDirection == AlignD.LEFT && getAlliance() == Alliance.Blue)
-                        driveInches(slideDistToWall, 90, 0.7);
-                    if(alignDirection == AlignD.RIGHT && getAlliance() == Alliance.Blue)
+                    if(alignDirection == AlignD.WALL && getAlliance() == Alliance.Blue){
+                        driveInches(-slideDistToWall, 90, 0.7);
+                    } else if(alignDirection == AlignD.BARRIER && getAlliance() == Alliance.Blue){
                         driveInches(slideDistToWall+otherSideInchesToWall, 90, 0.7);
-                    if(alignDirection == AlignD.LEFT && getAlliance() == Alliance.Red)
-                        driveInches(slideDistToWall+otherSideInchesToWall, 90, 0.7);
-                    if(alignDirection == AlignD.RIGHT && getAlliance() == Alliance.Red)
+                    } else if(alignDirection == AlignD.WALL && getAlliance() == Alliance.Red){
                         driveInches(slideDistToWall, 90, 0.7);
+                    } else if(alignDirection == AlignD.BARRIER && getAlliance() == Alliance.Red){
+                        driveInches(-slideDistToWall-otherSideInchesToWall, 90, 0.7);
+                    }
                     setTimerAndAdvanceStep(3500);
                     break;
                 case 6:
