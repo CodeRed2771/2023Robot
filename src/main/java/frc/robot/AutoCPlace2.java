@@ -7,16 +7,9 @@ import frc.robot.Arm.shoulderPresets;
 
 public class AutoCPlace2 extends AutoBaseClass{//didn't change much
 
-    double driveDistRedL = 0;
-    double driveDistRedR = 0;
-    double driveDistBlueL = 0;
-    double driveDistBlueR = 0;
-    int wheelAngleRedL = 0;
-    int wheelAngleRedR = 0;
-    int wheelAngleBlueL = 0;
-    int wheelAngleBlueR = 0;
-    int liftWait = 0;
-    double forwardDrive = 0;
+    public enum p2Positions {
+        BUMP, NON_BUMP
+    }
 
 	public void start() {
 		super.start();
@@ -32,31 +25,28 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
-                    Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(liftWait);
+                    //reset the arm
+                    setTimerAndAdvanceStep(850);
                     break;
                 case 1:
-                    Claw.openClawTO();
-                    setTimerAndAdvanceStep(1200);
                     break;
                 case 2:
+                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
+                    Arm.presetExtend(extenderPresets.HIGH);
+                    setTimerAndAdvanceStep(3500);
                     break;
                 case 3:
-                    Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(2000);
+                    if(Arm.extensionCompleted())
+                        advanceStep();
+                    break;
+                case 4:
+                    Claw2.open();
+                    setTimerAndAdvanceStep(150);
                     break;
                 case 5:
                     break;
                 case 6:
-                    if(getAlliance() == Alliance.Red && robotPosition() == Position.LEFT)
-                        driveInches(driveDistRedL, wheelAngleRedL, 0.9);
-                    if(getAlliance() == Alliance.Red && robotPosition() == Position.RIGHT)
-                        driveInches(driveDistRedR, wheelAngleRedR, 0.9);
-                    if(getAlliance() == Alliance.Blue && robotPosition() == Position.LEFT)
-                        driveInches(driveDistBlueL, wheelAngleBlueL, 0.9);
-                    if(getAlliance() == Alliance.Blue && robotPosition() == Position.RIGHT)
-                        driveInches(driveDistBlueR, wheelAngleBlueR, 0.9);
+                    driveInches(200, 0,1);
                     setTimerAndAdvanceStep(4000);
                     break;
                 case 7:
@@ -64,40 +54,81 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                         advanceStep();
                     break;
                 case 8:
-                    setStep(14);
+                    if(getAlliance() == Alliance.Blue)
+                        driveInches(25, 90, 0.7);
+                    else
+                        driveInches(-25, 90, 0.7);
                     Intake.deploy();
                     Intake.run(1);
-                    driveInches(forwardDrive, 0, 0.5);
-                    setTimerAndAdvanceStep(1500);
+                    Arm.presetShoulder(shoulderPresets.PICKUP_CONE);
+                    Arm.presetExtend(extenderPresets.PICKUP);
+                    setTimerAndAdvanceStep(600);
                     break;
                 case 9:
                     if(driveCompleted())
                         advanceStep();
                     break;
                 case 10:
-                    Intake.stop();
-                    Intake.retract();
-                    if(getAlliance() == Alliance.Red && robotPosition() == Position.LEFT)
-                        driveInches(driveDistRedL, wheelAngleRedL, 0.9);
-                    if(getAlliance() == Alliance.Red && robotPosition() == Position.RIGHT)
-                        driveInches(driveDistRedR, wheelAngleRedR, 0.9);
-                    if(getAlliance() == Alliance.Blue && robotPosition() == Position.LEFT)
-                        driveInches(driveDistBlueL, wheelAngleBlueL, 0.9);
-                    if(getAlliance() == Alliance.Blue && robotPosition() == Position.RIGHT)
-                        driveInches(driveDistBlueR, wheelAngleBlueR, 0.9);
-                    setTimerAndAdvanceStep(4000);
+                    if(getAlliance() == Alliance.Blue)
+                        driveInches(-19, 90, 0.7);
+                    if(getAlliance() == Alliance.Blue)
+                        driveInches(-19, 90, 0.7);
+                    setTimerAndAdvanceStep(2000);
                     break;
                 case 11:
                     if(driveCompleted())
                         advanceStep();
                     break;
                 case 12:
-                    //LiveBottom.backward();
-                    setTimerAndAdvanceStep(3000);
+                    driveInches(24, 0, 0.7);
+                    setTimerAndAdvanceStep(1750);
                     break;
                 case 13:
+                    if(driveCompleted())
+                        advanceStep();
                     break;
                 case 14:
+                    Intake.retract();
+                    LiveBottom2.forwardBasic();
+                    driveInches(-212, 0, 1);
+                    setTimerAndAdvanceStep(4000);
+                    break;
+                case 15:
+                    if(driveCompleted())
+                        advanceStep();
+                    break;
+                case 16:
+                    Claw2.closeClaw;
+                    driveInches(-18, 0, 0.65);
+                    setTimerAndAdvanceStep(1500);
+                    break;
+                case 17:
+                    if(driveCompleted())
+                        advanceStep();
+                    break;
+                case 18:
+                    Arm.presetExtend(extenderPresets.HIGH);
+                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
+                    setTimerAndAdvanceStep(2500);
+                    break;
+                case 19:
+                    if(Arm.extensionCompleted())
+                        advanceStep();
+                    break;
+                case 20:
+                    Claw2.openClaw;
+                    setTimerAndAdvanceStep(400);
+                    break;
+                case 21:
+                    break;
+                case 22:
+                    Arm.presetExtend(extenderPresets.RETRACTED);
+                    setTimerAndAdvanceStep(2500);
+                    break;
+                case 23:
+                    break;
+                case 24:
+                    LiveBottom2.stopBasic();
                     stop();
                     break;
             }
