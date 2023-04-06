@@ -139,6 +139,7 @@ public class Robot extends TimedRobot {
         Intake.init();
         VisionPlacer.init();
         VisionPlacer.setLED(LimelightOn.Off);
+        Claw2.init();
         // TickTimer.init();
         
 
@@ -208,9 +209,11 @@ public class Robot extends TimedRobot {
             }
         } else {
             if (gamepad2.getAButton()){
-                Claw.setClawPosition(ClawPresets.OPEN);
+                // Claw.setClawPosition(ClawPresets.OPEN);
+                Claw2.close();
             } else if (gamepad2.getBButton()) 
-                Claw.setClawPosition(ClawPresets.CLOSE);
+                // Claw.setClawPosition(ClawPresets.CLOSE);
+                Claw2.open();
         }
 
         if(gamepad2.getLeftTriggerAxis() > .5){
