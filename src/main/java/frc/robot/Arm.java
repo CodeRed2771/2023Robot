@@ -109,11 +109,11 @@ The available preset values are:<p>
     //                                 Colson wheels - .489" of extension per revolution
     //                                 (that number is just to give these next numbers some context)
     //                                 (these numbers are still in ticks (motor revolutions)
-    public static final double MAX_INSIDE_ROBOT_EXTENSION = 8; 
+    public static final double MAX_INSIDE_ROBOT_EXTENSION = 2; 
     private static final double MAX_GROUND_LEVEL_EXTENSION = 18;
-    private static final double MAX_IN_AIR_EXTENSION = 101; 
+    private static final double MAX_IN_AIR_EXTENSION = 82; 
     
-    private static final double MIN_RETRACTION_INSIDE_ROBOT = 8;
+    private static final double MIN_RETRACTION_INSIDE_ROBOT = 0;
 
     private static final double SHOULDER_ABS_MAX_UP = .43;
     // prev before colson wheels RLB     .57;
@@ -268,8 +268,15 @@ The available preset values are:<p>
         extendRequestedPos = 5;  // don't start quite at zero in case we're already at zero
         
         resetShoulderEncoder();
-        shoulderRequestedPos = SHOULDER_START_POSITION;
+        
         //  shoulderRequestedPos = shoulderMotor.getEncoder().getPosition();
+        
+        // shoulderRequestedPos = SHOULDER_START_POSITION;
+        if(!autoProgram.isRunning()) {
+            autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
+            autoProgram.start(SHOULDER_START_POSITION);
+        }
+
     }
     
     public static void resetShoulder() {
@@ -580,7 +587,7 @@ The available preset values are:<p>
         }
         double postion;
         double incraments;
-        final int timeDelay = 100;
+        final int timeDelay = 150;
         @Override
         public void tick() {
             if(isRunning()) {

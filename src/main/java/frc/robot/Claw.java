@@ -206,10 +206,12 @@ public class Claw {
     public static void setClawPosition(ClawPresets preset) {
         switch(preset) {
             case OPEN:
-                clawDesiredPosition = CLAW_FULLY_OPEN;
+                // clawDesiredPosition = CLAW_FULLY_OPEN;
+                Claw2.close();
                 break;
             case CLOSE:
-                clawDesiredPosition = CLAW_FULLY_CLOSED;
+                // clawDesiredPosition = CLAW_FULLY_CLOSED;
+                Claw2.open();
                 break;
             case STOP:
                 clawDesiredPosition = getCurrentClawPos();
