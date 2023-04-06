@@ -98,7 +98,7 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                         advanceStep();
                     break;
                 case 16:
-                    Claw2.closeClaw;
+                    // Claw2.closeClaw;
                     driveInches(-18, 0, 0.65);
                     setTimerAndAdvanceStep(1500);
                     break;
@@ -116,7 +116,7 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                         advanceStep();
                     break;
                 case 20:
-                    Claw2.openClaw;
+                    // Claw2.openClaw;
                     setTimerAndAdvanceStep(400);
                     break;
                 case 21:
