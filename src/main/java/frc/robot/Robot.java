@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
     final String AutoCP1CB = "Auto Community Place 1 Climb+Balance";
     final String AutoCPlace1 = "Auto Community Place 1";
     final String AutoCPlace2Wings = "Auto Community Place 2 (No Rail Ride)";
-    final String AutoCP2RailRider = "Auto Community Place 2 (Useing Rail Rider)";
+    final String AutoCP2RailRider = "Auto Community Place 2 (NOT NOT Rail Rider)";
     // final String AutoCPlace3VROOOM = "Auto Community Place 3 (TEST ONLY)";
 
     private double lastFWDvalue = 0; 
@@ -513,7 +513,7 @@ public class Robot extends TimedRobot {
             mAutoProgram.start();
             break;
         case AutoCP2RailRider:
-            mAutoProgram = new AutoRailRider2();
+            mAutoProgram = new AutoCPlace2();
             mAutoProgram.start();
             break;
         // case AutoCPlace3VROOOM:
