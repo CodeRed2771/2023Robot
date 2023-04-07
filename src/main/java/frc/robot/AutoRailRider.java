@@ -56,9 +56,9 @@ public class AutoRailRider extends AutoBaseClass{
                     break;
                 case 8:
                     if(DriverStation.getAlliance() == Alliance.Red) {
-                        driveInches(-13, 90, 1);
+                        driveInches(20, 90, 1);
                     } else {
-                        driveInches(13, 90, 1);
+                        driveInches(-20, 90, 1);
                     }
                     setTimerAndAdvanceStep(3500);
                     break;
@@ -68,9 +68,9 @@ public class AutoRailRider extends AutoBaseClass{
                     break;
                 case 10:
                     if(DriverStation.getAlliance() == Alliance.Red) {
-                        driveInches(-25, 90, 1);
-                    } else {
                         driveInches(25, 90, 1);
+                    } else {
+                        driveInches(-25, 90, 1);
                     }
                     Intake.deploy();
                     Intake.run(1);
@@ -82,7 +82,7 @@ public class AutoRailRider extends AutoBaseClass{
                     }
                     break;
                 case 12:
-                    driveInches(32, 0, 0.9);
+                    driveInches(20, 0, 0.9);
                     setTimerAndAdvanceStep(1250);
                     break;
                 case 13:
