@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Arm.extenderPresets;
 import frc.robot.Arm.shoulderPresets;
+import frc.robot.Claw.ClawPresets;;
 
 public class AutoCPlace2 extends AutoBaseClass{//didn't change much
 
@@ -25,15 +26,16 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    //reset the arm
-                    setTimerAndAdvanceStep(850);
+                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 1:
+                    if(Arm.shoulderMoveCompleted())
+                        advanceStep();
                     break;
                 case 2:
-                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
                     Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(3500);
+                    setTimerAndAdvanceStep(1700);
                     break;
                 case 3:
                     if(Arm.extensionCompleted())
@@ -46,33 +48,22 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                 case 5:
                     break;
                 case 6:
-                    driveInches(200, 0,1);
-                    setTimerAndAdvanceStep(4000);
+                    Arm.presetExtend(extenderPresets.RETRACTED);
+                    setTimerAndAdvanceStep(750);
                     break;
                 case 7:
-                    if(driveCompleted())
-                        advanceStep();
                     break;
                 case 8:
-                    if(getAlliance() == Alliance.Blue)
-                        driveInches(25, 90, 0.7);
-                    else
-                        driveInches(-25, 90, 0.7);
-                    Intake.deploy();
-                    Intake.run(1);
-                    Arm.presetShoulder(shoulderPresets.PICKUP_CONE);
-                    Arm.presetExtend(extenderPresets.PICKUP);
-                    setTimerAndAdvanceStep(600);
+                    driveInches(228, 0,1);
+                    setTimerAndAdvanceStep(2500);
                     break;
                 case 9:
-                    if(driveCompleted())
-                        advanceStep();
                     break;
                 case 10:
-                    if(getAlliance() == Alliance.Blue)
-                        driveInches(-19, 90, 0.7);
-                    if(getAlliance() == Alliance.Blue)
-                        driveInches(-19, 90, 0.7);
+                    Intake.deploy();
+                    Arm.presetExtend(extenderPresets.GATE_MODE);
+                    Arm.presetShoulder(shoulderPresets.GATE_MODE);
+                    Intake.run(1);
                     setTimerAndAdvanceStep(2000);
                     break;
                 case 11:
@@ -80,54 +71,25 @@ public class AutoCPlace2 extends AutoBaseClass{//didn't change much
                         advanceStep();
                     break;
                 case 12:
-                    driveInches(24, 0, 0.7);
-                    setTimerAndAdvanceStep(1750);
+                    Intake.retract();
+                    Intake.stop();
+                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
+                    Arm.presetExtend(extenderPresets.RETRACTED);
+                    driveInches(-230, 0, 1);
+                    setTimerAndAdvanceStep(4200);
                     break;
                 case 13:
                     if(driveCompleted())
                         advanceStep();
                     break;
                 case 14:
-                    Intake.retract();
                     LiveBottom2.forwardBasic();
-                    driveInches(-212, 0, 1);
-                    setTimerAndAdvanceStep(4000);
+                    setTimerAndAdvanceStep(3000);
                     break;
                 case 15:
-                    if(driveCompleted())
-                        advanceStep();
                     break;
                 case 16:
-                    // Claw2.closeClaw;
-                    driveInches(-18, 0, 0.65);
-                    setTimerAndAdvanceStep(1500);
-                    break;
-                case 17:
-                    if(driveCompleted())
-                        advanceStep();
-                    break;
-                case 18:
-                    Arm.presetExtend(extenderPresets.HIGH);
-                    Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
-                    setTimerAndAdvanceStep(2500);
-                    break;
-                case 19:
-                    if(Arm.extensionCompleted())
-                        advanceStep();
-                    break;
-                case 20:
-                    // Claw2.openClaw;
-                    setTimerAndAdvanceStep(400);
-                    break;
-                case 21:
-                    break;
-                case 22:
-                    Arm.presetExtend(extenderPresets.RETRACTED);
-                    setTimerAndAdvanceStep(2500);
-                    break;
-                case 23:
-                    break;
-                case 24:
+                    Intake.stop();
                     LiveBottom2.stopBasic();
                     stop();
                     break;
