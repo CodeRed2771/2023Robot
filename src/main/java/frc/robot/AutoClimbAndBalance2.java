@@ -15,13 +15,13 @@ public class AutoClimbAndBalance2 extends AutoBaseClass {
     double startPitch = 0;
     double endPitch = 0;
     double currentTime;
-    final double DRIVE_DISTANCE = 2;
+    final double DRIVE_DISTANCE = 3;
     double startTimeForPitchSamples;
-    final double TIME_TO_NEXT_PITCH_CHECK = 500;
+    final double TIME_TO_NEXT_PITCH_CHECK = 250;
     double startTimeForLevelTesting;
     final double TIME_UNTIL_ASURED_LEVEL = 500;
-    final double ALLOWABLE_PITCH_ERROR_FOR_BALANCE =  .2;
-    final double PITCH_CHANGE_INDICATING_MOTION = .2;
+    final double ALLOWABLE_PITCH_ERROR_FOR_BALANCE =  1.5;
+    final double PITCH_CHANGE_INDICATING_MOTION = .4;
 
         // final double DRIVE_DISTANCE = 2;
     // double lastPitchPosition;
@@ -37,6 +37,7 @@ public class AutoClimbAndBalance2 extends AutoBaseClass {
         currentPitch = RobotGyro.pitch();
         currentTime = System.currentTimeMillis();
         SmartDashboard.putNumber("Difference In Pitch", endPitch-startPitch);
+        SmartDashboard.putNumber("Auto Balance Step", getCurrentStep());
         if(isRunning()) {
             switch(getCurrentStep()) {
                 case 0:
@@ -54,6 +55,7 @@ public class AutoClimbAndBalance2 extends AutoBaseClass {
                     }
                     break;
                 case 2:
+                    // DriveAuto.parkingBrake();
                     if(Math.abs(endPitch - startPitch) > PITCH_CHANGE_INDICATING_MOTION) {
                         // Moving                        
                         startTimeForPitchSamples = currentTime;
@@ -69,10 +71,19 @@ public class AutoClimbAndBalance2 extends AutoBaseClass {
                     }
                     break;
                 case 3:
-                    if(currentTime > (startTimeForLevelTesting + TIME_UNTIL_ASURED_LEVEL)) {
-                        DriveAuto.parkingBrake();
-                        stop();
+                    if(Math.abs(currentPitch) < ALLOWABLE_PITCH_ERROR_FOR_BALANCE) {
+                        if(currentTime > (startTimeForLevelTesting + TIME_UNTIL_ASURED_LEVEL)) {
+                            DriveAuto.parkingBrake();
+                            setTimerAndAdvanceStep(500);
+                        }
+                    } else {
+                        setStep(0);
                     }
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    stop();
                     break;
             }
         }
