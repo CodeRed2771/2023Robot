@@ -127,7 +127,7 @@ public class Robot extends TimedRobot {
         else
             DriveTrain.init("NEO");
         
-        Claw.init();
+        // Claw.init();
         if(useLiveBottom2){
             LiveBottom2.init();
         }else{
@@ -154,6 +154,7 @@ public class Robot extends TimedRobot {
 
         RobotGyro.init();
         Arm.resetShoulder();
+        
     }
 
     @Override
@@ -218,7 +219,7 @@ public class Robot extends TimedRobot {
 
         if(gamepad2.getLeftTriggerAxis() > .5){
             if (!clawFlippedPress){
-                Claw.flip();
+                // Claw.flip();
                 clawFlippedPress = true;
             } 
         } else{
@@ -235,6 +236,11 @@ public class Robot extends TimedRobot {
             
         //     mAutoProgram.start();
         // }
+        if(gamepad1.getYButton()) {
+            mAutoProgram.stop();
+            mAutoProgram = new AutoClimbAndBalance2();
+            mAutoProgram.start();
+        }
 
         if(gamepad1.getDPadUpRestricted() || gamepad2.getDPadUpRestricted()) {
             // if(useLiveBottom2){
@@ -403,7 +409,7 @@ public class Robot extends TimedRobot {
             LiveBottom.tick();
         }
         // TickTimer.tick();
-        Claw.tick();
+        // Claw.tick();
  
         RobotGyro.position(); // i don't think this does anything - dvv
 

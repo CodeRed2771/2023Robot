@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoClimbAndBalance extends AutoBaseClass {
 
-    private final static double driveRatio = .5;
+    private final static double driveRatio = .3; // was .5
     private boolean isBalanced = false;
     private int counter = 0;
     private int dacount = 0;

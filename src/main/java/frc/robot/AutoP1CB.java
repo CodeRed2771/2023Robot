@@ -28,37 +28,38 @@ public class AutoP1CB extends AutoBaseClass{
             SmartDashboard.putNumber("Auto Step", getCurrentStep());
             switch (getCurrentStep()) {
                 case 0:
-                    // Claw.closeClawTO();
-                    // setTimerAndAdvanceStep(1000);
+                    // Claw.resetToCloseClaw();
+                    // Claw.stopClawTO();
                     setStep(2);
                     break;
                 case 1:
                     break;
                 case 2:
-                    Claw.stopClawTO();
+                    // Claw.setClawPosition(ClawPresets.OPEN);
+                    // Claw2.open();
                     Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
-                    Arm.presetExtend(extenderPresets.HIGH);
-                    setTimerAndAdvanceStep(1700);
+                    // Arm.presetExtend(extenderPresets.HIGH);
+                    setTimerAndAdvanceStep(1000);
                     break;
                 case 3:
-                    Claw.stopClawTO();
+                    // Claw.stopClawTO();
                     break;
                 case 4:
-                    setStep(8);
-                    // Arm.presetLift(shoulderPresets.PLACING_HIGH);
-                    // setTimerAndAdvanceStep(100);
+                    Arm.presetExtend(extenderPresets.HIGH);
+                    setTimerAndAdvanceStep(1700);
                     break;
                 case 5:
                     break;
                 case 6:
-                    // Arm.presetExtend(extenderPresets.HIGH);
-                    // setTimerAndAdvanceStep(3500);
+                    Claw2.open();
+                    setTimerAndAdvanceStep(100);
                     break;
                 case 7:
                     break;
                 case 8:
-                    Claw.setClawPosition(ClawPresets.CLOSE);
-                    setTimerAndAdvanceStep(1000);
+                    setStep(10);
+                    // Claw.setClawPosition(ClawPresets.CLOSE);
+                    // setTimerAndAdvanceStep(1000);
                     break;
                 case 9:
                     break;

@@ -71,7 +71,7 @@ public class AutoCP1CB extends AutoBaseClass{
                 case 11:
                     break;
                 case 12:
-                    driveInches(170, 0, 0.65);
+                    driveInches(174, 0, 0.65);
                     setTimerAndAdvanceStep(4000);
                     break;
                 case 13:
@@ -88,7 +88,7 @@ public class AutoCP1CB extends AutoBaseClass{
                         advanceStep(); 
                     break;
                 case 16:
-                    driveInches(-75, 0, 0.7);
+                    driveInches(-80, 0, 0.7);
                     setTimerAndAdvanceStep(3000);
                     break;
                 case 17:
@@ -96,13 +96,18 @@ public class AutoCP1CB extends AutoBaseClass{
                         advanceStep();
                     break;
                 case 18:
+                    setTimerAndAdvanceStep(500);
+                    break;
+                case 19:
+                    break;
+                case 20:
                     balance.start();
                     setTimerAndAdvanceStep(6000);
                     break;
-                case 19:
+                case 21:
                     balance.tick();
                     break;
-                case 20:
+                case 22:
                     stop();
                     break;
             }

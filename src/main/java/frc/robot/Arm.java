@@ -109,15 +109,15 @@ The available preset values are:<p>
     //                                 Colson wheels - .489" of extension per revolution
     //                                 (that number is just to give these next numbers some context)
     //                                 (these numbers are still in ticks (motor revolutions)
-    public static final double MAX_INSIDE_ROBOT_EXTENSION = 2; 
+    public static final double MAX_INSIDE_ROBOT_EXTENSION = 6; 
     private static final double MAX_GROUND_LEVEL_EXTENSION = 18;
-    private static final double MAX_IN_AIR_EXTENSION = 82; 
+    private static final double MAX_IN_AIR_EXTENSION = 94; 
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 0;
 
     private static final double SHOULDER_ABS_MAX_UP = .43;
     // prev before colson wheels RLB     .57;
-    private static final double SHOULDER_ABS_MAX_DOWN = .80;
+    private static final double SHOULDER_ABS_MAX_DOWN = .745;
     // prev before colson wheels RLB   .22;
 
     private static double SHOULDER_START_POSITION = 0;
@@ -209,7 +209,8 @@ The available preset values are:<p>
 
         extendRequestedPos = 0;
         //shoulderRequestedPos = SHOULDER_START_POSITION;
-        shoulderRequestedPos = shoulderMotor.getEncoder().getPosition();
+        // shoulderRequestedPos = shoulderMotor.getEncoder().getPosition();
+        resetShoulder();
 
         MAX_SHOULDER_SPEED = 0;
     }
@@ -296,7 +297,7 @@ The available preset values are:<p>
                 extendRequestedPos = 8.6;
                 break;
             case BACK_FEEDER_STATION:
-                extendRequestedPos = 48.56;
+                extendRequestedPos = 26;
                 break;
             case RETRACTED:
                 extendRequestedPos = 0;
@@ -314,7 +315,7 @@ The available preset values are:<p>
                 extendRequestedPos = 4.5;//??
                 break;
             case HIGH:
-                extendRequestedPos = MAX_IN_AIR_EXTENSION-8;//??
+                extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
                 break;
         }
     }
@@ -415,7 +416,7 @@ The available preset values are:<p>
                 // shoulderRequestedPos = 1.2;
                 if(!autoProgram.isRunning()) {
                     autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
-                    autoProgram.start(2);
+                    autoProgram.start(1.49);
                 }
                 break;
             case GATE_MODE:
@@ -535,13 +536,18 @@ The available preset values are:<p>
         double curPos = 0;
         
         boolean isConn = false;
-        int connTrys = 10000000;
+        int connTrys = 55000000;
         
-        while(isConn == false && connTrys != 0) {
+        while(!isConn && connTrys != 0) {
             isConn = shoulderAbsEncoder.isConnected();
             connTrys = connTrys - 1;
             SmartDashboard.putNumber("connTrys:", connTrys);
         };
+        // connTrys = 15000000;
+        // while(connTrys != 0) {
+        //     connTrys = connTrys - 1;
+        //     SmartDashboard.putNumber("connTrys:", connTrys);
+        // }
 
         curPos = shoulderAbsEncoder.getAbsolutePosition();
 
