@@ -11,7 +11,20 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.libs.CurrentBreaker;
 
-
+/*
+ * 
+ * 
+ * 
+ *    THIS IS THE OLD CLAW  
+ * 
+ * 
+ *    SEE Claw2.java for pnuematic claw
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 public class Claw {
 
     private static CANSparkMax clawMotor;
