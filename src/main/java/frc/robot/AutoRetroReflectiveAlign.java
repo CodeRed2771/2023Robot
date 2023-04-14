@@ -18,7 +18,6 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
         super.start();
     }
 
-
     public void stop() {
         super.stop();
     }
@@ -59,7 +58,9 @@ public class AutoRetroReflectiveAlign extends AutoBaseClass {
                 }
                 break;
             case 3:
-                if (Math.abs(strafeDistance) > 1 || Math.abs(strafeDistance) < 48){
+                strafeDistance = VisionPlacer.getXAngleOffset()*.75;
+                SmartDashboard.putNumber("Auto Strafe Amt", strafeDistance);
+                if (Math.abs(strafeDistance) > 1 && Math.abs(strafeDistance) < 48){
                     driveInches(strafeDistance, 90,0.5);
                     setTimerAndAdvanceStep(2000);
                 } else {
