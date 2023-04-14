@@ -111,6 +111,7 @@ The available preset values are:<p>
     //                                 (these numbers are still in ticks (motor revolutions)
     public static final double MAX_INSIDE_ROBOT_EXTENSION = 6; 
     private static final double MAX_GROUND_LEVEL_EXTENSION = 18;
+    private static final double MAX_IN_AIR_AUTO = 88;
     private static final double MAX_IN_AIR_EXTENSION = 94; 
     
     private static final double MIN_RETRACTION_INSIDE_ROBOT = 0;
@@ -309,13 +310,13 @@ The available preset values are:<p>
                 extendRequestedPos = MAX_INSIDE_ROBOT_EXTENSION;
                 break;
             case LOW:
-                extendRequestedPos = 45.86;
+                extendRequestedPos = 47.5;
                 break;
             case PICKUP:
                 extendRequestedPos = 4.5;//??
                 break;
             case HIGH:
-                extendRequestedPos = MAX_IN_AIR_EXTENSION;//??
+                extendRequestedPos = MAX_IN_AIR_AUTO;//??
                 break;
         }
     }
@@ -455,7 +456,7 @@ The available preset values are:<p>
                 // shoulderRequestedPos = 2.3;//??
                 if(!autoProgram.isRunning()) {
                     autoProgram = new AutoShoulderMoveIncraments(AutoType.NonDriveAuto);
-                    autoProgram.start(2.3);
+                    autoProgram.start(1.80);
                 }
                 MAX_SHOULDER_SPEED=0.65;
                 break;
@@ -593,14 +594,14 @@ The available preset values are:<p>
         }
         double postion;
         double incraments;
-        final int timeDelay = 150;
+        final int timeDelay = 130;
         @Override
         public void tick() {
             if(isRunning()) {
                 switch(getCurrentStep()) {
                     case 0:
                         postion = shoulderMotor.getEncoder().getPosition();
-                        incraments = (desiredPosition - postion)/5;
+                        incraments = (desiredPosition - postion)/7;
                         setStep(2);
                         break;
                     case 1:
@@ -635,7 +636,19 @@ The available preset values are:<p>
                         break;
                     case 11:
                         break;
-                    case 12: 
+                    case 12:
+                        shoulderRequestedPos += incraments;
+                        setTimerAndAdvanceStep(timeDelay);
+                        break;
+                    case 13:
+                        break;
+                    case 14:
+                        shoulderRequestedPos += incraments;
+                        setTimerAndAdvanceStep(timeDelay);
+                        break;
+                    case 15:
+                        break;
+                    case 16: 
                         stop();
                         break;
                 }

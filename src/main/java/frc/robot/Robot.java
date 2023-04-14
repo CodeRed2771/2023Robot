@@ -187,10 +187,15 @@ public class Robot extends TimedRobot {
             Arm.presetShoulder(shoulderPresets.PICKUP_BACK_FEEDER_STATION);
             Arm.presetExtend(extenderPresets.BACK_FEEDER_STATION);
         }
-        if (gamepad2.getDPadRightRestricted()){
-            Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
-            Arm.presetExtend(extenderPresets.HIGH);
-        }
+        if (gamepad2.getDPadRightRestricted() && gamepad2.getLeftBumper()){
+            Arm.presetShoulder(shoulderPresets.PLACING_LOW);
+            Arm.presetExtend(extenderPresets.LOW);
+        } else
+            if (gamepad2.getDPadRightRestricted()){
+                Arm.presetShoulder(shoulderPresets.PLACING_HIGH);
+                Arm.presetExtend(extenderPresets.HIGH);
+            }
+        
 
         // if (gamepad1.getXButton()) {
         //     Arm.shoulderMotor2.set(.2);
